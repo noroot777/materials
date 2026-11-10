@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# 把成片压成 README 顶上那张会动的预览图。重新渲染之后跑一次。
+# 把成片压成一张会动的预览图,给出不了播放器的地方用。重新渲染之后跑一次。
 #
 #   tools/readme_preview.sh
 #
-# 输出 renders/promo.webp(720 宽、15 帧、无声、循环)。knowbase 的 README 按 main 分支上的
-# 地址引这张图和成片,所以两个文件名都别改;推上去之后 README 那边不用动。
-# 仓库里的 mp4 在 GitHub 的 README 里不会内嵌播放,所以页面上放这张图,点它打开带配乐的 mp4。
+# 输出 renders/promo.webp(720 宽、15 帧、无声、循环)。knowbase 的 README 现在用的是上传的
+# 附件(见 tools/github_upload.sh),不引这张图;别处要嵌一张不带声音的动图时用它。
 set -euo pipefail
 cd "$(dirname "$0")/.."
 out=renders/promo.webp

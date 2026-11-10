@@ -8,7 +8,8 @@
 # 免费账号的视频附件上限是 10 MB,成片超了,所以另压这一份。
 #
 # 传法:把输出的文件拖进 knowbase 仓库任意一个 issue 的评论框(不用点提交),等它换成一条
-# https://github.com/user-attachments/assets/… 地址,把那条地址单独一行贴进 README。
+# https://github.com/user-attachments/assets/… 地址,用它换掉 knowbase 的 README 里现有的那一条
+# (那条地址得单独占一行,前后各空一行)。
 set -euo pipefail
 cd "$(dirname "$0")/.."
 out=renders/knowbase-promo-github.mp4
