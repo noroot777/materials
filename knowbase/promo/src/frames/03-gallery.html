@@ -1,0 +1,100 @@
+<style>
+/* g1 —— 左边四类的数,右边整面图鉴一拍滚一步 */
+#ROOT .stage { position: absolute; left: 660px; top: 0; width: 1260px; height: 1080px; }
+#ROOT .gal { left: 90px; top: -150px; width: 1900px; height: 1400px; border-color: transparent; transform-origin: 0% 50%; }
+#ROOT .side { position: absolute; left: 0; top: 0; width: 660px; height: 1080px; box-shadow: 30px 0 80px -30px rgba(0, 0, 0, 0.6); }
+#ROOT .hd { position: absolute; left: 60px; top: 56px; font-size: 136px; }
+#ROOT .kd { position: absolute; left: 64px; width: 540px; height: 170px; }
+#ROOT .kd .lb { position: absolute; left: 0; top: 0; font-size: 62px; line-height: 90px; white-space: nowrap; }
+#ROOT .kd .ct { position: absolute; right: 0; top: 0; font-size: 62px; font-weight: 700; line-height: 90px; letter-spacing: -2px; }
+#ROOT .kd .br { position: absolute; left: 0; top: 98px; height: 30px; transform-origin: left center; }
+
+/* g2 —— 推近一张档案:绿框逐拍圈出三块,再用半版墨色把话说出来 */
+#ROOT .dw { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 100% 0%; }
+#ROOT .dw img { display: block; position: absolute; left: 0; top: 0; }
+#ROOT .bx { position: absolute; left: 1067px; top: 0; width: 826px; height: 1080px; transform-origin: 50% 247px; opacity: 0; }
+#ROOT .bx i { position: absolute; left: 0; top: 0; width: 826px; border: 0 solid var(--kb-brand); border-left-width: 8px; border-right-width: 8px; transform-origin: 0% 0%; }
+#ROOT .bx .bt { height: 26px; border-top-width: 8px; border-radius: 18px 18px 0 0; }
+#ROOT .bx .bm { height: 100px; }
+#ROOT .bx .bb { height: 26px; border-bottom-width: 8px; border-radius: 0 0 18px 18px; }
+#ROOT .pnl { position: absolute; left: 0; top: 0; width: 1037px; height: 1080px; }
+#ROOT .pnl .ln { position: absolute; left: 96px; font-size: 204px; }
+#ROOT .pnl .hl { position: absolute; left: 70px; top: 548px; width: 880px; height: 250px; background: var(--kb-brand); transform-origin: left center; }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="stage"><div class="kb-win gal"><img src="assets/gallery-tall.jpg" width="1900" alt=""></div></div>
+  <div class="side kb-paper">
+    <div class="hd kb-display kb-mask"><span>工具图鉴</span></div>
+    <div class="kd" style="top:300px"><span class="lb kb-display">开源项目</span><span class="ct kb-mono">3,395</span><i class="br" style="width:540px;background:var(--kb-k-project)"></i></div>
+    <div class="kd" style="top:488px"><span class="lb kb-display">产品</span><span class="ct kb-mono">1,714</span><i class="br" style="width:273px;background:var(--kb-k-product)"></i></div>
+    <div class="kd" style="top:676px"><span class="lb kb-display">研究</span><span class="ct kb-mono">770</span><i class="br" style="width:122px;background:var(--kb-k-research)"></i></div>
+    <div class="kd" style="top:864px"><span class="lb kb-display">模型</span><span class="ct kb-mono">598</span><i class="br" style="width:95px;background:var(--kb-k-model)"></i></div>
+  </div>
+</div>
+
+<div class="kb-g kb-paper" data-g="2">
+  <div class="dw"><img src="assets/drawer.jpg" width="1920" height="1080" alt=""><div class="bx"><i class="bt"></i><i class="bm"></i><i class="bb"></i></div></div>
+  <div class="pnl kb-ink">
+    <i class="hl"></i>
+    <div class="ln kb-display kb-mask" style="top:270px"><span>每个工具</span></div>
+    <div class="ln kb-display kb-mask" style="top:550px"><span>一页档案</span></div>
+  </div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 19.273); gate(g2, 19.273, null);
+
+  // g1:图鉴斜着立在右边,八拍每拍往上滚一步;左边四类逐拍亮出来
+  var gal = $('.gal'), sheet = $('.gal img');
+  gsap.set(gal, { transformPerspective: 2400, rotationY: -15, rotationX: 7, rotation: 1.5 });
+  var beats = [15.441, 15.906, 16.393, 16.881, 17.369, 17.833, 18.321, 18.785];
+  tl.fromTo(gal, { y: 420 }, { y: 0, duration: 0.4, ease: 'expo.out' }, at(15.441));
+  beats.slice(1).forEach(function (t, i) {
+    tl.to(sheet, { y: -(i + 1) * 190, duration: 0.34, ease: 'expo.out' }, at(t));
+  });
+  push(gal, 15.441, 19.273, 1, 1.1);
+  rise($('.hd > span'), 15.441, 0, 0.3);
+  $$('.kd').forEach(function (kd, i) {
+    var t = beats[i + 1];
+    slam(kd, t, { x: -70 }, 0.2);
+    tl.fromTo(kd.querySelector('.br'), { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: 'expo.out' }, at(t) + 0.04);
+    roll(kd.querySelector('.ct'), t, t + 0.4);
+  });
+  // 后三拍没有新的行了:左边那一列跟着拍子顶一下
+  [17.833, 18.321, 18.785].forEach(function (t, i) {
+    tl.fromTo($$('.kd .br'), { scaleY: 1.9 }, { scaleY: 1, duration: 0.3, ease: 'expo.out', immediateRender: false }, at(t));
+  });
+
+  // g2:档案抽屉。绿框一拍换一块 —— 标题卡、时间线、就这个工具提问
+  // 前四拍贴着抽屉看(放大到 1.45,跟着绿框往下走),半版墨色进来时退回整页
+  var dw = $('.dw');
+  tl.fromTo(dw, { scale: 1.62, y: 0 }, { scale: 1.45, duration: 0.45, ease: 'expo.out' }, at(19.273));
+  tl.to(dw, { y: -420, duration: 0.3, ease: 'expo.out' }, at(20.248));
+  tl.to(dw, { y: -486, duration: 0.3, ease: 'expo.out' }, at(20.712));
+  tl.to(dw, { scale: 1, y: 0, duration: 0.32, ease: 'expo.out' }, at(21.2));
+  tl.to(dw, { scale: 1.04, duration: 23.127 - 21.6, ease: 'none' }, at(21.6));
+  // 绿框是三段拼的:上下两个帽只平移,中段纵向拉伸(竖边不会被拉粗),整个过程不碰布局属性
+  var bx = $('.bx'), bt = $('.bx .bt'), bm = $('.bx .bm'), bb = $('.bx .bb');
+  function seg(top, h) { return [{ y: top }, { y: top + 25, scaleY: (h - 50) / 100 }, { y: top + h - 26 }]; }
+  function boxTo(t, top, h) {
+    var s = seg(top, h);
+    [bt, bm, bb].forEach(function (el, k) {
+      s[k].duration = 0.26; s[k].ease = 'expo.out';
+      tl.to(el, s[k], at(t));
+    });
+  }
+  (function (s) { gsap.set(bt, s[0]); gsap.set(bm, s[1]); gsap.set(bb, s[2]); })(seg(99, 297));
+  tl.fromTo(bx, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.22, ease: 'expo.out' }, at(19.76));
+  boxTo(20.248, 469, 525);
+  boxTo(20.712, 1004, 62);
+  tl.fromTo($('.pnl'), { xPercent: -100 }, { xPercent: 0, duration: 0.26, ease: 'expo.out' }, at(21.2));
+  rise($$('.pnl .ln > span')[0], 21.2 + 0.06, 0, 0.3);
+  rise($$('.pnl .ln > span')[1], 21.664, 0, 0.3);
+  boxTo(21.664, 99, 297);
+  tl.fromTo($('.pnl .hl'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(22.152));
+  boxTo(22.152, 469, 525);
+  boxTo(22.639, 1004, 62);
+  tl.fromTo($$('.pnl .ln'), { scale: 1.06 }, { scale: 1, duration: 0.36, ease: 'expo.out', transformOrigin: '0% 50%', immediateRender: false }, at(22.639));
+</script>

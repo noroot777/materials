@@ -1,0 +1,89 @@
+/* 每一帧共用的底子。#ROOT 由 tools/build-frames.mjs 换成这一帧自己的根 id(f01…f08),
+   所以这里的每条规则都只管得到自己那一帧 —— 八帧同时挂在一页里,互不串味。
+   色值是 frame.md 那张表在片子里的唯一落点。 */
+/* 字体是本机装着的那几款(产品界面自己用的也是它们),用 local() 起个别名说清这层依赖:
+   换一台没有宋体-简 / 苹方的机器渲染,字形会回退,得先装上或把这里换成带文件的字体。
+   等宽体例外:字体栈的第一位必须是具名字体。渲染器编译时见到第一位是通用族(ui-monospace、
+   -apple-system 这类)会在前面插一个 Inter,截帧却不插 —— 成片里的工具名和计数就悄悄变成了
+   比例字体。JetBrains Mono 是渲染器自带内嵌的那款,截帧和成片是同一份字形。 */
+@font-face { font-family: "KB Songti"; font-weight: 900; src: local("Songti SC Black"), local("STSongti-SC-Black"); }
+@font-face { font-family: "KB Sans"; font-weight: 400; src: local("PingFang SC Regular"), local("PingFangSC-Regular"); }
+@font-face { font-family: "KB Sans"; font-weight: 500; src: local("PingFang SC Medium"), local("PingFangSC-Medium"); }
+@font-face { font-family: "KB Sans"; font-weight: 600 700; src: local("PingFang SC Semibold"), local("PingFangSC-Semibold"); }
+
+#ROOT {
+  --kb-paper: #F3F5F4;
+  --kb-paper-2: #ECF0EE;
+  --kb-card: #FFFFFF;
+  --kb-ink: #14202B;
+  --kb-ink-2: #3A4750;
+  --kb-muted: #66727C;
+  --kb-muted-on-ink: #A9B4BA;
+  --kb-line: #DCE3E0;
+  --kb-brand: #17604F;
+  --kb-brand-deep: #0E4A3B;
+  --kb-brand-soft: #DFF0E9;
+  --kb-k-project: #17604F;
+  --kb-k-product: #3D5A80;
+  --kb-k-model: #7D4E9E;
+  --kb-k-research: #2F6D7A;
+  --kb-display: "KB Songti", serif;
+  --kb-mono: "JetBrains Mono", Menlo, monospace;
+  --kb-body: "KB Sans", sans-serif;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--kb-ink);
+  color: var(--kb-ink);
+  font-family: var(--kb-body);
+  font-size: 32px;
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+}
+#ROOT * { box-sizing: border-box; margin: 0; padding: 0; }
+#ROOT i { font-style: normal; }
+
+/* 一组 = 一层满版;除第一组外都先藏着,由时间线按拍点亮 */
+#ROOT .kb-g {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+}
+#ROOT .kb-g.kb-first { visibility: visible; opacity: 1; }
+#ROOT .kb-paper { background: var(--kb-paper); color: var(--kb-ink); }
+#ROOT .kb-ink { background: var(--kb-ink); color: var(--kb-paper); }
+#ROOT .kb-brand { background: var(--kb-brand); color: #fff; }
+
+#ROOT .kb-display { font-family: var(--kb-display); font-weight: 900; }
+#ROOT .kb-mono { font-family: var(--kb-mono); font-variant-numeric: tabular-nums; }
+
+/* 遮罩里的字从下面顶上来 */
+#ROOT .kb-mask { display: block; overflow: hidden; line-height: 1.2; }
+#ROOT .kb-mask > span { display: block; white-space: nowrap; }
+#ROOT .kb-ch { display: inline-block; white-space: pre; }
+
+/* 装截图的窗口 */
+#ROOT .kb-win {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--kb-line);
+  background: var(--kb-card);
+  box-shadow: 0 44px 90px -28px rgba(20, 32, 43, 0.5);
+}
+#ROOT .kb-win img { display: block; position: absolute; left: 0; top: 0; }
+
+/* 滚轮式计数:每一位是一条竖排的数字带,停在目标那一格 */
+#ROOT .kb-odo { display: inline-flex; line-height: 1.1; white-space: nowrap; }
+#ROOT .kb-odo-d { display: block; height: 1.1em; overflow: hidden; }
+#ROOT .kb-odo-s { display: block; }
+#ROOT .kb-odo-s > i { display: block; height: 1.1em; }
+#ROOT .kb-odo-c { display: block; height: 1.1em; }

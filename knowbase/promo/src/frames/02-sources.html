@@ -1,0 +1,100 @@
+<style>
+/* g1 —— 左边四路来源的名单,右边是它们各自的真实界面,两拍换一路 */
+#ROOT .mk { position: absolute; left: 0; top: 90px; width: 600px; height: 225px; background: var(--kb-brand); }
+#ROOT .src { position: absolute; left: 0; width: 600px; height: 225px; padding: 0 44px 0 64px; display: flex; align-items: center; justify-content: space-between; opacity: 0.3; }
+#ROOT .src .nm { font-size: 88px; white-space: nowrap; }
+#ROOT .src .ct { font-size: 88px; font-weight: 700; letter-spacing: -4px; }
+#ROOT .shot { left: 650px; top: 70px; width: 1400px; height: 1100px; border-color: transparent; }
+
+/* g2 —— 同步中心:六路各跑各的进度条,数字滚到位,三段后处理逐拍点亮 */
+#ROOT .ttl { position: absolute; left: 110px; top: 70px; font-size: 156px; }
+#ROOT .sum { position: absolute; left: 100px; top: 270px; width: 820px; height: 320px; display: flex; align-items: flex-end; gap: 26px; }
+#ROOT .sum .n { font-size: 290px; font-weight: 700; letter-spacing: -14px; }
+#ROOT .sum .u { font-size: 84px; color: var(--kb-brand); margin-bottom: 40px; }
+#ROOT .stg { position: absolute; left: 110px; width: 740px; height: 116px; }
+#ROOT .stg .bg { position: absolute; left: -24px; top: 0; width: 100%; height: 108px; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .stg .tx { position: absolute; left: 0; top: 0; font-size: 76px; line-height: 108px; white-space: nowrap; opacity: 0.22; }
+#ROOT .sync { left: 940px; top: 90px; width: 920px; height: 900px; }
+#ROOT .sy { position: absolute; left: 0; width: 920px; height: 150px; border-bottom: 1px solid var(--kb-line); }
+#ROOT .sy .nm { position: absolute; left: 48px; top: 0; font-size: 52px; font-weight: 600; line-height: 150px; color: var(--kb-ink); }
+#ROOT .sy .bar { position: absolute; left: 310px; top: 64px; width: 290px; height: 22px; border-radius: 11px; background: var(--kb-line); overflow: hidden; }
+#ROOT .sy .bar i { display: block; width: 100%; height: 100%; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .sy .nt { position: absolute; right: 48px; top: 0; font-size: 48px; font-weight: 600; line-height: 150px; color: var(--kb-brand); white-space: nowrap; }
+#ROOT .sy .nt.q { color: var(--kb-muted); }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="mk"></div>
+  <div class="src" style="top:90px"><span class="nm kb-display">公众号</span><span class="ct kb-mono">44</span></div>
+  <div class="src" style="top:315px"><span class="nm kb-display">大V观点</span><span class="ct kb-mono">51</span></div>
+  <div class="src" style="top:540px"><span class="nm kb-display">RSS</span><span class="ct kb-mono">12</span></div>
+  <div class="src" style="top:765px"><span class="nm kb-display">YouTube</span><span class="ct kb-mono">52</span></div>
+  <div class="kb-win shot"><img src="assets/subs-wechat.jpg" width="2400" alt=""></div>
+  <div class="kb-win shot"><img src="assets/subs-social.jpg" width="2400" alt=""></div>
+  <div class="kb-win shot"><img src="assets/subs-rss.jpg" width="2800" alt=""></div>
+  <div class="kb-win shot"><img src="assets/subs-youtube.jpg" width="2400" alt=""></div>
+</div>
+
+<div class="kb-g kb-paper" data-g="2">
+  <div class="ttl kb-display kb-mask"><span>一键同步</span></div>
+  <div class="sum"><span class="n kb-mono">228</span><span class="u kb-display kb-mask"><span>条新增</span></span></div>
+  <div class="stg" style="top:630px"><i class="bg"></i><span class="tx kb-display">入库处理</span></div>
+  <div class="stg" style="top:746px"><i class="bg"></i><span class="tx kb-display">生成日报</span></div>
+  <div class="stg" style="top:862px"><i class="bg"></i><span class="tx kb-display">整理工具与 Wiki</span></div>
+  <div class="kb-win sync">
+    <div class="sy" style="top:0"><span class="nm">公众号</span><i class="bar"><i></i></i><span class="nt kb-mono">+33 篇</span></div>
+    <div class="sy" style="top:150px"><span class="nm">大V观点</span><i class="bar"><i></i></i><span class="nt kb-mono">+124 条</span></div>
+    <div class="sy" style="top:300px"><span class="nm">RSS</span><i class="bar"><i></i></i><span class="nt kb-mono">+54 条</span></div>
+    <div class="sy" style="top:450px"><span class="nm">YouTube</span><i class="bar"><i></i></i><span class="nt kb-mono q">48 个频道</span></div>
+    <div class="sy" style="top:600px"><span class="nm">简报</span><i class="bar"><i></i></i><span class="nt kb-mono">+16 条</span></div>
+    <div class="sy" style="top:750px"><span class="nm">网页专栏</span><i class="bar"><i></i></i><span class="nt kb-mono">+1 条</span></div>
+  </div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 11.61); gate(g2, 11.61, null);
+
+  // g1:每两拍换一路。正拍 —— 标记块落到这一行、窗口从右边砸进来;
+  // 中间那一拍 —— 画面在截图里挪一步,看到这一路的另一半
+  var cuts = [7.755, 8.707, 9.683, 10.635];
+  var offs = [8.243, 9.195, 10.147, 11.122];
+  // 每张截图的起止取景:[x0, y0, x1, y1]。RSS 那张只取右半的阅读区
+  var views = [[-86, -50, -86, -330], [-86, -90, -86, -330], [-1190, -290, -1190, -560], [-86, -90, -800, -330]];
+  var srcs = $$('.src'), shots = $$('.shot');
+  cuts.forEach(function (t, i) {
+    var img = shots[i].querySelector('img'), v = views[i];
+    if (i) {
+      tl.to($('.mk'), { y: i * 225, duration: 0.2, ease: 'expo.out' }, at(t));
+      tl.to(srcs[i - 1], { opacity: 0.3, duration: 0.12 }, at(t));
+      tl.fromTo(shots[i], { xPercent: 100 }, { xPercent: 0, duration: 0.24, ease: 'expo.out' }, at(t));
+    }
+    tl.fromTo(srcs[i], { opacity: 0.3 }, { opacity: 1, duration: 0.1 }, at(t));
+    tl.fromTo(srcs[i].querySelector('.ct'), { scale: 1.5 }, { scale: 1, duration: 0.3, ease: 'expo.out', transformOrigin: '100% 50%' }, at(t));
+    tl.fromTo(img, { x: v[0], y: v[1] }, { x: v[2], y: v[3], duration: 0.4, ease: 'expo.inOut', immediateRender: true }, at(offs[i]) - 0.2);
+    push(shots[i], t, t + 0.97, 1, 1.03, { transformOrigin: '0% 0%' });
+  });
+
+  // g2:标题顶上来,窗口和六行落下;进度条各自跑完的那一刻落在拍上
+  rise($('.ttl > span'), 11.61, 0, 0.3);
+  slam($('.sync'), 11.61, { x: 420 }, 0.26);
+  slam($$('.sy'), 11.61, { y: 60 }, 0.3, 0.035);
+  slam($('.sum .n'), 11.61, { y: 70 }, 0.2);
+  roll($('.sum .n'), 11.61, 13.514);
+  rise($('.sum .u > span'), 13.514, 0, 0.24);
+  var done = [12.074, 12.074, 12.562, 12.562, 13.026, 13.026];
+  $$('.sy').forEach(function (row, i) {
+    var t0 = 11.72 + i * 0.07;
+    tl.fromTo(row.querySelector('.bar i'), { scaleX: 0 }, { scaleX: 1, duration: done[i] - t0, ease: 'power2.in' }, at(t0));
+    slam(row.querySelector('.nt'), done[i], { x: 36 }, 0.2);
+  });
+  [13.514, 14.002, 14.466].forEach(function (t, i) {
+    var stg = $$('.stg')[i];
+    tl.fromTo(stg.querySelector('.bg'), { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: 'expo.out' }, at(t));
+    tl.to(stg.querySelector('.tx'), { opacity: 1, color: '#FFFFFF', duration: 0.1 }, at(t) + 0.03);
+  });
+  // 全部跑完:整版翻成墨色,接下一帧
+  tl.set(g2, { backgroundColor: '#14202B', color: '#F3F5F4' }, at(14.954));
+  tl.set($('.sum .u'), { color: '#F3F5F4' }, at(14.954));
+  tl.fromTo(g2, { scale: 1.05 }, { scale: 1, duration: 0.4, ease: 'expo.out', immediateRender: false }, at(14.954));
+</script>

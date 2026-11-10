@@ -1,0 +1,69 @@
+<style>
+/* g1 —— 低频回来的那一记:日期砸下来,今天这份日报和往期的日期栏依次进场 */
+#ROOT .ttl { position: absolute; left: 100px; top: 60px; font-size: 172px; }
+#ROOT .dt { position: absolute; left: 88px; top: 280px; font-size: 300px; font-weight: 700; line-height: 1.1; letter-spacing: -12px; white-space: nowrap; transform-origin: 0% 0%; }
+#ROOT .mt { position: absolute; left: 100px; top: 690px; width: 900px; height: 190px; display: flex; align-items: flex-end; gap: 26px; }
+#ROOT .mt .n { font-size: 170px; font-weight: 700; letter-spacing: -6px; }
+#ROOT .mt .u { font-size: 96px; margin-bottom: 16px; }
+#ROOT .ln { position: absolute; left: 100px; top: 920px; width: 840px; height: 10px; background: #fff; transform-origin: left center; }
+#ROOT .rep { left: 1010px; top: 140px; width: 1300px; height: 1040px; border-color: transparent; }
+#ROOT .rail { left: 1490px; top: 50px; width: 430px; height: 1100px; border-color: transparent; border-radius: 18px 0 0 18px; box-shadow: -30px 30px 90px -20px rgba(20, 32, 43, 0.7); }
+
+/* g2 —— 收藏 */
+#ROOT .fv { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--kb-paper); }
+#ROOT .fv img { display: block; position: absolute; left: -100px; top: 0; transform-origin: 30% 40%; }
+#ROOT .band { position: absolute; left: 0; top: 760px; width: 1920px; height: 320px; }
+#ROOT .band .hl { position: absolute; left: 76px; top: 34px; width: 520px; height: 252px; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .band .w { position: absolute; left: 100px; top: 28px; font-size: 220px; }
+#ROOT .band .ct { position: absolute; right: 100px; top: 28px; height: 264px; display: flex; align-items: flex-end; gap: 24px; }
+#ROOT .band .ct .n { font-size: 230px; font-weight: 700; letter-spacing: -8px; }
+#ROOT .band .ct .u { font-size: 130px; margin-bottom: 24px; }
+</style>
+
+<div class="kb-g kb-first kb-brand" data-g="1">
+  <div class="ttl kb-display kb-mask"><span>每日日报</span></div>
+  <div class="dt kb-mono">11-10</div>
+  <div class="mt"><span class="n kb-mono">202</span><span class="u kb-display kb-mask"><span>条素材</span></span></div>
+  <i class="ln"></i>
+  <div class="kb-win rep"><img src="assets/daily-tools.jpg" width="1750" alt=""></div>
+  <div class="kb-win rail"><img src="assets/daily-dates.jpg" width="430" alt=""></div>
+</div>
+
+<div class="kb-g kb-ink" data-g="2">
+  <div class="fv"><img src="assets/fav.jpg" width="2700" alt=""></div>
+  <div class="band kb-ink">
+    <i class="hl"></i>
+    <div class="w kb-display kb-mask"><span>收藏</span></div>
+    <div class="ct"><span class="n kb-mono">27</span><span class="u kb-display">条</span></div>
+  </div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 32.717); gate(g2, 32.717, null);
+
+  // g1:30.79 那一记给日期
+  rise($('.ttl > span'), 30.79, 0, 0.3);
+  tl.fromTo($('.dt'), { scale: 2.6, opacity: 0 }, { scale: 1.9, opacity: 1, duration: 0.3, ease: 'expo.out' }, at(30.79));
+  tl.to($('.dt'), { scale: 1, duration: 0.28, ease: 'expo.out' }, at(31.277));
+  tl.fromTo($('.ln'), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: 'expo.out' }, at(30.79) + 0.08);
+  slam($('.rep'), 31.277, { x: 700 }, 0.28);
+  slam($('.mt .n'), 31.277, { y: 70 }, 0.2);
+  roll($('.mt .n'), 31.277, 31.742);
+  rise($('.mt .u > span'), 31.742, 0, 0.24);
+  tl.fromTo($('.rail'), { yPercent: 105 }, { yPercent: 0, duration: 0.3, ease: 'expo.out' }, at(31.742));
+  tl.fromTo($('.rail img'), { y: 0 }, { y: -230, duration: 0.4, ease: 'expo.out' }, at(32.229));
+  tl.fromTo($('.rep img'), { y: 0 }, { y: -150, duration: 0.4, ease: 'expo.out' }, at(32.229));
+  push($('.rep'), 31.277, 32.717, 1, 1.04, { transformOrigin: '0% 30%' });
+
+  // g2:收藏页满版进来,第二拍挪一步,第三拍横条把词和数顶上来
+  var fav = $('.fv img');
+  tl.fromTo(fav, { scale: 1.16 }, { scale: 1, duration: 0.42, ease: 'expo.out' }, at(32.717));
+  tl.fromTo(fav, { y: -40 }, { y: -300, duration: 0.4, ease: 'expo.out' }, at(33.181));
+  tl.fromTo($('.band'), { yPercent: 100 }, { yPercent: 0, duration: 0.24, ease: 'expo.out' }, at(33.669));
+  rise($('.band .w > span'), 33.669 + 0.05, 0, 0.26);
+  slam($('.band .ct'), 33.669 + 0.05, { x: 160 }, 0.26);
+  roll($('.band .ct .n'), 33.669, 34.157);
+  tl.fromTo($('.band .hl'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(34.157));
+  tl.fromTo(fav, { scale: 1 }, { scale: 1.05, duration: 0.4, ease: 'expo.out', immediateRender: false }, at(34.157));
+</script>

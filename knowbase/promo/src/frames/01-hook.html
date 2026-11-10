@@ -1,0 +1,117 @@
+<style>
+/* g1 —— 七路来源逐个砸进来,收成一条线 */
+#ROOT .rows { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ROOT .row { position: absolute; left: 0; width: 1920px; height: 154.3px; display: flex; align-items: center; gap: 40px; padding: 0 110px; }
+#ROOT .row:nth-child(even) { flex-direction: row-reverse; }
+#ROOT .row .nm { font-size: 126px; line-height: 154px; white-space: nowrap; }
+#ROOT .row .tr { display: block; flex: 1; height: 6px; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .row:nth-child(even) .tr { transform-origin: right center; }
+#ROOT .row .fl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: var(--kb-brand); }
+#ROOT .line { position: absolute; left: 0; top: 535px; width: 1920px; height: 10px; background: var(--kb-brand); opacity: 0; }
+
+/* g2 —— 字标 */
+#ROOT .lock { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ROOT .wm { position: absolute; left: 100px; top: 96px; width: 1760px; font-size: 404px; line-height: 1.2; letter-spacing: -8px; }
+#ROOT .ln { position: absolute; left: 110px; top: 612px; width: 1700px; height: 10px; background: var(--kb-brand); }
+#ROOT .sub { position: absolute; left: 110px; top: 680px; font-size: 210px; }
+#ROOT .hl { position: absolute; left: 84px; top: 680px; width: 1102px; height: 252px; background: var(--kb-brand); transform-origin: left center; }
+
+/* g3 —— 一拍一个词 */
+#ROOT .pn { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: flex; align-items: center; justify-content: center; }
+#ROOT .pn .w { font-size: 400px; line-height: 1.2; }
+#ROOT .pn .w5 { font-size: 336px; }
+
+/* g4 —— 两行数字 */
+#ROOT .st { position: absolute; left: 110px; width: 1700px; height: 430px; display: flex; align-items: flex-end; gap: 44px; }
+#ROOT .st1 { top: 78px; }
+#ROOT .st2 { top: 570px; }
+#ROOT .st .n { font-size: 330px; font-weight: 700; letter-spacing: -14px; }
+#ROOT .st .u { font-size: 150px; color: var(--kb-brand); margin-bottom: 42px; }
+#ROOT .rule { position: absolute; left: 110px; top: 537px; width: 1700px; height: 6px; background: var(--kb-ink); transform-origin: left center; }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="rows">
+    <div class="row" style="top:0"><span class="nm kb-display">公众号</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:154.3px"><span class="nm kb-display">大V观点</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:308.6px"><span class="nm kb-display">RSS</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:462.9px"><span class="nm kb-display">YouTube</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:617.1px"><span class="nm kb-display">简报</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:771.4px"><span class="nm kb-display">网页专栏</span><i class="tr"></i><i class="fl"></i></div>
+    <div class="row" style="top:925.7px"><span class="nm kb-display">手动收录</span><i class="tr"></i><i class="fl"></i></div>
+  </div>
+  <div class="line"></div>
+</div>
+
+<div class="kb-g kb-paper" data-g="2">
+  <div class="lock">
+    <div class="wm kb-display kb-mask"><span>Knowbase</span></div>
+    <div class="ln"></div>
+    <div class="hl"></div>
+    <div class="sub kb-display kb-mask"><span>个人知识库</span></div>
+  </div>
+</div>
+
+<div class="kb-g" data-g="3">
+  <div class="pn kb-brand" data-layout-allow-overlap><div class="w w5 kb-display kb-mask"><span>多来源聚合</span></div></div>
+  <div class="pn kb-paper" data-layout-allow-overlap><div class="w kb-display kb-mask"><span>混合检索</span></div></div>
+  <div class="pn kb-ink" data-layout-allow-overlap><div class="w kb-display kb-mask"><span>意图问答</span></div></div>
+  <div class="pn kb-brand" data-layout-allow-overlap><div class="w kb-display kb-mask"><span>每日日报</span></div></div>
+</div>
+
+<div class="kb-g kb-paper" data-g="4">
+  <div class="st st1"><span class="n kb-mono">6,744</span><span class="u kb-display kb-mask"><span>个工具</span></span></div>
+  <div class="rule"></div>
+  <div class="st st2"><span class="n kb-mono">12,388</span><span class="u kb-display kb-mask"><span>条收录</span></span></div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]'), g3 = $('[data-g="3"]'), g4 = $('[data-g="4"]');
+  gate(g1, null, 1.997); gate(g2, 1.997, 3.924); gate(g3, 3.924, 5.828); gate(g4, 5.828, null);
+
+  // g1:闷着的那一小节,八分音符一行
+  var hits = [0, 0.30, 0.534, 0.78, 1.022, 1.27, 1.509];
+  $$('.row').forEach(function (row, i) {
+    // 第一行开场就在:第 0 帧是成片的封面,不能是一张空底
+    if (i) tl.fromTo(row, { xPercent: i % 2 ? 100 : -100 }, { xPercent: 0, duration: 0.16, ease: 'expo.out' }, at(hits[i]));
+    tl.fromTo(row.querySelector('.fl'), { opacity: i ? 1 : 0.7 }, { opacity: 0, duration: 0.3, ease: 'power2.out' }, at(hits[i]) + (i ? 0.04 : 0));
+    tl.fromTo(row.querySelector('.tr'), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: 'expo.out' }, at(hits[i]) + 0.06);
+    if (i < 6) tl.to(row.querySelector('.nm'), { opacity: 0.34, duration: 0.12 }, at(hits[i + 1]));
+  });
+  tl.to($$('.row .nm'), { opacity: 1, duration: 0.08 }, at(1.75));
+  tl.to($('.rows'), { scaleY: 0.004, duration: 0.2, ease: 'expo.in' }, at(1.75));
+  tl.set($('.line'), { opacity: 1 }, at(1.95));
+
+  // g2:1.997 砸下来的那一记,字标顶上来,绿线从上一组接过来
+  rise($('.wm > span'), 1.997, 0, 0.34);
+  tl.fromTo($('.ln'), { y: -77 }, { y: 0, duration: 0.3, ease: 'expo.out' }, at(1.997));
+  rise($('.sub > span'), 2.485, 0, 0.3);
+  tl.fromTo($('.hl'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(2.949));
+  tl.to($('.sub'), { color: '#FFFFFF', duration: 0.1 }, at(2.949) + 0.04);
+  tl.set(g2, { backgroundColor: '#14202B', color: '#F3F5F4' }, at(3.437));
+  push($('.lock'), 1.997, 3.437, 1, 1.035, { transformOrigin: '8% 50%' });
+  tl.fromTo($('.lock'), { scale: 1.09 }, { scale: 1.045, duration: 0.42, ease: 'expo.out', immediateRender: false }, at(3.437));
+
+  // g3:四拍四个词,每拍换一个方向擦进来
+  var wipes = ['inset(0% 0% 0% 100%)', 'inset(100% 0% 0% 0%)', 'inset(0% 100% 0% 0%)', 'inset(0% 0% 100% 0%)'];
+  var beats = [3.924, 4.412, 4.876, 5.364];
+  var pns = $$('.pn');
+  pns.forEach(function (pn, i) {
+    if (i) {
+      tl.fromTo(pn, { clipPath: wipes[i] }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.2, ease: 'expo.out' }, at(beats[i]));
+      tl.set(pns[i - 1], { autoAlpha: 0 }, at(beats[i]) + 0.2);
+    }
+    rise(chars(pn.querySelector('.w > span')), beats[i] + 0.02, 0.018, 0.2);
+    push(pn.querySelector('.w'), beats[i], beats[i] + 0.5, 1, 1.06);
+  });
+
+  // g4:两个数滚到位,各自落在拍上
+  tl.fromTo($('.rule'), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'expo.out' }, at(5.828));
+  slam($('.st1 .n'), 5.828, { y: 80 }, 0.2);
+  roll($('.st1 .n'), 5.828, 6.78);
+  rise($('.st1 .u > span'), 6.78, 0, 0.26);
+  slam($('.st2 .n'), 6.316, { y: 80 }, 0.2);
+  roll($('.st2 .n'), 6.316, 7.268);
+  rise($('.st2 .u > span'), 7.268, 0, 0.26);
+  push(g4, 6.78, 7.755, 1, 1.03, { transformOrigin: '6% 50%' });
+</script>

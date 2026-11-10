@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<!-- 生成物:改 src/frames/04-search.html 或 src/kit.*,再跑 node tools/build-frames.mjs -->
+<template>
+<style>
+/* 每一帧共用的底子。#f04 由 tools/build-frames.mjs 换成这一帧自己的根 id(f01…f08),
+   所以这里的每条规则都只管得到自己那一帧 —— 八帧同时挂在一页里,互不串味。
+   色值是 frame.md 那张表在片子里的唯一落点。 */
+/* 字体是本机装着的那几款(产品界面自己用的也是它们),用 local() 起个别名说清这层依赖:
+   换一台没有宋体-简 / 苹方的机器渲染,字形会回退,得先装上或把这里换成带文件的字体。
+   等宽体例外:字体栈的第一位必须是具名字体。渲染器编译时见到第一位是通用族(ui-monospace、
+   -apple-system 这类)会在前面插一个 Inter,截帧却不插 —— 成片里的工具名和计数就悄悄变成了
+   比例字体。JetBrains Mono 是渲染器自带内嵌的那款,截帧和成片是同一份字形。 */
+@font-face { font-family: "KB Songti"; font-weight: 900; src: local("Songti SC Black"), local("STSongti-SC-Black"); }
+@font-face { font-family: "KB Sans"; font-weight: 400; src: local("PingFang SC Regular"), local("PingFangSC-Regular"); }
+@font-face { font-family: "KB Sans"; font-weight: 500; src: local("PingFang SC Medium"), local("PingFangSC-Medium"); }
+@font-face { font-family: "KB Sans"; font-weight: 600 700; src: local("PingFang SC Semibold"), local("PingFangSC-Semibold"); }
+
+#f04 {
+  --kb-paper: #F3F5F4;
+  --kb-paper-2: #ECF0EE;
+  --kb-card: #FFFFFF;
+  --kb-ink: #14202B;
+  --kb-ink-2: #3A4750;
+  --kb-muted: #66727C;
+  --kb-muted-on-ink: #A9B4BA;
+  --kb-line: #DCE3E0;
+  --kb-brand: #17604F;
+  --kb-brand-deep: #0E4A3B;
+  --kb-brand-soft: #DFF0E9;
+  --kb-k-project: #17604F;
+  --kb-k-product: #3D5A80;
+  --kb-k-model: #7D4E9E;
+  --kb-k-research: #2F6D7A;
+  --kb-display: "KB Songti", serif;
+  --kb-mono: "JetBrains Mono", Menlo, monospace;
+  --kb-body: "KB Sans", sans-serif;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--kb-ink);
+  color: var(--kb-ink);
+  font-family: var(--kb-body);
+  font-size: 32px;
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+}
+#f04 * { box-sizing: border-box; margin: 0; padding: 0; }
+#f04 i { font-style: normal; }
+
+/* 一组 = 一层满版;除第一组外都先藏着,由时间线按拍点亮 */
+#f04 .kb-g {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+}
+#f04 .kb-g.kb-first { visibility: visible; opacity: 1; }
+#f04 .kb-paper { background: var(--kb-paper); color: var(--kb-ink); }
+#f04 .kb-ink { background: var(--kb-ink); color: var(--kb-paper); }
+#f04 .kb-brand { background: var(--kb-brand); color: #fff; }
+
+#f04 .kb-display { font-family: var(--kb-display); font-weight: 900; }
+#f04 .kb-mono { font-family: var(--kb-mono); font-variant-numeric: tabular-nums; }
+
+/* 遮罩里的字从下面顶上来 */
+#f04 .kb-mask { display: block; overflow: hidden; line-height: 1.2; }
+#f04 .kb-mask > span { display: block; white-space: nowrap; }
+#f04 .kb-ch { display: inline-block; white-space: pre; }
+
+/* 装截图的窗口 */
+#f04 .kb-win {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--kb-line);
+  background: var(--kb-card);
+  box-shadow: 0 44px 90px -28px rgba(20, 32, 43, 0.5);
+}
+#f04 .kb-win img { display: block; position: absolute; left: 0; top: 0; }
+
+/* 滚轮式计数:每一位是一条竖排的数字带,停在目标那一格 */
+#f04 .kb-odo { display: inline-flex; line-height: 1.1; white-space: nowrap; }
+#f04 .kb-odo-d { display: block; height: 1.1em; overflow: hidden; }
+#f04 .kb-odo-s { display: block; }
+#f04 .kb-odo-s > i { display: block; height: 1.1em; }
+#f04 .kb-odo-c { display: block; height: 1.1em; }
+
+/* 检索:一个大输入框敲字、回车,框缩到顶上,三张真实的结果卡逐拍落下 */
+#f04 .bar { position: absolute; left: 110px; top: 150px; width: 1700px; height: 260px; display: flex; align-items: center; background: var(--kb-card); border: 6px solid var(--kb-ink); border-radius: 34px; overflow: hidden; transform-origin: 0% 0%; }
+#f04 .bar .q { flex: 1; padding-left: 60px; font-size: 140px; font-weight: 600; line-height: 248px; white-space: nowrap; }
+#f04 .bar .cr { display: inline-block; width: 12px; height: 150px; margin-left: 8px; vertical-align: -22px; background: var(--kb-brand); }
+#f04 .bar .go { width: 400px; height: 100%; background: var(--kb-ink); color: var(--kb-paper); font-size: 120px; line-height: 248px; text-align: center; }
+#f04 .fact { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f04 .fr { position: absolute; left: 110px; height: 270px; display: flex; align-items: flex-end; gap: 40px; }
+#f04 .fr .n { font-size: 250px; font-weight: 700; line-height: 270px; letter-spacing: -9px; }
+#f04 .fr .u { font-size: 142px; color: var(--kb-brand); margin-bottom: 24px; }
+#f04 .res { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#f04 .res img { display: block; position: absolute; left: 110px; }
+#f04 .hdr { position: absolute; left: 0; top: 0; width: 1920px; height: 216px; background: var(--kb-paper); border-bottom: 2px solid var(--kb-line); opacity: 0; }
+#f04 .band { position: absolute; left: 0; top: 680px; width: 1920px; height: 400px; display: flex; align-items: center; justify-content: center; gap: 56px; }
+#f04 .band span { display: block; font-size: 236px; line-height: 300px; padding: 0 34px; white-space: nowrap; }
+#f04 .band .x { font-family: var(--kb-mono); font-weight: 400; font-size: 190px; padding: 0; }
+</style>
+<div id="f04" data-composition-id="04-search" data-width="1920" data-height="1080" data-duration="3.831">
+<div class="kb-g kb-first kb-paper" data-g="1">
+  <div class="fact">
+    <div class="fr" style="top:470px"><span class="n kb-mono">31,692</span><span class="u kb-display kb-mask"><span>篇文档</span></span></div>
+    <div class="fr" style="top:760px"><span class="n kb-mono">80,885</span><span class="u kb-display kb-mask"><span>个片段</span></span></div>
+  </div>
+  <div class="res">
+    <img src="assets/search-1.jpg" width="2300" style="top:236px" alt="">
+    <img src="assets/search-2.jpg" width="2300" style="top:606px" alt="">
+    <img src="assets/search-3.jpg" width="2300" style="top:976px" alt="">
+  </div>
+  <i class="hdr"></i>
+  <div class="bar"><span class="q"><span class="tx">claude code 记忆</span><i class="cr"></i></span><span class="go kb-display">检索</span></div>
+  <div class="band kb-ink"><span class="kw kb-display">关键词</span><span class="x">×</span><span class="sem kb-display">语义</span></div>
+</div>
+</div>
+<script>
+(function () {
+// 每一帧共用的时间线小工具。tools/build-frames.mjs 把这份原样塞进每一帧的闭包里。
+//
+// 约定:传进来的秒数一律是「全片时间」(STORYBOARD.md / audiomap.json 里那一份),
+// 换算成这一帧自己的时间只在 at() 一处做 —— 改拍点时照着分镜抄数字就行。
+//
+// 不依赖 onUpdate / 定时器 / 随机数:渲染是逐帧 seek 出来的,任何「播放时才发生」的东西
+// 都落不到画面上。计数用数字带、打字用逐字点亮,都是纯时间线。
+function kbKit(root, tl, T0, DUR) {
+  function $(s) { return root.querySelector(s); }
+  function $$(s) { return Array.prototype.slice.call(root.querySelectorAll(s)); }
+  function at(t) { return Math.max(0, Math.round((t - T0) * 1000) / 1000); }
+
+  // 一组的可见区间。开头那组靠 .kb-first 本来就亮着,a 传 null;末尾那组 b 传 null
+  function gate(el, a, b) {
+    if (a != null && at(a) > 0) tl.set(el, { autoAlpha: 1 }, at(a));
+    if (b != null && at(b) < DUR) tl.set(el, { autoAlpha: 0 }, at(b));
+  }
+
+  // 砸进来:从 from 那个偏移快速落到原位
+  function slam(el, t, from, dur, stagger) {
+    var f = { opacity: 0 }, to = { opacity: 1, duration: dur || 0.22, ease: 'expo.out' };
+    for (var key in from) { f[key] = from[key]; to[key] = key.indexOf('scale') === 0 ? 1 : 0; }
+    if (stagger) to.stagger = stagger;
+    tl.fromTo(el, f, to, at(t));
+  }
+
+  // 遮罩里的字顶上来(els 的父级要 overflow:hidden)
+  function rise(els, t, stagger, dur) {
+    tl.fromTo(els, { yPercent: 115 },
+      { yPercent: 0, duration: dur || 0.3, ease: 'expo.out', stagger: stagger || 0 }, at(t));
+  }
+
+  // 匀速的慢推,撑满一段时长
+  function push(el, t0, t1, s0, s1, extra) {
+    var to = { scale: s1, duration: t1 - t0, ease: 'none' };
+    for (var key in extra || {}) to[key] = extra[key];
+    tl.fromTo(el, { scale: s0 }, to, at(t0));
+  }
+
+  // 把一段字拆成逐字的 span
+  function chars(el) {
+    var text = el.textContent;
+    el.textContent = '';
+    return Array.from(text).map(function (c) {
+      var s = document.createElement('span');
+      s.className = 'kb-ch';
+      s.textContent = c;
+      el.appendChild(s);
+      return s;
+    });
+  }
+
+  // 打字:t0 到 t1 之间逐字出现,光标是紧跟在后面的兄弟元素,自己就会跟着走
+  function typeOn(el, t0, t1) {
+    var cs = chars(el);
+    cs.forEach(function (c, i) {
+      c.style.display = 'none';
+      tl.set(c, { display: 'inline-block' }, at(t0 + (t1 - t0) * i / Math.max(1, cs.length - 1)));
+    });
+    return cs;
+  }
+
+  // 滚轮式计数。el 的文字就是目标值(可以带千分位逗号);tLand 是最后一位停稳的那一刻,
+  // 前面几位依次早停一点,读起来是从左到右锁定
+  function roll(el, t0, tLand) {
+    var text = el.textContent.trim();
+    var glyphs = Array.from(text);
+    var strips = [];
+    el.textContent = '';
+    el.classList.add('kb-odo');
+    glyphs.forEach(function (c, i) {
+      if (!/\d/.test(c)) {
+        var sep = document.createElement('span');
+        sep.className = 'kb-odo-c';
+        sep.textContent = c;
+        el.appendChild(sep);
+        return;
+      }
+      var cell = document.createElement('span');
+      var strip = document.createElement('span');
+      var turns = 12 + i * 3;
+      cell.className = 'kb-odo-d';
+      strip.className = 'kb-odo-s';
+      for (var n = turns - 1; n >= 0; n--) {
+        var d = document.createElement('i');
+        d.textContent = String((((+c - n) % 10) + 10) % 10);
+        // 路过的那些数字没人要读,只有停下来的那一格算正文
+        if (n) d.setAttribute('data-layout-ignore', '');
+        strip.appendChild(d);
+      }
+      cell.appendChild(strip);
+      el.appendChild(cell);
+      strips.push({ el: strip, turns: turns });
+    });
+    strips.forEach(function (s, i) {
+      var land = tLand - (strips.length - 1 - i) * 0.07;
+      tl.fromTo(s.el, { yPercent: 0 },
+        { yPercent: -100 * (s.turns - 1) / s.turns, duration: Math.max(0.2, land - t0), ease: 'power3.out' },
+        at(t0));
+    });
+  }
+
+  return { $: $, $$: $$, at: at, gate: gate, slam: slam, rise: rise, push: push,
+           chars: chars, typeOn: typeOn, roll: roll };
+}
+  var root = document.getElementById("f04");
+  var T0 = 23.127, DUR = 3.831;
+  var tl = gsap.timeline({ paused: true });
+  var k = kbKit(root, tl, T0, DUR);
+  var $ = k.$, $$ = k.$$, at = k.at, gate = k.gate, slam = k.slam, rise = k.rise,
+      push = k.push, chars = k.chars, typeOn = k.typeOn, roll = k.roll;
+  tl.to({ v: 0 }, { v: 1, duration: DUR, ease: 'none' }, 0);
+// 第一小节:敲字。底下两个数是这个框搜的是多大一个库
+  slam($('.bar'), 23.127, { y: 90 }, 0.24);
+  typeOn($('.bar .tx'), 23.22, 23.95);
+  var ns = $$('.fr .n'), us = $$('.fr .u > span');
+  slam(ns[0], 23.127, { y: 60 }, 0.2); roll(ns[0], 23.127, 23.591); rise(us[0], 23.591, 0, 0.22);
+  slam(ns[1], 23.36, { y: 60 }, 0.2); roll(ns[1], 23.36, 23.83); rise(us[1], 23.83, 0, 0.22);
+
+  // 回车:按钮亮一下,框缩到顶上,数字让位
+  tl.to($('.bar .go'), { backgroundColor: '#17604F', duration: 0.06 }, at(24.079) - 0.05);
+  tl.set($('.bar .cr'), { opacity: 0 }, at(24.079));
+  tl.to($('.bar'), { y: -106, scale: 0.6, duration: 0.3, ease: 'expo.out' }, at(24.079));
+  tl.to($('.fact'), { opacity: 0, y: 120, duration: 0.16, ease: 'power2.in' }, at(24.079) - 0.04);
+  tl.set($('.hdr'), { opacity: 1 }, at(24.079) + 0.2);
+
+  // 第一张跟着回车就到,之后一拍一张;第三张进来时整列往上让一格,从顶上那条底下滚过去
+  var cards = $$('.res img');
+  slam(cards[0], 24.079 + 0.1, { y: 220 }, 0.3);
+  slam(cards[1], 24.543, { y: 150 }, 0.26);
+  slam(cards[2], 25.031, { y: 150 }, 0.26);
+  tl.to($('.res'), { y: -380, duration: 0.3, ease: 'expo.out' }, at(25.031));
+  tl.to($('.res'), { y: -750, duration: 0.3, ease: 'expo.out' }, at(25.519));
+
+  // 关键词 × 语义:墨色横条从底下顶上来
+  tl.fromTo($('.band'), { yPercent: 100 }, { yPercent: 0, duration: 0.24, ease: 'expo.out' }, at(25.983));
+  slam($('.band .kw'), 25.983 + 0.04, { x: -160 }, 0.26);
+  slam($('.band .sem'), 25.983 + 0.04, { x: 160 }, 0.26);
+  tl.fromTo($('.band .x'), { rotation: -180, scale: 0 }, { rotation: 0, scale: 1, duration: 0.3, ease: 'expo.out' }, at(25.983) + 0.06);
+  tl.to($('.band .sem'), { backgroundColor: '#17604F', color: '#FFFFFF', duration: 0.1 }, at(26.471));
+  tl.fromTo($('.band .x'), { rotation: 0 }, { rotation: 90, duration: 0.3, ease: 'expo.out', immediateRender: false }, at(26.471));
+  tl.fromTo($('.band'), { scale: 1.05 }, { scale: 1, duration: 0.34, ease: 'expo.out', transformOrigin: '50% 100%', immediateRender: false }, at(26.471));
+  window.__timelines = window.__timelines || {};
+  window.__timelines["04-search"] = tl;
+  tl.seek(0);
+})();
+</script>
+</template>
+</body>
+</html>

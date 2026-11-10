@@ -1,0 +1,64 @@
+<style>
+/* g1 —— 三张图谱两拍一换,底下一条墨色横条报名字和节点数 */
+#ROOT .gv { position: absolute; left: 0; top: 0; width: 1920px; height: 850px; overflow: hidden; background: var(--kb-paper); }
+#ROOT .gv img { display: block; position: absolute; left: 0; top: 0; transform-origin: 20% 30%; }
+#ROOT .band { position: absolute; left: 0; top: 850px; width: 1920px; height: 230px; border-top: 10px solid var(--kb-brand); }
+#ROOT .cap { position: absolute; left: 0; top: 0; width: 1920px; height: 220px; }
+#ROOT .cap .nm { position: absolute; left: 100px; top: 36px; font-size: 124px; }
+#ROOT .cap .ct { position: absolute; right: 100px; top: 36px; font-size: 136px; font-weight: 700; letter-spacing: -5px; }
+
+/* g2 —— 三张并排 */
+#ROOT .cell { position: absolute; top: 0; width: 640px; height: 1080px; overflow: hidden; background: var(--kb-paper); border-left: 6px solid var(--kb-ink); }
+#ROOT .cell img { display: block; position: absolute; }
+#ROOT .cell .cp { position: absolute; left: 0; top: 800px; width: 640px; height: 280px; padding: 30px 44px 0; border-top: 10px solid var(--kb-brand); }
+#ROOT .cell .cp .nm { display: block; font-size: 64px; line-height: 84px; white-space: nowrap; }
+#ROOT .cell .cp .ct { display: block; font-size: 110px; font-weight: 700; line-height: 124px; letter-spacing: -4px; }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="gv"><img src="assets/graph.jpg" width="2900" alt=""></div>
+  <div class="gv"><img src="assets/graph-projects.jpg" width="2700" alt=""></div>
+  <div class="gv"><img src="assets/graph-skills.jpg" width="2700" alt=""></div>
+  <div class="band kb-ink">
+    <div class="cap"><div class="nm kb-display kb-mask"><span>话题图谱</span></div><span class="ct kb-mono">278</span></div>
+    <div class="cap"><div class="nm kb-display kb-mask"><span>开源项目图谱</span></div><span class="ct kb-mono">3,755</span></div>
+    <div class="cap"><div class="nm kb-display kb-mask"><span>Skill 图谱</span></div><span class="ct kb-mono">330</span></div>
+  </div>
+</div>
+
+<div class="kb-g kb-ink" data-g="2">
+  <div class="cell" style="left:0"><img src="assets/graph.jpg" width="2300" style="left:-30px;top:60px" alt=""><div class="cp kb-ink"><span class="nm kb-display">话题图谱</span><span class="ct kb-mono">278</span></div></div>
+  <div class="cell" style="left:640px"><img src="assets/graph-projects.jpg" width="2300" style="left:-24px;top:-120px" alt=""><div class="cp kb-ink"><span class="nm kb-display">开源项目图谱</span><span class="ct kb-mono">3,755</span></div></div>
+  <div class="cell" style="left:1280px"><img src="assets/graph-skills.jpg" width="2300" style="left:-24px;top:-150px" alt=""><div class="cp kb-ink"><span class="nm kb-display">Skill 图谱</span><span class="ct kb-mono">330</span></div></div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 37.5); gate(g2, 37.5, null);
+
+  // 正拍换图(每张换一个方向擦进来),中间那一拍在图里挪一步
+  var cuts = [34.644, 35.596, 36.548];
+  var offs = [35.109, 36.061, 37.036];
+  var wipes = [null, 'inset(0% 0% 0% 100%)', 'inset(100% 0% 0% 0%)'];
+  var views = [[-30, 0, -330, -10], [-20, -70, -20, -520], [-20, -560, -20, -90]];
+  var gvs = $$('.gv'), caps = $$('.cap');
+  cuts.forEach(function (t, i) {
+    var img = gvs[i].querySelector('img'), v = views[i];
+    if (i) {
+      tl.fromTo(gvs[i], { clipPath: wipes[i] }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.22, ease: 'expo.out' }, at(t));
+      tl.set(caps[i - 1], { autoAlpha: 0 }, at(t));
+    }
+    tl.fromTo(img, { x: v[0], y: v[1] }, { x: v[2], y: v[3], duration: 0.42, ease: 'expo.inOut' }, at(offs[i]) - 0.21);
+    push(img, t, t + 0.3, 1.08, 1, { ease: 'expo.out' });
+    rise(caps[i].querySelector('.nm > span'), t + 0.03, 0, 0.24);
+    slam(caps[i].querySelector('.ct'), t, { y: 70 }, 0.2);
+    roll(caps[i].querySelector('.ct'), t, offs[i]);
+  });
+
+  // 最后两拍:三张并排,一个八分音符落一张
+  $$('.cell').forEach(function (cell, i) {
+    var t = [37.5, 37.74, 37.988][i];
+    tl.fromTo(cell, { yPercent: 100 }, { yPercent: 0, duration: 0.26, ease: 'expo.out' }, at(t));
+    tl.fromTo(cell.querySelector('img'), { scale: 1.15 }, { scale: 1, duration: 38.475 - t, ease: 'power2.out', transformOrigin: '30% 40%' }, at(t));
+  });
+</script>

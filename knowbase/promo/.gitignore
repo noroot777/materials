@@ -1,0 +1,7 @@
+node_modules/
+.work/
+.hyperframes/
+snapshots/
+renders/*
+!renders/knowbase-promo.mp4
+!renders/promo.webp

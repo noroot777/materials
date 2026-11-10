@@ -1,0 +1,60 @@
+<style>
+/* 问答:问题敲出来,答案一拍一行往下流,左边的总数滚到位 */
+#ROOT .all { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ROOT .qb { position: absolute; left: 110px; top: 250px; width: 1700px; height: 500px; padding: 50px 70px; background: var(--kb-paper); color: var(--kb-ink); border-radius: 64px 64px 64px 0; font-size: 150px; font-weight: 600; line-height: 200px; white-space: nowrap; transform-origin: 0% 0%; }
+#ROOT .qb .l { display: block; height: 200px; }
+#ROOT .qb .cr { display: inline-block; width: 14px; height: 156px; margin-left: 10px; vertical-align: -22px; background: var(--kb-brand); }
+#ROOT .tot { position: absolute; left: 96px; top: 300px; width: 700px; height: 420px; }
+#ROOT .tot .n { font-size: 380px; font-weight: 700; letter-spacing: -18px; }
+#ROOT .un { position: absolute; left: 110px; top: 760px; width: 560px; height: 190px; }
+#ROOT .un .bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .un .tx { position: absolute; left: 34px; top: 0; font-size: 150px; line-height: 190px; color: #fff; }
+#ROOT .an { position: absolute; left: 860px; width: 1000px; height: 134px; }
+#ROOT .an .ix { position: absolute; left: 0; top: 10px; width: 76px; height: 76px; background: var(--kb-brand); color: #fff; font-size: 46px; font-weight: 700; line-height: 76px; text-align: center; border-radius: 12px; }
+#ROOT .an .nm { position: absolute; left: 108px; top: 0; font-size: 78px; line-height: 94px; white-space: nowrap; }
+#ROOT .an .ac { position: absolute; left: 110px; top: 94px; font-size: 28px; line-height: 36px; white-space: nowrap; color: var(--kb-muted-on-ink); }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="all">
+    <div class="qb"><span class="l"><span class="tx">最近一周,公众号都提过</span><i class="cr"></i></span><span class="l"><span class="tx">哪些开源项目?</span><i class="cr"></i></span></div>
+    <div class="tot"><span class="n kb-mono">200</span></div>
+    <div class="un"><i class="bg"></i><span class="tx kb-display kb-mask"><span>个项目</span></span></div>
+    <div class="an" style="top:250px"><span class="ix kb-mono">1</span><span class="nm kb-display">LobeHub</span><span class="ac">量子位 · 新智元 · 袋鼠帝AI客栈 · AI产品阿颖</span></div>
+    <div class="an" style="top:386px"><span class="ix kb-mono">2</span><span class="nm kb-display">DeepSeek Harness</span><span class="ac">GitHubDaily · 数字生命卡兹克 · 程序员成长指北 · AI范儿</span></div>
+    <div class="an" style="top:522px"><span class="ix kb-mono">3</span><span class="nm kb-display">Three.js</span><span class="ac">卡尔的AI沃茨 · code秘密花园 · 数字生命卡兹克</span></div>
+    <div class="an" style="top:658px"><span class="ix kb-mono">4</span><span class="nm kb-display">BISHENG</span><span class="ac">GitHubDaily · GitHub宝典</span></div>
+    <div class="an" style="top:794px"><span class="ix kb-mono">5</span><span class="nm kb-display">SGLang</span><span class="ac">机器之心 · AI前线</span></div>
+    <div class="an" style="top:930px"><span class="ix kb-mono">6</span><span class="nm kb-display">OpenCode</span><span class="ac">GitHubDaily · 老金带你玩AI</span></div>
+  </div>
+</div>
+
+<script>
+  // 问题先占满整版敲出来,答案开始流的那一拍缩到左上角
+  var qb = $('.qb'), ls = $$('.qb .tx'), crs = $$('.qb .cr');
+  slam(qb, 26.958, { y: 70 }, 0.22);
+  typeOn(ls[0], 27.02, 27.44);
+  typeOn(ls[1], 27.5, 27.76);
+  gsap.set(crs[1], { opacity: 0 });
+  tl.set(crs[0], { opacity: 0 }, at(27.5));
+  tl.set(crs[1], { opacity: 1 }, at(27.5));
+  tl.set(crs[1], { opacity: 0 }, at(27.91));
+  tl.to(qb, { scale: 0.4, y: -214, duration: 0.28, ease: 'expo.out' }, at(27.91));
+
+  // 答案一拍一行;每行的出处编号先弹出来,名字跟上
+  var lands = [27.91, 28.398, 28.886, 29.35, 29.838, 30.302];
+  $$('.an').forEach(function (an, i) {
+    tl.fromTo(an.querySelector('.ix'), { scale: 0 }, { scale: 1, duration: 0.2, ease: 'back.out(2.4)' }, at(lands[i]));
+    slam(an.querySelector('.nm'), lands[i] + 0.03, { x: 90 }, 0.24);
+    slam(an.querySelector('.ac'), lands[i] + 0.12, { x: 50 }, 0.24);
+  });
+
+  // 总数在第一行答案出来时开始滚,落在抽掉低频的那一拍上
+  slam($('.tot .n'), 27.91, { y: 90 }, 0.2);
+  roll($('.tot .n'), 27.91, 28.886);
+  tl.fromTo($('.un .bg'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(28.886));
+  rise($('.un .tx > span'), 28.886 + 0.04, 0, 0.26);
+
+  // 空拍那一小节:整版慢慢顶上去,攒到 30.79 那一刀
+  push($('.all'), 28.886, 30.79, 1, 1.025, { transformOrigin: '50% 50%' });
+</script>

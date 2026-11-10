@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      .frame { position: absolute; inset: 0; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="43.3"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div
+        id="el-01-hook"
+        class="frame"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="7.755"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-02-sources"
+        class="frame"
+        data-composition-id="02-sources"
+        data-composition-src="compositions/frames/02-sources.html"
+        data-start="7.755"
+        data-duration="7.686"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-gallery"
+        class="frame"
+        data-composition-id="03-gallery"
+        data-composition-src="compositions/frames/03-gallery.html"
+        data-start="15.441"
+        data-duration="7.686"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-04-search"
+        class="frame"
+        data-composition-id="04-search"
+        data-composition-src="compositions/frames/04-search.html"
+        data-start="23.127"
+        data-duration="3.831"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-ask"
+        class="frame"
+        data-composition-id="05-ask"
+        data-composition-src="compositions/frames/05-ask.html"
+        data-start="26.958"
+        data-duration="3.832"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-06-daily"
+        class="frame"
+        data-composition-id="06-daily"
+        data-composition-src="compositions/frames/06-daily.html"
+        data-start="30.79"
+        data-duration="3.854"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-graph"
+        class="frame"
+        data-composition-id="07-graph"
+        data-composition-src="compositions/frames/07-graph.html"
+        data-start="34.644"
+        data-duration="3.831"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-08-lockup"
+        class="frame"
+        data-composition-id="08-lockup"
+        data-composition-src="compositions/frames/08-lockup.html"
+        data-start="38.475"
+        data-duration="4.825"
+        data-track-index="1"
+      ></div>
+
+      <!-- BGM -->
+      <audio id="el-bgm" src="assets/bgm.mp3" data-start="0" data-duration="43.3"
+        data-track-index="11" data-volume="0.9"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

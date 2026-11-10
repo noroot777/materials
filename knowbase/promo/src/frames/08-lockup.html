@@ -1,0 +1,66 @@
+<style>
+/* g1 —— 跟开场那七行同一个句式:一拍一行,这回是能被别的 agent 调的三个工具 */
+#ROOT .row { position: absolute; left: 0; width: 1920px; height: 270px; display: flex; align-items: center; gap: 44px; padding: 0 100px; }
+#ROOT .row:nth-child(even) { flex-direction: row-reverse; }
+#ROOT .row .nm { font-size: 172px; font-weight: 700; line-height: 270px; letter-spacing: -6px; white-space: nowrap; }
+#ROOT .row .tr { display: block; flex: 1; height: 10px; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .row:nth-child(even) .tr { transform-origin: right center; }
+#ROOT .row .fl { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: var(--kb-brand); }
+#ROOT .row.last { background: var(--kb-brand); color: #fff; }
+#ROOT .row.last .tr { background: #fff; }
+#ROOT .row.last .fl { background: #fff; }
+
+/* g2 —— 收尾的字标,位置和开场那一版对齐 */
+#ROOT .lock { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ROOT .wm { position: absolute; left: 100px; top: 96px; width: 1760px; font-size: 404px; line-height: 1.2; letter-spacing: -8px; }
+#ROOT .ln { position: absolute; left: 110px; top: 612px; width: 1700px; height: 10px; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .cmd { position: absolute; left: 110px; top: 652px; font-size: 160px; font-weight: 700; line-height: 190px; letter-spacing: -4px; white-space: nowrap; }
+#ROOT .cmd .ps { color: var(--kb-brand); }
+#ROOT .cmd .cr { display: inline-block; width: 14px; height: 150px; margin-left: 12px; vertical-align: -22px; background: var(--kb-brand); }
+#ROOT .url { position: absolute; left: 86px; top: 856px; height: 190px; padding: 0 34px 0 24px; transform-origin: 0% 50%; }
+#ROOT .url .bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: var(--kb-brand); transform-origin: left center; }
+#ROOT .url .tx { position: relative; display: block; font-size: 160px; font-weight: 700; line-height: 190px; letter-spacing: -4px; color: #fff; white-space: nowrap; }
+</style>
+
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="row" style="top:0"><span class="nm kb-mono">kb_search</span><i class="tr"></i><i class="fl"></i></div>
+  <div class="row" style="top:270px"><span class="nm kb-mono">kb_enumerate</span><i class="tr"></i><i class="fl"></i></div>
+  <div class="row" style="top:540px"><span class="nm kb-mono">kb_read</span><i class="tr"></i><i class="fl"></i></div>
+  <div class="row last" style="top:810px"><span class="nm kb-mono">MCP · Obsidian</span><i class="tr"></i><i class="fl"></i></div>
+</div>
+
+<div class="kb-g kb-paper" data-g="2">
+  <div class="lock">
+    <div class="wm kb-display kb-mask"><span>Knowbase</span></div>
+    <div class="ln"></div>
+    <div class="cmd kb-mono"><span class="ps">$ </span><span class="tx">./kb.sh start</span><i class="cr"></i></div>
+    <div class="url"><i class="bg"></i><span class="tx kb-mono kb-mask"><span>127.0.0.1:8787</span></span></div>
+  </div>
+</div>
+
+<script>
+  var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 40.403); gate(g2, 40.403, null);
+
+  var hits = [38.475, 38.94, 39.427, 39.915];
+  $$('.row').forEach(function (row, i) {
+    if (i) tl.fromTo(row, { xPercent: i % 2 ? 100 : -100 }, { xPercent: 0, duration: 0.18, ease: 'expo.out' }, at(hits[i]));
+    tl.fromTo(row.querySelector('.fl'), { opacity: i ? 1 : 0.7 }, { opacity: 0, duration: 0.32, ease: 'power2.out' }, at(hits[i]) + (i ? 0.04 : 0));
+    tl.fromTo(row.querySelector('.tr'), { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: 'expo.out' }, at(hits[i]) + 0.06);
+    if (i < 3) tl.to(row.querySelector('.nm'), { opacity: 0.5, duration: 0.12 }, at(hits[i + 1]));
+  });
+  tl.to($$('.row .nm'), { opacity: 1, duration: 0.1 }, at(39.915) + 0.24);
+
+  // 最后一记:字标顶上来,跟着敲一行启动命令,下一拍地址落下,最后一拍它再顶一下,然后静场
+  rise($('.wm > span'), 40.403, 0, 0.34);
+  tl.fromTo($('.ln'), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: 'expo.out' }, at(40.403) + 0.05);
+  gsap.set($('.cmd .cr'), { opacity: 0 });
+  tl.set($('.cmd .cr'), { opacity: 1 }, at(40.52));
+  slam($('.cmd .ps'), 40.52, { x: -40 }, 0.14);
+  typeOn($('.cmd .tx'), 40.56, 40.84);
+  tl.set($('.cmd .cr'), { opacity: 0 }, at(40.867));
+  tl.fromTo($('.url .bg'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(40.867));
+  rise($('.url .tx > span'), 40.867 + 0.04, 0, 0.26);
+  tl.fromTo($('.url'), { scale: 1.09 }, { scale: 1, duration: 0.4, ease: 'expo.out', immediateRender: false }, at(41.355));
+  push($('.lock'), 40.403, 43.3, 1, 1.03, { transformOrigin: '8% 50%' });
+</script>

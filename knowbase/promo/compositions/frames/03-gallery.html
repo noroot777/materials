@@ -1,0 +1,316 @@
+<!doctype html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<!-- 生成物:改 src/frames/03-gallery.html 或 src/kit.*,再跑 node tools/build-frames.mjs -->
+<template>
+<style>
+/* 每一帧共用的底子。#f03 由 tools/build-frames.mjs 换成这一帧自己的根 id(f01…f08),
+   所以这里的每条规则都只管得到自己那一帧 —— 八帧同时挂在一页里,互不串味。
+   色值是 frame.md 那张表在片子里的唯一落点。 */
+/* 字体是本机装着的那几款(产品界面自己用的也是它们),用 local() 起个别名说清这层依赖:
+   换一台没有宋体-简 / 苹方的机器渲染,字形会回退,得先装上或把这里换成带文件的字体。
+   等宽体例外:字体栈的第一位必须是具名字体。渲染器编译时见到第一位是通用族(ui-monospace、
+   -apple-system 这类)会在前面插一个 Inter,截帧却不插 —— 成片里的工具名和计数就悄悄变成了
+   比例字体。JetBrains Mono 是渲染器自带内嵌的那款,截帧和成片是同一份字形。 */
+@font-face { font-family: "KB Songti"; font-weight: 900; src: local("Songti SC Black"), local("STSongti-SC-Black"); }
+@font-face { font-family: "KB Sans"; font-weight: 400; src: local("PingFang SC Regular"), local("PingFangSC-Regular"); }
+@font-face { font-family: "KB Sans"; font-weight: 500; src: local("PingFang SC Medium"), local("PingFangSC-Medium"); }
+@font-face { font-family: "KB Sans"; font-weight: 600 700; src: local("PingFang SC Semibold"), local("PingFangSC-Semibold"); }
+
+#f03 {
+  --kb-paper: #F3F5F4;
+  --kb-paper-2: #ECF0EE;
+  --kb-card: #FFFFFF;
+  --kb-ink: #14202B;
+  --kb-ink-2: #3A4750;
+  --kb-muted: #66727C;
+  --kb-muted-on-ink: #A9B4BA;
+  --kb-line: #DCE3E0;
+  --kb-brand: #17604F;
+  --kb-brand-deep: #0E4A3B;
+  --kb-brand-soft: #DFF0E9;
+  --kb-k-project: #17604F;
+  --kb-k-product: #3D5A80;
+  --kb-k-model: #7D4E9E;
+  --kb-k-research: #2F6D7A;
+  --kb-display: "KB Songti", serif;
+  --kb-mono: "JetBrains Mono", Menlo, monospace;
+  --kb-body: "KB Sans", sans-serif;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--kb-ink);
+  color: var(--kb-ink);
+  font-family: var(--kb-body);
+  font-size: 32px;
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+}
+#f03 * { box-sizing: border-box; margin: 0; padding: 0; }
+#f03 i { font-style: normal; }
+
+/* 一组 = 一层满版;除第一组外都先藏着,由时间线按拍点亮 */
+#f03 .kb-g {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+}
+#f03 .kb-g.kb-first { visibility: visible; opacity: 1; }
+#f03 .kb-paper { background: var(--kb-paper); color: var(--kb-ink); }
+#f03 .kb-ink { background: var(--kb-ink); color: var(--kb-paper); }
+#f03 .kb-brand { background: var(--kb-brand); color: #fff; }
+
+#f03 .kb-display { font-family: var(--kb-display); font-weight: 900; }
+#f03 .kb-mono { font-family: var(--kb-mono); font-variant-numeric: tabular-nums; }
+
+/* 遮罩里的字从下面顶上来 */
+#f03 .kb-mask { display: block; overflow: hidden; line-height: 1.2; }
+#f03 .kb-mask > span { display: block; white-space: nowrap; }
+#f03 .kb-ch { display: inline-block; white-space: pre; }
+
+/* 装截图的窗口 */
+#f03 .kb-win {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--kb-line);
+  background: var(--kb-card);
+  box-shadow: 0 44px 90px -28px rgba(20, 32, 43, 0.5);
+}
+#f03 .kb-win img { display: block; position: absolute; left: 0; top: 0; }
+
+/* 滚轮式计数:每一位是一条竖排的数字带,停在目标那一格 */
+#f03 .kb-odo { display: inline-flex; line-height: 1.1; white-space: nowrap; }
+#f03 .kb-odo-d { display: block; height: 1.1em; overflow: hidden; }
+#f03 .kb-odo-s { display: block; }
+#f03 .kb-odo-s > i { display: block; height: 1.1em; }
+#f03 .kb-odo-c { display: block; height: 1.1em; }
+
+/* g1 —— 左边四类的数,右边整面图鉴一拍滚一步 */
+#f03 .stage { position: absolute; left: 660px; top: 0; width: 1260px; height: 1080px; }
+#f03 .gal { left: 90px; top: -150px; width: 1900px; height: 1400px; border-color: transparent; transform-origin: 0% 50%; }
+#f03 .side { position: absolute; left: 0; top: 0; width: 660px; height: 1080px; box-shadow: 30px 0 80px -30px rgba(0, 0, 0, 0.6); }
+#f03 .hd { position: absolute; left: 60px; top: 56px; font-size: 136px; }
+#f03 .kd { position: absolute; left: 64px; width: 540px; height: 170px; }
+#f03 .kd .lb { position: absolute; left: 0; top: 0; font-size: 62px; line-height: 90px; white-space: nowrap; }
+#f03 .kd .ct { position: absolute; right: 0; top: 0; font-size: 62px; font-weight: 700; line-height: 90px; letter-spacing: -2px; }
+#f03 .kd .br { position: absolute; left: 0; top: 98px; height: 30px; transform-origin: left center; }
+
+/* g2 —— 推近一张档案:绿框逐拍圈出三块,再用半版墨色把话说出来 */
+#f03 .dw { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 100% 0%; }
+#f03 .dw img { display: block; position: absolute; left: 0; top: 0; }
+#f03 .bx { position: absolute; left: 1067px; top: 0; width: 826px; height: 1080px; transform-origin: 50% 247px; opacity: 0; }
+#f03 .bx i { position: absolute; left: 0; top: 0; width: 826px; border: 0 solid var(--kb-brand); border-left-width: 8px; border-right-width: 8px; transform-origin: 0% 0%; }
+#f03 .bx .bt { height: 26px; border-top-width: 8px; border-radius: 18px 18px 0 0; }
+#f03 .bx .bm { height: 100px; }
+#f03 .bx .bb { height: 26px; border-bottom-width: 8px; border-radius: 0 0 18px 18px; }
+#f03 .pnl { position: absolute; left: 0; top: 0; width: 1037px; height: 1080px; }
+#f03 .pnl .ln { position: absolute; left: 96px; font-size: 204px; }
+#f03 .pnl .hl { position: absolute; left: 70px; top: 548px; width: 880px; height: 250px; background: var(--kb-brand); transform-origin: left center; }
+</style>
+<div id="f03" data-composition-id="03-gallery" data-width="1920" data-height="1080" data-duration="7.686">
+<div class="kb-g kb-first kb-ink" data-g="1">
+  <div class="stage"><div class="kb-win gal"><img src="assets/gallery-tall.jpg" width="1900" alt=""></div></div>
+  <div class="side kb-paper">
+    <div class="hd kb-display kb-mask"><span>工具图鉴</span></div>
+    <div class="kd" style="top:300px"><span class="lb kb-display">开源项目</span><span class="ct kb-mono">3,395</span><i class="br" style="width:540px;background:var(--kb-k-project)"></i></div>
+    <div class="kd" style="top:488px"><span class="lb kb-display">产品</span><span class="ct kb-mono">1,714</span><i class="br" style="width:273px;background:var(--kb-k-product)"></i></div>
+    <div class="kd" style="top:676px"><span class="lb kb-display">研究</span><span class="ct kb-mono">770</span><i class="br" style="width:122px;background:var(--kb-k-research)"></i></div>
+    <div class="kd" style="top:864px"><span class="lb kb-display">模型</span><span class="ct kb-mono">598</span><i class="br" style="width:95px;background:var(--kb-k-model)"></i></div>
+  </div>
+</div>
+
+<div class="kb-g kb-paper" data-g="2">
+  <div class="dw"><img src="assets/drawer.jpg" width="1920" height="1080" alt=""><div class="bx"><i class="bt"></i><i class="bm"></i><i class="bb"></i></div></div>
+  <div class="pnl kb-ink">
+    <i class="hl"></i>
+    <div class="ln kb-display kb-mask" style="top:270px"><span>每个工具</span></div>
+    <div class="ln kb-display kb-mask" style="top:550px"><span>一页档案</span></div>
+  </div>
+</div>
+</div>
+<script>
+(function () {
+// 每一帧共用的时间线小工具。tools/build-frames.mjs 把这份原样塞进每一帧的闭包里。
+//
+// 约定:传进来的秒数一律是「全片时间」(STORYBOARD.md / audiomap.json 里那一份),
+// 换算成这一帧自己的时间只在 at() 一处做 —— 改拍点时照着分镜抄数字就行。
+//
+// 不依赖 onUpdate / 定时器 / 随机数:渲染是逐帧 seek 出来的,任何「播放时才发生」的东西
+// 都落不到画面上。计数用数字带、打字用逐字点亮,都是纯时间线。
+function kbKit(root, tl, T0, DUR) {
+  function $(s) { return root.querySelector(s); }
+  function $$(s) { return Array.prototype.slice.call(root.querySelectorAll(s)); }
+  function at(t) { return Math.max(0, Math.round((t - T0) * 1000) / 1000); }
+
+  // 一组的可见区间。开头那组靠 .kb-first 本来就亮着,a 传 null;末尾那组 b 传 null
+  function gate(el, a, b) {
+    if (a != null && at(a) > 0) tl.set(el, { autoAlpha: 1 }, at(a));
+    if (b != null && at(b) < DUR) tl.set(el, { autoAlpha: 0 }, at(b));
+  }
+
+  // 砸进来:从 from 那个偏移快速落到原位
+  function slam(el, t, from, dur, stagger) {
+    var f = { opacity: 0 }, to = { opacity: 1, duration: dur || 0.22, ease: 'expo.out' };
+    for (var key in from) { f[key] = from[key]; to[key] = key.indexOf('scale') === 0 ? 1 : 0; }
+    if (stagger) to.stagger = stagger;
+    tl.fromTo(el, f, to, at(t));
+  }
+
+  // 遮罩里的字顶上来(els 的父级要 overflow:hidden)
+  function rise(els, t, stagger, dur) {
+    tl.fromTo(els, { yPercent: 115 },
+      { yPercent: 0, duration: dur || 0.3, ease: 'expo.out', stagger: stagger || 0 }, at(t));
+  }
+
+  // 匀速的慢推,撑满一段时长
+  function push(el, t0, t1, s0, s1, extra) {
+    var to = { scale: s1, duration: t1 - t0, ease: 'none' };
+    for (var key in extra || {}) to[key] = extra[key];
+    tl.fromTo(el, { scale: s0 }, to, at(t0));
+  }
+
+  // 把一段字拆成逐字的 span
+  function chars(el) {
+    var text = el.textContent;
+    el.textContent = '';
+    return Array.from(text).map(function (c) {
+      var s = document.createElement('span');
+      s.className = 'kb-ch';
+      s.textContent = c;
+      el.appendChild(s);
+      return s;
+    });
+  }
+
+  // 打字:t0 到 t1 之间逐字出现,光标是紧跟在后面的兄弟元素,自己就会跟着走
+  function typeOn(el, t0, t1) {
+    var cs = chars(el);
+    cs.forEach(function (c, i) {
+      c.style.display = 'none';
+      tl.set(c, { display: 'inline-block' }, at(t0 + (t1 - t0) * i / Math.max(1, cs.length - 1)));
+    });
+    return cs;
+  }
+
+  // 滚轮式计数。el 的文字就是目标值(可以带千分位逗号);tLand 是最后一位停稳的那一刻,
+  // 前面几位依次早停一点,读起来是从左到右锁定
+  function roll(el, t0, tLand) {
+    var text = el.textContent.trim();
+    var glyphs = Array.from(text);
+    var strips = [];
+    el.textContent = '';
+    el.classList.add('kb-odo');
+    glyphs.forEach(function (c, i) {
+      if (!/\d/.test(c)) {
+        var sep = document.createElement('span');
+        sep.className = 'kb-odo-c';
+        sep.textContent = c;
+        el.appendChild(sep);
+        return;
+      }
+      var cell = document.createElement('span');
+      var strip = document.createElement('span');
+      var turns = 12 + i * 3;
+      cell.className = 'kb-odo-d';
+      strip.className = 'kb-odo-s';
+      for (var n = turns - 1; n >= 0; n--) {
+        var d = document.createElement('i');
+        d.textContent = String((((+c - n) % 10) + 10) % 10);
+        // 路过的那些数字没人要读,只有停下来的那一格算正文
+        if (n) d.setAttribute('data-layout-ignore', '');
+        strip.appendChild(d);
+      }
+      cell.appendChild(strip);
+      el.appendChild(cell);
+      strips.push({ el: strip, turns: turns });
+    });
+    strips.forEach(function (s, i) {
+      var land = tLand - (strips.length - 1 - i) * 0.07;
+      tl.fromTo(s.el, { yPercent: 0 },
+        { yPercent: -100 * (s.turns - 1) / s.turns, duration: Math.max(0.2, land - t0), ease: 'power3.out' },
+        at(t0));
+    });
+  }
+
+  return { $: $, $$: $$, at: at, gate: gate, slam: slam, rise: rise, push: push,
+           chars: chars, typeOn: typeOn, roll: roll };
+}
+  var root = document.getElementById("f03");
+  var T0 = 15.441, DUR = 7.686;
+  var tl = gsap.timeline({ paused: true });
+  var k = kbKit(root, tl, T0, DUR);
+  var $ = k.$, $$ = k.$$, at = k.at, gate = k.gate, slam = k.slam, rise = k.rise,
+      push = k.push, chars = k.chars, typeOn = k.typeOn, roll = k.roll;
+  tl.to({ v: 0 }, { v: 1, duration: DUR, ease: 'none' }, 0);
+var g1 = $('[data-g="1"]'), g2 = $('[data-g="2"]');
+  gate(g1, null, 19.273); gate(g2, 19.273, null);
+
+  // g1:图鉴斜着立在右边,八拍每拍往上滚一步;左边四类逐拍亮出来
+  var gal = $('.gal'), sheet = $('.gal img');
+  gsap.set(gal, { transformPerspective: 2400, rotationY: -15, rotationX: 7, rotation: 1.5 });
+  var beats = [15.441, 15.906, 16.393, 16.881, 17.369, 17.833, 18.321, 18.785];
+  tl.fromTo(gal, { y: 420 }, { y: 0, duration: 0.4, ease: 'expo.out' }, at(15.441));
+  beats.slice(1).forEach(function (t, i) {
+    tl.to(sheet, { y: -(i + 1) * 190, duration: 0.34, ease: 'expo.out' }, at(t));
+  });
+  push(gal, 15.441, 19.273, 1, 1.1);
+  rise($('.hd > span'), 15.441, 0, 0.3);
+  $$('.kd').forEach(function (kd, i) {
+    var t = beats[i + 1];
+    slam(kd, t, { x: -70 }, 0.2);
+    tl.fromTo(kd.querySelector('.br'), { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: 'expo.out' }, at(t) + 0.04);
+    roll(kd.querySelector('.ct'), t, t + 0.4);
+  });
+  // 后三拍没有新的行了:左边那一列跟着拍子顶一下
+  [17.833, 18.321, 18.785].forEach(function (t, i) {
+    tl.fromTo($$('.kd .br'), { scaleY: 1.9 }, { scaleY: 1, duration: 0.3, ease: 'expo.out', immediateRender: false }, at(t));
+  });
+
+  // g2:档案抽屉。绿框一拍换一块 —— 标题卡、时间线、就这个工具提问
+  // 前四拍贴着抽屉看(放大到 1.45,跟着绿框往下走),半版墨色进来时退回整页
+  var dw = $('.dw');
+  tl.fromTo(dw, { scale: 1.62, y: 0 }, { scale: 1.45, duration: 0.45, ease: 'expo.out' }, at(19.273));
+  tl.to(dw, { y: -420, duration: 0.3, ease: 'expo.out' }, at(20.248));
+  tl.to(dw, { y: -486, duration: 0.3, ease: 'expo.out' }, at(20.712));
+  tl.to(dw, { scale: 1, y: 0, duration: 0.32, ease: 'expo.out' }, at(21.2));
+  tl.to(dw, { scale: 1.04, duration: 23.127 - 21.6, ease: 'none' }, at(21.6));
+  // 绿框是三段拼的:上下两个帽只平移,中段纵向拉伸(竖边不会被拉粗),整个过程不碰布局属性
+  var bx = $('.bx'), bt = $('.bx .bt'), bm = $('.bx .bm'), bb = $('.bx .bb');
+  function seg(top, h) { return [{ y: top }, { y: top + 25, scaleY: (h - 50) / 100 }, { y: top + h - 26 }]; }
+  function boxTo(t, top, h) {
+    var s = seg(top, h);
+    [bt, bm, bb].forEach(function (el, k) {
+      s[k].duration = 0.26; s[k].ease = 'expo.out';
+      tl.to(el, s[k], at(t));
+    });
+  }
+  (function (s) { gsap.set(bt, s[0]); gsap.set(bm, s[1]); gsap.set(bb, s[2]); })(seg(99, 297));
+  tl.fromTo(bx, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.22, ease: 'expo.out' }, at(19.76));
+  boxTo(20.248, 469, 525);
+  boxTo(20.712, 1004, 62);
+  tl.fromTo($('.pnl'), { xPercent: -100 }, { xPercent: 0, duration: 0.26, ease: 'expo.out' }, at(21.2));
+  rise($$('.pnl .ln > span')[0], 21.2 + 0.06, 0, 0.3);
+  rise($$('.pnl .ln > span')[1], 21.664, 0, 0.3);
+  boxTo(21.664, 99, 297);
+  tl.fromTo($('.pnl .hl'), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, at(22.152));
+  boxTo(22.152, 469, 525);
+  boxTo(22.639, 1004, 62);
+  tl.fromTo($$('.pnl .ln'), { scale: 1.06 }, { scale: 1, duration: 0.36, ease: 'expo.out', transformOrigin: '0% 50%', immediateRender: false }, at(22.639));
+  window.__timelines = window.__timelines || {};
+  window.__timelines["03-gallery"] = tl;
+  tl.seek(0);
+})();
+</script>
+</template>
+</body>
+</html>
