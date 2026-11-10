@@ -1,0 +1,578 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        /* ---------- 底：斜放压暗的队列截图 ---------- */
+        .f06-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f06-stage {
+          position: absolute;
+          inset: 0;
+          perspective: 2200px;
+        }
+        .f06-cam {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f06-plate {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        .f06-shot {
+          display: block;
+          width: 1920px;
+          height: 1080px;
+        }
+        /* 盖住右检查器里那行本机路径 */
+        .f06-patch {
+          position: absolute;
+          left: 1588px;
+          top: 372px;
+          width: 262px;
+          height: 30px;
+          background: #1a1a18;
+        }
+        .f06-dim {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          opacity: 0.58;
+        }
+        .f06-scene {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        .f06-scene-b {
+          visibility: hidden;
+        }
+
+        /* ---------- 卡片 / 泳道共用的状态色（由时间线改这几个变量） ---------- */
+        .f06-card,
+        .f06-lane {
+          --f06-bg: #111111;
+          --f06-edge: #505048;
+          --f06-fg: #888880;
+          --f06-dim: #505048;
+          --f06-num: #505048;
+          --f06-fill: #e85d26;
+          position: absolute;
+          background: var(--f06-bg);
+          border: 4px solid var(--f06-edge);
+          color: var(--f06-fg);
+        }
+        .f06-lane {
+          --f06-edge: #e85d26;
+          --f06-fg: #f0ece5;
+          --f06-dim: #888880;
+        }
+        .f06-ico {
+          position: absolute;
+          border: 4px solid var(--f06-fg);
+        }
+        .f06-dot {
+          position: absolute;
+          inset: 12px;
+          background: #e85d26;
+          opacity: 0;
+        }
+        .f06-chk {
+          position: absolute;
+          inset: 4px;
+          width: calc(100% - 8px);
+          height: calc(100% - 8px);
+          color: #111111;
+          opacity: 0;
+        }
+        .f06-track {
+          position: absolute;
+          border: 4px solid var(--f06-dim);
+          overflow: hidden;
+        }
+        .f06-fill {
+          position: absolute;
+          inset: 0;
+          background: var(--f06-fill);
+          transform-origin: 0 50%;
+        }
+        .f06-seg {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          margin-left: -2px;
+          background: var(--f06-bg);
+        }
+
+        /* ---------- 第一小节：串行 ---------- */
+        .f06-rail {
+          position: absolute;
+          left: 0;
+          top: 60px;
+          width: 1920px;
+          height: 10px;
+          background: #505048;
+        }
+        .f06-station {
+          position: absolute;
+          top: -10px;
+          width: 30px;
+          height: 30px;
+          margin-left: -15px;
+          background: #505048;
+        }
+        .f06-cur {
+          position: absolute;
+          left: 32px;
+          top: 48px;
+          width: 440px;
+          height: 190px;
+        }
+        .f06-cur-slab {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 440px;
+          height: 34px;
+          background: #e85d26;
+        }
+        .f06-cur-arrow {
+          position: absolute;
+          left: 140px;
+          top: 34px;
+          width: 160px;
+          height: 150px;
+          transform-origin: 50% 0;
+        }
+        .f06-card {
+          top: 244px;
+          width: 440px;
+          height: 452px;
+          transform-origin: 50% 50%;
+        }
+        .f06-num {
+          position: absolute;
+          left: 26px;
+          top: 22px;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 112px;
+          line-height: 0.86;
+          letter-spacing: -0.03em;
+          color: var(--f06-num);
+        }
+        .f06-card .f06-ico {
+          right: 26px;
+          top: 26px;
+          width: 76px;
+          height: 76px;
+        }
+        .f06-name {
+          position: absolute;
+          left: 26px;
+          top: 176px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 50px;
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+          white-space: nowrap;
+        }
+        .f06-cli {
+          position: absolute;
+          left: 28px;
+          top: 252px;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 38px;
+          line-height: 1.2;
+          color: var(--f06-dim);
+        }
+        .f06-card .f06-track {
+          left: 26px;
+          right: 26px;
+          bottom: 26px;
+          height: 72px;
+        }
+        .f06-belt {
+          position: absolute;
+          left: 0;
+          top: 720px;
+          width: 1920px;
+          height: 128px;
+          background: #111111;
+          border-top: 4px solid #505048;
+          border-bottom: 4px solid #505048;
+          overflow: hidden;
+        }
+        .f06-belt-in {
+          position: absolute;
+          left: -708px;
+          top: 0;
+          height: 100%;
+        }
+        .f06-belt-tick {
+          position: absolute;
+          top: 0;
+          width: 40px;
+          height: 100%;
+          background: #505048;
+          transform: skewX(-32deg);
+        }
+
+        /* ---------- 标题与计数 ---------- */
+        .f06-title {
+          position: absolute;
+          left: 0;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 150px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
+        .f06-title-a {
+          bottom: 0;
+          padding: 8px 52px 18px 64px;
+          background: #e85d26;
+          color: #111111;
+          transform-origin: 0 100%;
+        }
+        .f06-title-b {
+          top: 0;
+          padding: 6px 52px 14px 64px;
+          background: #111111;
+          color: #e85d26;
+          border-right: 8px solid #e85d26;
+          border-bottom: 8px solid #e85d26;
+          transform-origin: 0 0;
+        }
+        .f06-count {
+          position: absolute;
+          right: 0;
+          display: flex;
+          align-items: baseline;
+          padding: 0 40px 0 36px;
+          background: #111111;
+          color: #e85d26;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 220px;
+          line-height: 0.94;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+        }
+        .f06-count-a {
+          bottom: 0;
+          transform-origin: 100% 100%;
+        }
+        .f06-count-b {
+          top: 0;
+          transform-origin: 100% 0;
+        }
+        .f06-count-n {
+          display: inline-grid;
+          text-align: right;
+        }
+        .f06-digit {
+          grid-area: 1 / 1;
+          opacity: 0;
+        }
+
+        /* ---------- 第二小节：并行 ---------- */
+        .f06-lane {
+          left: 0;
+          width: 1920px;
+          height: 188px;
+          transform-origin: 50% 50%;
+        }
+        .f06-lname {
+          position: absolute;
+          left: 60px;
+          top: 22px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 60px;
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+          white-space: nowrap;
+        }
+        .f06-lcli {
+          position: absolute;
+          left: 62px;
+          top: 106px;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 38px;
+          line-height: 1.2;
+          color: var(--f06-dim);
+        }
+        .f06-lane .f06-track {
+          left: 590px;
+          top: 40px;
+          width: 890px;
+          height: 100px;
+        }
+        .f06-pct {
+          position: absolute;
+          left: 1490px;
+          top: 40px;
+          width: 256px;
+          height: 100px;
+          text-align: right;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 92px;
+          line-height: 100px;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+        }
+        .f06-lane .f06-ico {
+          left: 1776px;
+          top: 40px;
+          width: 100px;
+          height: 100px;
+        }
+        .f06-lane .f06-dot {
+          inset: 18px;
+        }
+
+        .f06-flash {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .f06-border {
+          position: absolute;
+          inset: 0;
+          border: 18px solid #e85d26;
+          opacity: 0;
+          pointer-events: none;
+        }
+      </style>
+
+      <div id="root" data-composition-id="06-queue" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f06-bg" id="f06-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f06-stage">
+            <div class="f06-cam" id="f06-cam">
+              <div class="f06-plate" id="f06-plate">
+                <img class="f06-shot" src="assets/shots/queue.png" alt="" />
+                <div class="f06-patch"></div>
+              </div>
+            </div>
+          </div>
+          <div class="f06-dim"></div>
+        </div>
+
+        <!-- 第一小节：串行 -->
+        <div class="f06-scene" id="f06-a">
+          <div class="f06-rail" id="f06-rail"></div>
+          <div class="f06-belt"><div class="f06-belt-in" id="f06-belt-in"></div></div>
+          <div id="f06-cards"></div>
+          <div class="f06-cur" id="f06-cur">
+            <div class="f06-cur-slab"></div>
+            <svg class="f06-cur-arrow" id="f06-cur-arrow" viewBox="0 0 160 150">
+              <polygon points="48,0 112,0 112,70 160,70 80,150 0,70 48,70" fill="#e85d26" />
+            </svg>
+          </div>
+          <div class="f06-title f06-title-a" id="f06-title-a">串行排队</div>
+          <div class="f06-count f06-count-a" id="f06-count-a"></div>
+        </div>
+
+        <!-- 第二小节：并行 -->
+        <div class="f06-scene f06-scene-b" id="f06-b">
+          <div id="f06-lanes"></div>
+          <div class="f06-title f06-title-b" id="f06-title-b">并行开跑</div>
+          <div class="f06-count f06-count-b" id="f06-count-b"></div>
+        </div>
+
+        <div class="f06-border" id="f06-border"></div>
+        <div class="f06-flash" id="f06-flash"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const S16 = BEAT / 4;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const $ = (id) => document.getElementById(id);
+
+          const TASKS = [
+            { name: "接入 Apple Pay", cli: "claude" },
+            { name: "迁移到 React 19", cli: "codex" },
+            { name: "导出 CSV", cli: "gemini" },
+            { name: "修复对比度", cli: "cursor" },
+          ];
+          const CHECK =
+            '<svg class="f06-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="square" stroke-linejoin="miter"><path d="M3.5 12.6l5.6 5.6L20.5 6.2" /></svg>';
+          const SEGS = [25, 50, 75].map((p) => '<div class="f06-seg" style="left:' + p + '%"></div>').join("");
+          const ICON = (id) => '<div class="f06-ico" id="' + id + '-ico"><div class="f06-dot" id="' + id + '-dot"></div>' + CHECK + "</div>";
+          const TRACK = (id) => '<div class="f06-track"><div class="f06-fill" id="' + id + '-fill"></div>' + SEGS + "</div>";
+
+          const RUN = { "--f06-bg": "#111111", "--f06-edge": "#e85d26", "--f06-fg": "#f0ece5", "--f06-dim": "#888880", "--f06-num": "#e85d26", "--f06-fill": "#e85d26" };
+          const DONE = { "--f06-bg": "#e85d26", "--f06-edge": "#e85d26", "--f06-fg": "#111111", "--f06-dim": "#111111", "--f06-num": "#111111", "--f06-fill": "#111111" };
+
+          // ---------- DOM ----------
+          const CARD_X = (i) => 32 + i * 472;
+          $("f06-cards").innerHTML = TASKS.map((t, i) => {
+            const id = "f06-card-" + i;
+            return (
+              '<div class="f06-card" id="' + id + '" style="left:' + CARD_X(i) + 'px">' +
+              '<div class="f06-num">0' + (i + 1) + "</div>" + ICON(id) +
+              '<div class="f06-name">' + t.name + '</div><div class="f06-cli">' + t.cli + "</div>" + TRACK(id) +
+              "</div>"
+            );
+          }).join("");
+          $("f06-rail").innerHTML = TASKS.map((_, i) => '<div class="f06-station" style="left:' + (CARD_X(i) + 220) + 'px"></div>').join("");
+          let ticks = "";
+          for (let k = 0; k < 24; k++) ticks += '<div class="f06-belt-tick" style="left:' + k * 118 + 'px"></div>';
+          $("f06-belt-in").innerHTML = ticks;
+
+          const LANE_Y = (i) => 236 + i * 210;
+          $("f06-lanes").innerHTML = TASKS.map((t, i) => {
+            const id = "f06-lane-" + i;
+            return (
+              '<div class="f06-lane" id="' + id + '" style="top:' + LANE_Y(i) + 'px">' +
+              '<div class="f06-lname">' + t.name + '</div><div class="f06-lcli">' + t.cli + "</div>" + TRACK(id) +
+              '<div class="f06-pct" id="' + id + '-pct">0%</div>' + ICON(id) +
+              "</div>"
+            );
+          }).join("");
+
+          const counter = (id, max) => {
+            let digits = "";
+            for (let n = 0; n <= max; n++) digits += '<span class="f06-digit" id="' + id + "-d" + n + '">' + n + "</span>";
+            $(id).innerHTML = '<span class="f06-count-n">' + digits + "</span><span>/4</span>";
+          };
+          counter("f06-count-a", 3);
+          counter("f06-count-b", 4);
+
+          // ---------- 小工具 ----------
+          // 运行指示方块：十六分一亮一暗，到 to 熄灭
+          const blink = (sel, from, to) => {
+            // 零时刻的 set 在 seek(0) 时不一定会渲染，t=0 的状态直接写到元素上
+            if (from === 0) gsap.set(sel, { opacity: 1 });
+            for (let k = from === 0 ? 1 : 0; from + k * S16 < to - 0.01; k++) tl.set(sel, { opacity: k % 2 ? 0.18 : 1 }, from + k * S16);
+            tl.set(sel, { opacity: 0 }, to);
+          };
+          const count = (id, n, at) => {
+            if (n > 0) tl.set("#" + id + "-d" + (n - 1), { opacity: 0 }, at);
+            if (at === 0) gsap.set("#" + id + "-d" + n, { opacity: 1 });
+            else tl.set("#" + id + "-d" + n, { opacity: 1 }, at);
+            if (n > 0) tl.fromTo("#" + id, { scale: 1.24 }, { scale: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, at);
+          };
+          const tick = (id, at, from) => {
+            tl.set("#" + id + "-ico .f06-chk", { opacity: 1 }, at);
+            tl.fromTo("#" + id + "-ico", { scale: from, rotation: -14 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2.4)", immediateRender: false }, at);
+          };
+
+          // ---------- 底：全程匀速缓推；b4 换构图时斜向翻到另一侧 ----------
+          tl.fromTo("#f06-cam", { scale: 1.3 }, { scale: 1.46, duration: 3.75, ease: "none" }, 0);
+          gsap.set("#f06-plate", { rotationY: -13, rotationX: 6 });
+          tl.to("#f06-plate", { rotationY: 12, rotationX: 5, duration: 0.34, ease: "power3.inOut" }, b(4) - 0.17);
+
+          // ---------- 第一小节：串行（b0–b3） ----------
+          gsap.set(".f06-card", { scale: 0.93 });
+          gsap.set(".f06-card .f06-fill", { scaleX: 0 });
+          tl.fromTo("#f06-title-a", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "power4.out" }, 0);
+          tl.fromTo("#f06-flash", { opacity: 0.5 }, { opacity: 0, duration: 0.26, ease: "power2.out" }, 0);
+          count("f06-count-a", 0, 0);
+
+          TASKS.forEach((_, i) => {
+            const id = "f06-card-" + i;
+            const start = b(i);
+            const end = b(i + 1);
+            // 排队 → 运行：橙边框砸到位，进度条匀速走满一拍
+            if (i === 0) gsap.set("#" + id, RUN);
+            else tl.set("#" + id, RUN, start);
+            tl.fromTo("#" + id, { scale: 1.14 }, { scale: 1, duration: 0.3, ease: "power4.out", immediateRender: i === 0 }, start);
+            tl.fromTo("#" + id + "-fill", { scaleX: 0 }, { scaleX: 1, duration: BEAT, ease: "none", immediateRender: false }, start);
+            blink("#" + id + "-dot", start, end);
+            // 游标跳到这张卡，箭头向下戳一下
+            if (i > 0) tl.to("#f06-cur", { x: i * 472, duration: 0.2, ease: "power3.inOut" }, start - 0.1);
+            tl.fromTo("#f06-cur-arrow", { y: -44, scaleY: 0.7 }, { y: 0, scaleY: 1, duration: 0.26, ease: "back.out(2.6)", immediateRender: i === 0 }, start);
+            // 运行 → 完成（第 4 张的完成时刻就是 b4，被换构图盖掉）
+            if (i < 3) {
+              tl.set("#" + id, DONE, end);
+              tl.fromTo("#" + id, { scale: 1.12 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, end);
+              tick(id, end, 2.1);
+              count("f06-count-a", i + 1, end);
+            }
+          });
+          // 传送带：每个八分音符步进半格
+          for (let k = 0; k < 8; k++) tl.to("#f06-belt-in", { x: (k + 1) * 59, duration: 0.13, ease: "power3.out" }, k * (BEAT / 2));
+
+          // ---------- 第二小节：并行（b4–b7） ----------
+          tl.set("#f06-a", { visibility: "hidden" }, b(4));
+          tl.set("#f06-b", { visibility: "visible" }, b(4));
+          tl.fromTo("#f06-flash", { opacity: 0.7 }, { opacity: 0, duration: 0.28, ease: "power2.out", immediateRender: false }, b(4));
+          tl.fromTo("#f06-b", { scale: 1.07 }, { scale: 1, duration: 0.32, ease: "power4.out", immediateRender: false }, b(4));
+          tl.fromTo("#f06-title-b", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, b(4));
+          count("f06-count-b", 0, b(4));
+
+          // 四条同时从 0 开跑，冲线时刻（拍）：b6 / b7 / b5 / b6.5
+          const FINISH = [6, 7, 5, 6.5];
+          const order = [0, 1, 2, 3].sort((x, y) => FINISH[x] - FINISH[y]);
+          TASKS.forEach((_, i) => {
+            const id = "f06-lane-" + i;
+            const end = b(FINISH[i]);
+            const span = end - b(4);
+            const pct = $(id + "-pct");
+            const roll = { v: 0 };
+            tl.fromTo("#" + id, { x: i % 2 ? 760 : -760 }, { x: 0, duration: 0.28, ease: "power4.out", immediateRender: false }, b(4));
+            tl.fromTo("#" + id + "-fill", { scaleX: 0 }, { scaleX: 1, duration: span, ease: "none", immediateRender: false }, b(4));
+            tl.to(roll, { v: 100, duration: span, ease: "none", onUpdate: () => (pct.textContent = Math.round(roll.v) + "%") }, b(4));
+            blink("#" + id + "-dot", b(4), end);
+            // 冲线：整条变橙底墨字 + 勾，顶一下，计数跳
+            tl.set("#" + id, DONE, end);
+            tl.fromTo("#" + id, { scaleY: 1.22 }, { scaleY: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, end);
+            tick(id, end, 1.55);
+            count("f06-count-b", order.indexOf(i) + 1, end);
+          });
+
+          // b7 —— 四条全满：整屏橙框闪，计数块反色
+          tl.fromTo("#f06-border", { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power2.out", immediateRender: false }, b(7));
+          tl.fromTo("#f06-b", { scale: 1.04 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, b(7));
+          tl.set("#f06-count-b", { backgroundColor: "#e85d26", color: "#111111" }, b(7));
+          // b7 后半拍：四个勾按十六分依次再顶一下
+          [0, 1, 2, 3].forEach((i) => {
+            tl.fromTo("#f06-lane-" + i + "-ico", { scale: 1.5 }, { scale: 1, duration: 0.11, ease: "power2.out", immediateRender: false }, b(7) + BEAT / 2 + i * (S16 / 3));
+          });
+
+          window.__timelines["06-queue"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,687 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f10-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        /* 两个小节并排放在一条 3840 宽的长条上，b4 整条向左甩一屏 */
+        .f10-strip {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 3840px;
+          height: 1080px;
+          will-change: transform;
+        }
+        .f10-scene {
+          position: absolute;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          background: #111111;
+          perspective: 2200px;
+        }
+        .f10-scene-a { left: 0; }
+        .f10-scene-b { left: 1920px; }
+        .f10-seam {
+          position: absolute;
+          left: 1860px;
+          top: -80px;
+          width: 60px;
+          height: 1240px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f10-cam {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 0 0;
+          will-change: transform;
+        }
+        .f10-plate {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        .f10-shot {
+          display: block;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f10-dim {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          opacity: 0.5;
+        }
+
+        /* ── 第一小节：组织图 ── */
+        .f10-chart {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 12%;
+        }
+        .f10-wires {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f10-wire {
+          fill: none;
+          stroke: #f0ece5;
+          stroke-width: 6;
+          stroke-linecap: butt;
+          stroke-linejoin: miter;
+        }
+        .f10-node {
+          position: absolute;
+          left: 640px;
+          top: 30px;
+          width: 640px;
+          height: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 26px;
+          background: #e85d26;
+          color: #111111;
+        }
+        .f10-node-logo {
+          width: 120px;
+          height: 120px;
+          stroke-width: 2.7;
+        }
+        .f10-node-text {
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 124px;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          padding-bottom: 8px;
+        }
+        .f10-ping {
+          position: absolute;
+          left: 640px;
+          top: 30px;
+          width: 640px;
+          height: 200px;
+          border: 6px solid #e85d26;
+          opacity: 0;
+        }
+        .f10-card {
+          position: absolute;
+          width: 560px;
+          height: 280px;
+          padding: 28px 38px 38px;
+          background: #111111;
+          border: 3px solid #f0ece5;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          visibility: hidden;
+        }
+        .f10-slot {
+          position: absolute;
+          width: 560px;
+          height: 280px;
+          border: 3px solid #505048;
+          visibility: hidden;
+        }
+        .f10-card-top {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+        }
+        .f10-card-name {
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 72px;
+          line-height: 1.1;
+          color: #f0ece5;
+        }
+        .f10-card-pct {
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 78px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          color: #e85d26;
+        }
+        .f10-bar {
+          position: relative;
+          height: 54px;
+          background: #282826;
+          overflow: hidden;
+        }
+        .f10-bar-fill {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          transform-origin: 0 50%;
+        }
+        .f10-joint {
+          position: absolute;
+          left: 50%;
+          top: -16px;
+          width: 28px;
+          height: 28px;
+          margin-left: -14px;
+          background: #e85d26;
+        }
+        .f10-packet {
+          position: absolute;
+          left: -13px;
+          top: -13px;
+          width: 26px;
+          height: 26px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f10-head {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .f10-line {
+          display: block;
+          height: 174px;
+          padding: 10px 44px 18px 106px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 130px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f10-line-a {
+          background: #111111;
+          color: #f0ece5;
+        }
+        .f10-line-b {
+          background: #e85d26;
+          color: #111111;
+        }
+
+        /* ── 第二小节：研讨 ── */
+        .f10-mark {
+          position: absolute;
+          border-style: solid;
+          border-color: #e85d26;
+          visibility: hidden;
+        }
+        .f10-tag {
+          position: absolute;
+          padding: 2px 18px 6px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
+        .f10-band {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 190px;
+          background: #111111;
+          border-bottom: 3px solid #f0ece5;
+        }
+        .f10-who {
+          position: absolute;
+          top: 0;
+          width: 800px;
+          height: 187px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 64px 6px;
+          background: #1a1a18;
+          color: #505048;
+        }
+        .f10-who-a {
+          left: 0;
+          transform-origin: 0 0;
+        }
+        .f10-who-b {
+          right: 0;
+          flex-direction: row-reverse;
+          transform-origin: 100% 0;
+        }
+        .f10-who-name {
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 88px;
+          line-height: 1;
+        }
+        .f10-eq {
+          display: flex;
+          align-items: flex-end;
+          gap: 12px;
+          height: 96px;
+        }
+        .f10-eq-bar {
+          width: 18px;
+          height: 96px;
+          background: currentColor;
+          transform-origin: 50% 100%;
+        }
+        .f10-versus {
+          position: absolute;
+          left: 912px;
+          top: 46px;
+          width: 96px;
+          height: 96px;
+          color: #505048;
+        }
+        .f10-ok {
+          position: absolute;
+          left: 876px;
+          top: 10px;
+          width: 168px;
+          height: 168px;
+          background: #e85d26;
+          color: #111111;
+          visibility: hidden;
+        }
+        .f10-ok-svg {
+          position: absolute;
+          left: 24px;
+          top: 24px;
+          width: 120px;
+          height: 120px;
+        }
+        .f10-title-b {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          padding: 8px 48px 18px 106px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 112px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
+        .f10-flash {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .f10-border {
+          position: absolute;
+          inset: 0;
+          border: 16px solid #e85d26;
+          opacity: 0;
+        }
+      </style>
+
+      <div id="root" data-composition-id="10-team" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f10-bg" id="f10-bg" data-start="0" data-duration="3.75" data-track-index="0"></div>
+
+        <div class="f10-strip" id="f10-strip">
+          <!-- 第一小节：团队 -->
+          <div class="f10-scene f10-scene-a">
+            <div class="f10-cam" id="f10-cam-a">
+              <div class="f10-plate" id="f10-plate-a">
+                <img class="f10-shot" src="assets/shots/team.png" alt="" />
+              </div>
+            </div>
+            <div class="f10-dim"></div>
+
+            <div class="f10-chart" id="f10-chart">
+              <svg class="f10-wires" id="f10-wires" viewBox="0 0 1920 1080"></svg>
+              <div id="f10-packets"></div>
+              <div class="f10-ping" id="f10-ping"></div>
+              <div class="f10-node" id="f10-node">
+                <svg class="f10-node-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 18H3l2-18" /></svg>
+                <span class="f10-node-text">调度</span>
+              </div>
+              <div id="f10-slots"></div>
+              <div id="f10-cards"></div>
+            </div>
+
+            <div class="f10-head">
+              <span class="f10-line f10-line-a" id="f10-line-a">一个调度</span>
+              <span class="f10-line f10-line-b" id="f10-line-b">多个执行者</span>
+            </div>
+          </div>
+
+          <!-- 第二小节：研讨 -->
+          <div class="f10-scene f10-scene-b">
+            <div class="f10-cam" id="f10-cam-b">
+              <div class="f10-plate" id="f10-plate-b">
+                <img class="f10-shot" src="assets/shots/duet.png" alt="" />
+                <div id="f10-marks"></div>
+              </div>
+            </div>
+
+            <div class="f10-band" id="f10-band">
+              <div class="f10-who f10-who-a" id="f10-who-a">
+                <span class="f10-who-name">claude</span>
+                <div class="f10-eq" id="f10-eq-a"></div>
+              </div>
+              <div class="f10-who f10-who-b" id="f10-who-b">
+                <span class="f10-who-name">codex</span>
+                <div class="f10-eq" id="f10-eq-b"></div>
+              </div>
+              <svg class="f10-versus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M4 4l16 16M20 4L4 20" /></svg>
+              <div class="f10-ok" id="f10-ok">
+                <svg class="f10-ok-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"><path id="f10-ok-path" d="M3.5 12.5l5.5 5.5L20.5 6" /></svg>
+              </div>
+            </div>
+
+            <div class="f10-title-b" id="f10-title-b">让两个模型先聊出方案</div>
+          </div>
+
+          <div class="f10-seam" id="f10-seam"></div>
+        </div>
+
+        <div class="f10-border" id="f10-border"></div>
+        <div class="f10-flash" id="f10-flash"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const SIXTEENTH = BEAT / 4;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const $ = (id) => document.getElementById(id);
+
+          const ORANGE = "#e85d26";
+          const INK = "#111111";
+
+          // 不在 t=0 起跑的 fromTo 一律不立即渲染，免得起始值在构建时就刷到画面上
+          const ft = (target, from, to, at) => tl.fromTo(target, from, { ...to, immediateRender: at <= 0 }, at);
+          const show = (target, at) => tl.set(target, { visibility: "visible" }, at);
+          const hide = (target, at) => tl.set(target, { visibility: "hidden" }, at);
+          // 镜头对准截图上的 (cx, cy)、放大 s 倍、并让它落在画布的 (sx, sy)
+          const aim = (cx, cy, s, sx, sy) => ({ x: (sx ?? 960) - cx * s, y: (sy ?? 540) - cy * s, scale: s });
+          const WHIP = 0.3;
+          const LEAD = 0.17;
+          const whip = (cam, target, at) => tl.to(cam, { ...target, duration: WHIP, ease: "power3.inOut" }, at - LEAD);
+
+          /* ───────── 第一小节：团队 ───────── */
+
+          const NODE = { x: 960, bottom: 230 };
+          const BUS = 288;
+          const CARD_W = 560;
+          // 三张执行者卡阶梯式下行；rate 相同 = 进度条匀速
+          const cards = [
+            { name: "claude", x: 60, y: 346, from: 0.18 },
+            { name: "codex", x: 680, y: 506, from: 0.09 },
+            { name: "gemini", x: 1300, y: 666, from: 0.04 },
+          ];
+          const RATE = 0.4;
+          const wires = $("f10-wires");
+          const cardHost = $("f10-cards");
+          const packetHost = $("f10-packets");
+          const slotHost = $("f10-slots");
+          let wireMarkup = "";
+
+          cards.forEach((card, i) => {
+            card.cx = card.x + CARD_W / 2;
+            // 连线的折点：调度块底 → 总线 → 卡片正上方 → 卡片顶
+            card.points = card.cx === NODE.x
+              ? [[NODE.x, NODE.bottom], [card.cx, card.y]]
+              : [[NODE.x, NODE.bottom], [NODE.x, BUS], [card.cx, BUS], [card.cx, card.y]];
+            card.length = card.points.slice(1).reduce((sum, p, k) => sum + Math.abs(p[0] - card.points[k][0]) + Math.abs(p[1] - card.points[k][1]), 0);
+
+            wireMarkup +=
+              '<path class="f10-wire" id="f10-wire-' + i + '" d="M' + card.points.map((p) => p.join(" ")).join("L") +
+              '" style="stroke-dasharray:' + card.length + ";stroke-dashoffset:" + card.length + '" />';
+
+            const slot = document.createElement("div");
+            slot.className = "f10-slot";
+            slot.id = "f10-slot-" + i;
+            slot.style.left = card.x + "px";
+            slot.style.top = card.y + "px";
+            slotHost.appendChild(slot);
+
+            const el = document.createElement("div");
+            el.className = "f10-card";
+            el.id = "f10-card-" + i;
+            el.style.left = card.x + "px";
+            el.style.top = card.y + "px";
+            el.innerHTML =
+              '<div class="f10-joint"></div>' +
+              '<div class="f10-card-top"><span class="f10-card-name">' + card.name + '</span><span class="f10-card-pct"></span></div>' +
+              '<div class="f10-bar"><div class="f10-bar-fill"></div></div>';
+            cardHost.appendChild(el);
+            card.pct = el.querySelector(".f10-card-pct");
+            card.fill = el.querySelector(".f10-bar-fill");
+          });
+
+          wires.innerHTML = wireMarkup;
+
+          // 沿折线跑一趟的小方块（调度者往执行者派活）
+          let packetCount = 0;
+          const sendPacket = (card, at, total) => {
+            const el = document.createElement("div");
+            el.className = "f10-packet";
+            el.id = "f10-packet-" + packetCount++;
+            packetHost.appendChild(el);
+            tl.set(el, { x: card.points[0][0], y: card.points[0][1], visibility: "visible" }, at);
+            let cursor = at;
+            card.points.slice(1).forEach((p, k) => {
+              const seg = Math.abs(p[0] - card.points[k][0]) + Math.abs(p[1] - card.points[k][1]);
+              const dur = (seg / card.length) * total;
+              tl.to(el, { x: p[0], y: p[1], duration: dur, ease: "none" }, cursor);
+              cursor += dur;
+            });
+            hide(el, cursor);
+          };
+
+          // b0 —— 硬切进来：团队界面砸到位，调度节点 + 第一行标题
+          tl.set("#f10-cam-a", aim(960, 540, 1), 0);
+          ft("#f10-plate-a", { scale: 1.5, rotationX: 20, y: 150 }, { scale: 1, rotationX: 0, y: 0, duration: 0.34, ease: "power4.out" }, 0);
+          ft("#f10-flash", { opacity: 0.85 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
+          ft("#f10-node", { scale: 2.1, y: 120 }, { scale: 1, y: 0, duration: 0.32, ease: "back.out(1.5)" }, 0);
+          show("#f10-line-a", 0);
+          ft("#f10-line-a", { xPercent: -100, y: 174 }, { xPercent: 0, y: 174, duration: 0.3, ease: "power4.out" }, 0);
+
+          // b0 的十六分：三个空位先逐个亮出来，等着被执行者卡填上
+          cards.forEach((_, i) => {
+            const at = SIXTEENTH * (i + 1);
+            show("#f10-slot-" + i, at);
+            ft("#f10-slot-" + i, { scale: 1.12 }, { scale: 1, duration: 0.14, ease: "power2.out" }, at);
+          });
+
+          // 每个反拍：调度节点往外发一圈信号
+          [0.5, 1.5, 2.5, 3.5].forEach((k) => {
+            ft("#f10-ping", { scaleX: 1, scaleY: 1, opacity: 1 }, { scaleX: 1.16, scaleY: 1.5, opacity: 0, duration: 0.3, ease: "power2.out" }, b(k));
+          });
+
+          // b1 / b2 / b3 —— 连线画到、执行者卡弹出、整张图顶一下、底下的界面甩一下
+          const camStops = [aim(1150, 436, 1.25), aim(716, 560, 1.35), aim(1250, 380, 1.45)];
+          const END_A = b(4) + 0.17;
+          cards.forEach((card, i) => {
+            const at = b(i + 1);
+            const id = "#f10-card-" + i;
+            tl.to("#f10-wire-" + i, { strokeDashoffset: 0, duration: 0.2, ease: "power2.in" }, at - 0.2);
+            show(id, at);
+            ft(id, { scale: 0.35, y: -110 }, { scale: 1, y: 0, duration: 0.3, ease: "back.out(2.2)" }, at);
+            ft("#f10-chart", { scale: 1.04 }, { scale: 1, duration: 0.3, ease: "power2.out" }, at);
+            whip("#f10-cam-a", camStops[i], at);
+
+            // 进度条 + 百分比匀速走到甩切为止
+            const state = { v: card.from };
+            const paint = () => {
+              card.fill.style.transform = "scaleX(" + state.v.toFixed(4) + ")";
+              card.pct.textContent = Math.round(state.v * 100) + "%";
+            };
+            paint();
+            tl.to(state, { v: card.from + RATE * (END_A - at), duration: END_A - at, ease: "none", onUpdate: paint }, at);
+
+            // 之后每个反拍再派一趟
+            for (let k = i + 1.5; k < 4; k += 1) sendPacket(card, b(k), 0.26);
+          });
+
+          // b2 —— 第二行标题砸入，第一行被顶上去
+          show("#f10-line-b", b(2));
+          ft("#f10-line-b", { xPercent: -100 }, { xPercent: 0, duration: 0.26, ease: "power4.out" }, b(2));
+          tl.to("#f10-line-a", { y: 0, duration: 0.26, ease: "power4.out" }, b(2));
+
+          /* ───────── b4：整屏向左甩切到研讨 ───────── */
+
+          const WHIP_ALL = 0.36;
+          show("#f10-seam", b(4) - WHIP_ALL / 2);
+          tl.to("#f10-strip", { x: -1920, duration: WHIP_ALL, ease: "power3.inOut" }, b(4) - WHIP_ALL / 2);
+          tl.to("#f10-strip", { skewX: -9, duration: WHIP_ALL / 2, ease: "power2.in" }, b(4) - WHIP_ALL / 2);
+          tl.to("#f10-strip", { skewX: 0, duration: WHIP_ALL / 2, ease: "power3.out" }, b(4));
+
+          /* ───────── 第二小节：研讨 ───────── */
+
+          // 截图上的四段发言（1920 坐标，外扩几像素）；s 是圈它时镜头的倍率，边框粗细按倍率折算成屏上 5px
+          const marks = [
+            { id: "a1", who: "claude", l: 465, t: 183, w: 1084, h: 127, s: 1.5, tag: "tl" },
+            { id: "b1", who: "codex", l: 708, t: 309, w: 1082, h: 125, s: 1.5, tag: "tr" },
+            { id: "a2", who: "claude", l: 469, t: 475, w: 1077, h: 118, s: 1.3, tag: "tl" },
+            { id: "b2", who: "codex", l: 712, t: 599, w: 1074, h: 119, s: 1.3, tag: "br" },
+          ];
+          const markHost = $("f10-marks");
+          marks.forEach((m) => {
+            const bw = 5 / m.s;
+            const el = document.createElement("div");
+            el.className = "f10-mark";
+            el.id = "f10-mark-" + m.id;
+            el.style.cssText = "left:" + m.l + "px;top:" + m.t + "px;width:" + m.w + "px;height:" + m.h + "px;border-width:" + bw + "px";
+            const tag = document.createElement("div");
+            tag.className = "f10-tag";
+            tag.textContent = m.who;
+            tag.style.fontSize = 70 / m.s + "px";
+            tag.style[m.tag[1] === "l" ? "left" : "right"] = -bw + "px";
+            tag.style[m.tag[0] === "t" ? "bottom" : "top"] = "100%";
+            el.appendChild(tag);
+            markHost.appendChild(el);
+          });
+
+          // 头牌里的「正在说话」跳动条：高度表写死
+          const EQ = [
+            [0.9, 0.4, 0.7, 0.3, 0.6],
+            [0.3, 0.85, 0.5, 1, 0.4],
+            [0.7, 0.5, 1, 0.45, 0.8],
+            [0.45, 1, 0.3, 0.7, 0.5],
+          ];
+          ["a", "b"].forEach((side) => {
+            const host = $("f10-eq-" + side);
+            for (let i = 0; i < 5; i++) {
+              const bar = document.createElement("div");
+              bar.className = "f10-eq-bar";
+              bar.id = "f10-eq-" + side + "-" + i;
+              bar.style.transform = "scaleY(0.14)";
+              host.appendChild(bar);
+            }
+          });
+          const lit = (side, on, at) =>
+            tl.set("#f10-who-" + side, { backgroundColor: on ? ORANGE : "#1a1a18", color: on ? INK : "#505048" }, at);
+          const speak = (side, from, steps, offset) => {
+            for (let k = 0; k < steps; k++) {
+              EQ[(k + (offset || 0)) % EQ.length].forEach((h, i) => {
+                tl.to("#f10-eq-" + side + "-" + i, { scaleY: h, duration: 0.1, ease: "power2.out" }, from + k * SIXTEENTH);
+              });
+            }
+          };
+          const hush = (side, at) => {
+            for (let i = 0; i < 5; i++) tl.to("#f10-eq-" + side + "-" + i, { scaleY: 0.14, duration: 0.08, ease: "power2.out" }, at);
+          };
+          const punchWho = (side, at) => ft("#f10-who-" + side, { scale: 1.14 }, { scale: 1, duration: 0.3, ease: "power3.out" }, at);
+          const circle = (id, at, delay) => {
+            show("#f10-mark-" + id, at + (delay || 0));
+            ft("#f10-mark-" + id, { scale: 1.1 }, { scale: 1, duration: 0.3, ease: "power3.out" }, at + (delay || 0));
+          };
+
+          // b4 —— 研讨界面甩进来（四段发言同框）：头牌从上砸下，标题从下顶上，镜头慢推
+          tl.set("#f10-cam-b", aim(1120, 450, 1.2), 0);
+          ft("#f10-band", { y: -200 }, { y: 0, duration: 0.26, ease: "power4.out" }, b(4));
+          ft("#f10-title-b", { y: 170 }, { y: 0, duration: 0.26, ease: "power4.out" }, b(4));
+          tl.to("#f10-cam-b", { ...aim(1140, 452, 1.26), duration: b(5) - LEAD - b(4), ease: "none" }, b(4));
+          // 十六分：两块头牌先各闪一下
+          lit("a", true, b(4) + SIXTEENTH);
+          lit("a", false, b(4) + SIXTEENTH * 2);
+          lit("b", true, b(4) + SIXTEENTH * 2);
+          lit("b", false, b(4) + SIXTEENTH * 3);
+
+          // b5 —— claude 发言
+          whip("#f10-cam-b", aim(1007, 246.5, 1.5, 960, 556), b(5));
+          circle("a1", b(5));
+          lit("a", true, b(5));
+          punchWho("a", b(5));
+          speak("a", b(5), 4, 0);
+
+          // b6 —— codex 接话
+          hide("#f10-mark-a1", b(6) - 0.06);
+          whip("#f10-cam-b", aim(1249, 371.5, 1.5, 960, 556), b(6));
+          circle("b1", b(6));
+          lit("a", false, b(6));
+          hush("a", b(6));
+          lit("b", true, b(6));
+          punchWho("b", b(6));
+          speak("b", b(6), 4, 1);
+
+          // b7 —— 第二轮两段同框：两块头牌同亮，中间弹出勾，整屏橙框闪
+          hide("#f10-mark-b1", b(7) - 0.06);
+          whip("#f10-cam-b", aim(1127.5, 596.5, 1.3, 960, 560), b(7));
+          circle("a2", b(7));
+          circle("b2", b(7), SIXTEENTH);
+          lit("a", true, b(7));
+          punchWho("a", b(7));
+          punchWho("b", b(7));
+          speak("a", b(7), 4, 2);
+          speak("b", b(7), 4, 3);
+          show("#f10-ok", b(7));
+          ft("#f10-ok", { scale: 0.2, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2.6)" }, b(7));
+          const okPath = $("f10-ok-path");
+          okPath.style.strokeDasharray = 26;
+          okPath.style.strokeDashoffset = 26;
+          tl.to(okPath, { strokeDashoffset: 0, duration: 0.2, ease: "power2.out" }, b(7) + 0.06);
+          ft("#f10-border", { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power2.out" }, b(7));
+          ft("#f10-plate-b", { scale: 1.04 }, { scale: 1, duration: 0.3, ease: "power2.out" }, b(7));
+          ft("#f10-title-b", { scale: 1.06, transformOrigin: "0 100%" }, { scale: 1, duration: 0.3, ease: "power2.out" }, b(7));
+          // 尾巴上镜头继续慢推，不停死
+          tl.to("#f10-cam-b", { ...aim(1127.5, 596.5, 1.34, 960, 560), duration: 3.75 - (b(7) + WHIP - LEAD), ease: "none" }, b(7) + WHIP - LEAD);
+
+          window.__timelines["10-team"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

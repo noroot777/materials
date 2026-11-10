@@ -1,0 +1,10 @@
+node_modules/
+.work/
+.hyperframes/
+.media/
+.preview/
+capture/
+snapshots/
+.DS_Store
+renders/*
+!renders/ash-promo.mp4

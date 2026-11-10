@@ -1,0 +1,361 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f02-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f02-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f02-pile {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 50% 50%;
+          --f02-fg: #f0ece5;
+          --f02-mute: #888880;
+          --f02-hot: #e85d26;
+        }
+        .f02-win {
+          position: absolute;
+          background: #1a1a18;
+          border: 3px solid #888880;
+          overflow: hidden;
+          will-change: transform;
+        }
+        .f02-bar {
+          height: 64px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 0 20px;
+          background: #f0ece5;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 36px;
+          color: #111111;
+        }
+        .f02-sq {
+          width: 16px;
+          height: 16px;
+          background: #111111;
+          flex: none;
+        }
+        .f02-name {
+          margin-left: 12px;
+        }
+        .f02-body {
+          padding: 12px 22px;
+        }
+        .f02-ln {
+          display: flex;
+          align-items: center;
+          height: 50px;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 34px;
+          line-height: 50px;
+          white-space: pre;
+          color: var(--f02-fg);
+        }
+        .f02-chk {
+          display: none;
+          flex: none;
+          width: 30px;
+          height: 30px;
+          margin-right: 12px;
+          color: var(--f02-hot);
+        }
+        .f02-k-ok .f02-chk {
+          display: block;
+        }
+        .f02-k-dim {
+          color: var(--f02-mute);
+        }
+        .f02-k-warn {
+          color: var(--f02-hot);
+        }
+        .f02-cur {
+          flex: none;
+          width: 18px;
+          height: 36px;
+          margin-left: 4px;
+          background: var(--f02-hot);
+          visibility: hidden;
+        }
+        .f02-on .f02-cur {
+          visibility: inherit;
+        }
+        .f02-dim {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          opacity: 0;
+        }
+        .f02-inv {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f02-q {
+          position: absolute;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          visibility: hidden;
+          z-index: 60;
+        }
+        .f02-q-orange {
+          background: #e85d26;
+          color: #111111;
+        }
+        .f02-q-ink {
+          background: #111111;
+          color: #f0ece5;
+          border: 10px solid #f0ece5;
+        }
+        #f02-q-0 { left: 0; top: 60px; padding: 0 30px 30px 60px; font-size: 430px; transform-origin: 0 50%; }
+        #f02-q-1 { right: 0; bottom: 50px; padding: 0 20px 24px 50px; font-size: 345px; border-right: 0; transform-origin: 100% 50%; }
+        #f02-q-2 { left: 40px; top: 330px; padding: 0 10px 22px 44px; font-size: 290px; }
+        #f02-q-3 { left: 50px; top: 310px; padding: 0 20px 24px 50px; font-size: 340px; }
+        .f02-dot {
+          position: absolute;
+          left: 948px;
+          top: 528px;
+          width: 24px;
+          height: 24px;
+          background: #e85d26;
+          visibility: hidden;
+          z-index: 70;
+        }
+      </style>
+
+      <div id="root" data-composition-id="02-pain" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f02-bg" id="f02-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f02-grid"></div>
+        </div>
+        <div class="f02-inv" id="f02-inv"></div>
+        <div class="f02-pile" id="f02-pile"></div>
+        <div class="f02-q f02-q-orange" id="f02-q-0">谁在跑？</div>
+        <div class="f02-q f02-q-ink" id="f02-q-1">谁卡住了？</div>
+        <div class="f02-q f02-q-orange" id="f02-q-2">谁改了什么？</div>
+        <div class="f02-q f02-q-ink" id="f02-q-3">谁来验收？</div>
+        <div class="f02-dot" id="f02-dot"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+
+          // —— 以下三张表与 01-hook.html 逐字相同（两帧共用同一堆窗口）——
+          // 窗口终态：[cli, left, top, width, height, 角度]
+          const WINS = [
+            ["claude", 400, 380, 960, 520, -3],
+            ["codex", 1060, 640, 880, 480, 4],
+            ["gemini", -40, 10, 860, 400, -5],
+            ["cursor", 1140, -20, 800, 500, -6],
+            ["opencode", 520, 12, 720, 350, 2],
+            ["copilot", -50, 520, 840, 520, 6],
+            ["qwen", 560, 700, 800, 420, -4],
+            ["kimi", 1250, 270, 720, 370, 7],
+          ];
+          // 每个窗口的打字速度（字符/秒）与砸入时已经打出的字符数；从它砸入的那一拍起算，跨帧连续
+          const RATE = [52, 44, 48, 40, 56, 46, 50, 42];
+          const HEAD = [30, 40, 70, 55, 90, 60, 80, 50];
+          const LOGS = [
+            [["cmd", "> reading src/checkout.ts"], ["dim", "  412 lines, 3 imports"], ["cmd", "> edit src/pay/applepay.ts"], ["ok", "patched 2 hunks"], ["cmd", "> npm test"], ["dim", "running tests…"], ["ok", "38 passed"], ["warn", "waiting for approval"], ["cmd", "> git diff --stat"], ["dim", "  4 files changed, +119 -12"], ["warn", "still waiting for approval"]],
+            [["cmd", "> rg \"exportCsv\" server/"], ["dim", "  7 matches in 3 files"], ["cmd", "> apply_patch export.ts"], ["ok", "1 file updated"], ["dim", "running tests…"], ["warn", "2 failed, 41 passed"], ["cmd", "> retry with --bail"], ["dim", "thinking…"], ["warn", "needs your input"]],
+            [["cmd", "> read web/theme/tokens.css"], ["dim", "  contrast 3.1 : 1"], ["cmd", "> write tokens.css"], ["ok", "saved"], ["cmd", "> npm run build"], ["dim", "bundling 214 modules…"], ["ok", "built in 4.2s"], ["warn", "idle for 6 min"]],
+            [["cmd", "> open auth/passkey.ts"], ["dim", "  indexing workspace…"], ["cmd", "> refactor verifyAssertion"], ["ok", "3 edits applied"], ["cmd", "> tsc --noEmit"], ["warn", "error TS2345 at line 88"], ["dim", "fixing…"], ["ok", "0 errors"], ["warn", "waiting for approval"]],
+            [["cmd", "> plan: split queue.ts"], ["dim", "  step 1 of 5"], ["cmd", "> mv queue.ts queue/index.ts"], ["ok", "moved"], ["cmd", "> update 12 imports"], ["dim", "  step 3 of 5"], ["ok", "12 imports rewritten"], ["dim", "running tests…"], ["warn", "merge conflict in main"]],
+            [["cmd", "> gh pr checkout 412"], ["dim", "  switched to pr-412"], ["cmd", "> review diff"], ["dim", "  +86 -31 in 5 files"], ["warn", "2 comments unresolved"], ["cmd", "> suggest fix"], ["ok", "suggestion ready"], ["warn", "who merges this?"]],
+            [["cmd", "> scan docs/api.md"], ["dim", "  18 endpoints found"], ["cmd", "> generate client.ts"], ["ok", "wrote 240 lines"], ["cmd", "> lint --fix"], ["dim", "checking 61 files…"], ["ok", "clean"], ["warn", "task finished 9 min ago"]],
+            [["cmd", "> pytest tests/billing"], ["dim", "collecting 52 items…"], ["warn", "FAILED test_refund"], ["cmd", "> read billing/refund.py"], ["dim", "thinking…"], ["cmd", "> patch refund.py"], ["ok", "52 passed"], ["warn", "waiting for approval"]],
+          ];
+          const CHECK = '<svg class="f02-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"><path d="M3 13l6 6L21 5" /></svg>';
+          const BODY_TOP = 6 + 64 + 24; // 边框 + 标题栏 + 上下内边距
+          const PAUSE = 5; // 一行打完后停顿的「字符数」
+
+          const pile = document.getElementById("f02-pile");
+          const wins = WINS.map(([name, left, top, width, height], i) => {
+            const el = document.createElement("div");
+            el.className = "f02-win";
+            el.id = "f02-win-" + i;
+            el.setAttribute("data-layout-ignore", "");
+            el.style.cssText = `left:${left}px;top:${top}px;width:${width}px;height:${height}px;z-index:${i + 1}`;
+            el.innerHTML = `<div class="f02-bar"><span class="f02-sq"></span><span class="f02-sq"></span><span class="f02-sq"></span><span class="f02-name">${name}</span></div><div class="f02-body"></div>`;
+            const body = el.lastChild;
+            const count = Math.floor((height - BODY_TOP) / 50);
+            const rows = [];
+            for (let r = 0; r < count; r += 1) {
+              const row = document.createElement("div");
+              row.className = "f02-ln";
+              row.innerHTML = CHECK + '<span></span><span class="f02-cur"></span>';
+              body.appendChild(row);
+              rows.push({ row, text: row.children[1] });
+            }
+            pile.appendChild(el);
+            return { el, rows };
+          });
+
+          // 第 i 个窗口在曲目时间 T 的画面：已打完的行往上滚，最后一行正在打
+          const draw = (i, T) => {
+            const log = LOGS[i];
+            let left = Math.floor(Math.max(0, T - b(i)) * RATE[i]) + HEAD[i];
+            let index = 0;
+            while (left >= log[index % log.length][1].length + PAUSE) {
+              left -= log[index % log.length][1].length + PAUSE;
+              index += 1;
+            }
+            const { rows } = wins[i];
+            const first = Math.max(0, index - rows.length + 1);
+            rows.forEach(({ row, text }, r) => {
+              const at = first + r;
+              if (at > index) {
+                row.className = "f02-ln";
+                text.textContent = "";
+                return;
+              }
+              const [kind, full] = log[at % log.length];
+              const typing = at === index;
+              row.className = "f02-ln f02-k-" + (typing && left === 0 ? "cmd" : kind) + (typing ? " f02-on" : "");
+              text.textContent = typing ? full.slice(0, left) : full;
+            });
+          };
+          const clock = { T: 0 };
+          const drawAll = () => WINS.forEach((_, i) => draw(i, clock.T));
+          // —— 共用部分到此为止 ——
+
+          const BASE = 3.75; // 本帧在曲目里的起点：打字进度接着 01 往下走
+          const ORANGE = "#e85d26";
+          const EDGE = "#888880";
+          const center = (i) => [WINS[i][1] + WINS[i][3] / 2, WINS[i][2] + WINS[i][4] / 2];
+
+          // t=0：与 01 末画面同一套位置/角度，每个窗口多一层压暗用的墨色罩
+          WINS.forEach((win, i) => {
+            const dim = document.createElement("div");
+            dim.className = "f02-dim";
+            dim.id = "f02-dim-" + i;
+            wins[i].el.appendChild(dim);
+            gsap.set("#f02-win-" + i, { rotation: win[5] });
+          });
+          clock.T = BASE;
+          tl.fromTo(clock, { T: BASE }, { T: BASE + 3.75, duration: 3.75, ease: "none", onUpdate: drawAll }, 0);
+
+          // b0 —— 终端堆压暗
+          tl.fromTo(".f02-dim", { opacity: 0 }, { opacity: 0.66, duration: 0.14, ease: "power2.out" }, 0);
+
+          // 每拍底鼓：整堆抖一下（方向写死，不重复）
+          const KICK = [[-26, 14], [20, -18], [-16, -22], [24, 16], [-28, -10], [14, 24], [-20, 18]];
+          KICK.forEach(([x, y], k) => {
+            tl.fromTo("#f02-pile", { x, y, scale: 1.035 }, { x: 0, y: 0, scale: 1, duration: 0.26, ease: "power3.out", immediateRender: false }, b(k));
+          });
+
+          // 四个问句：后一句硬切顶掉前一句，进场方向各不相同
+          const hold = (id, at) => tl.to(id, { scale: 1.045, duration: BEAT * 2 - 0.3, ease: "none" }, at + 0.3);
+          const show = (id, at) => tl.set(id, { visibility: "visible" }, at);
+          const hide = (id, at) => tl.set(id, { visibility: "hidden" }, at);
+
+          show("#f02-q-0", 0); // b0 从左边撞进来
+          tl.fromTo("#f02-q-0", { xPercent: -100, scale: 1 }, { xPercent: 0, duration: 0.24, ease: "power4.out" }, 0);
+          hold("#f02-q-0", 0);
+
+          hide("#f02-q-0", b(2)); // b2 从右边撞进来
+          show("#f02-q-1", b(2));
+          tl.fromTo("#f02-q-1", { xPercent: 100, scale: 1 }, { xPercent: 0, duration: 0.24, ease: "power4.out" }, b(2));
+          hold("#f02-q-1", b(2));
+
+          hide("#f02-q-1", b(4)); // b4 从上面斜着砸下来
+          show("#f02-q-2", b(4));
+          tl.fromTo("#f02-q-2", { y: -820, rotation: -14, scale: 1 }, { y: 0, rotation: -3, duration: 0.26, ease: "power4.out" }, b(4));
+          hold("#f02-q-2", b(4));
+
+          hide("#f02-q-2", b(6)); // b6 从 3 倍砸到位
+          show("#f02-q-3", b(6));
+          tl.fromTo("#f02-q-3", { scale: 3, rotation: 9 }, { scale: 1, rotation: 2, duration: 0.26, ease: "power4.out" }, b(6));
+          hold("#f02-q-3", b(6));
+
+          // 反拍 b1 / b3 / b5：一个窗口亮起来、边框和标题栏变橙、顶出来一下
+          [[1, 1], [3, 2], [5, 6]].forEach(([beat, i]) => {
+            const id = "#f02-win-" + i;
+            const bar = id + " .f02-bar";
+            const at = b(beat);
+            tl.set(id, { borderColor: ORANGE, zIndex: 30 }, at);
+            tl.set(bar, { backgroundColor: ORANGE }, at);
+            tl.fromTo(id, { scale: 1.16 }, { scale: 1, duration: 0.34, ease: "back.out(2.6)", immediateRender: false }, at);
+            tl.fromTo("#f02-dim-" + i, { opacity: 0 }, { opacity: 0.66, duration: 0.2, ease: "power2.in", immediateRender: false }, at + 0.2);
+            tl.set(id, { borderColor: EDGE, zIndex: i + 1 }, at + 0.4);
+            tl.set(bar, { backgroundColor: "#f0ece5" }, at + 0.4);
+          });
+
+          // 军鼓 fill（3.28125 → 3.75）：十六分频闪 + 全体向中心坍缩
+          const FILL = b(7);
+          const SIX = BEAT / 4;
+          hide("#f02-q-3", FILL);
+          tl.set(".f02-dim", { opacity: 0 }, FILL);
+          // 四步：橙窗墨字（满屏橙）→ 墨底橙框 → 橙底墨窗 → 墨底橙框
+          const INK = "#111111";
+          const STROBE = [
+            { inv: "visible", win: ORANGE, edge: INK, bar: INK, name: ORANGE, fg: INK, mute: INK, hot: INK },
+            { inv: "hidden", win: "#1a1a18", edge: ORANGE, bar: ORANGE, name: INK, fg: "#f0ece5", mute: "#888880", hot: ORANGE },
+            { inv: "visible", win: INK, edge: INK, bar: INK, name: ORANGE, fg: "#f0ece5", mute: "#888880", hot: ORANGE },
+            { inv: "hidden", win: "#1a1a18", edge: ORANGE, bar: ORANGE, name: INK, fg: "#f0ece5", mute: "#888880", hot: ORANGE },
+          ];
+          STROBE.forEach((step, n) => {
+            const at = FILL + n * SIX;
+            tl.set("#f02-inv", { visibility: step.inv }, at);
+            tl.set(".f02-win", { backgroundColor: step.win, borderColor: step.edge }, at);
+            tl.set(".f02-bar", { backgroundColor: step.bar, color: step.name }, at);
+            tl.set(".f02-sq", { backgroundColor: step.name }, at);
+            tl.set("#f02-pile", { "--f02-fg": step.fg, "--f02-mute": step.mute, "--f02-hot": step.hot }, at);
+          });
+          WINS.forEach((win, i) => {
+            const [cx, cy] = center(i);
+            tl.to("#f02-win-" + i, { x: 960 - cx, y: 540 - cy, scale: 0, rotation: win[5] + (i % 2 ? 220 : -220), duration: 0.38, ease: "power2.in" }, FILL + i * 0.008);
+          });
+          show("#f02-dot", FILL + 3 * SIX);
+          tl.fromTo("#f02-dot", { scale: 6, rotation: 90 }, { scale: 1, rotation: 0, duration: 0.1, ease: "power2.out" }, FILL + 3 * SIX);
+
+          // t=0 的画面不能靠时间线上 0 时刻的 set 来出，直接写到元素上
+          gsap.set("#f02-q-0", { visibility: "visible" });
+
+          window.__timelines["02-pain"] = tl;
+          drawAll();
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

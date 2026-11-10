@@ -1,0 +1,397 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f05-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        /* 网格比画布大一圈，整块平移做慢滑（不动 background-position，免得子像素抖） */
+        .f05-grid {
+          position: absolute;
+          left: -160px;
+          top: -160px;
+          width: 2240px;
+          height: 1400px;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f05-stage {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        /* —— 左侧：巨型 15 —— */
+        .f05-numwrap {
+          position: absolute;
+          left: 40px;
+          top: -124px;
+          transform-origin: 0px 170px;
+        }
+        .f05-num {
+          position: absolute;
+          left: 0;
+          top: 0;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 850px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+          color: #e85d26;
+          transform-origin: 0% 55%;
+        }
+        .f05-num-ghost {
+          color: transparent;
+          -webkit-text-stroke: 4px #e85d26;
+        }
+        .f05-cap {
+          position: absolute;
+          left: 48px;
+          top: 668px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 110px;
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          color: #f0ece5;
+          transform-origin: 0% 50%;
+          visibility: hidden;
+        }
+        .f05-tally {
+          position: absolute;
+          border: 2px solid #505048;
+          background: #111111;
+        }
+        .f05-tally-on {
+          position: absolute;
+          inset: -2px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        /* —— 右侧：3×5 芯片阵 —— */
+        .f05-slot {
+          position: absolute;
+          border: 2px solid #505048;
+        }
+        /* 橙条与 ash 节点落位前的空位框，和芯片空位同一套语言，左下角从 t=0 起就有东西 */
+        .f05-dock {
+          position: absolute;
+          top: 918px;
+          height: 164px;
+          border: 2px solid #505048;
+        }
+        .f05-wires {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f05-chip {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 3px solid #e85d26;
+          background: #e85d26;
+          color: #111111;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 44px;
+          line-height: 1;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        /* —— 左下：橙条 + ash 节点 —— */
+        .f05-bar {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          padding: 10px 28px 18px 48px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 120px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f05-node {
+          position: absolute;
+          left: 564px;
+          top: 918px;
+          width: 236px;
+          height: 162px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border: 6px solid #e85d26;
+          background: #111111;
+          color: #f0ece5;
+          visibility: hidden;
+        }
+        .f05-node-logo {
+          display: block;
+          width: 56px;
+          height: 56px;
+          color: #e85d26;
+        }
+        .f05-node-name {
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 80px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          padding-bottom: 10px;
+        }
+        .f05-port {
+          position: absolute;
+          left: 800px;
+          top: 984px;
+          width: 30px;
+          height: 30px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f05-border {
+          position: absolute;
+          inset: 0;
+          border: 14px solid #e85d26;
+          box-sizing: border-box;
+          opacity: 0;
+        }
+      </style>
+
+      <div id="root" data-composition-id="05-executors" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f05-bg" id="f05-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f05-grid" id="f05-grid"></div>
+        </div>
+
+        <div class="f05-stage" id="f05-stage">
+          <div id="f05-slots"></div>
+          <div class="f05-dock" style="left: -2px; width: 548px"></div>
+          <div class="f05-dock" style="left: 564px; width: 236px"></div>
+          <svg class="f05-wires" id="f05-wires" viewBox="0 0 1920 1080" fill="none"></svg>
+
+          <div class="f05-numwrap" id="f05-numwrap">
+            <div class="f05-num f05-num-ghost" id="f05-ghost">1</div>
+            <div class="f05-num" id="f05-num">1</div>
+          </div>
+          <div class="f05-cap" id="f05-cap">个 CLI 执行器</div>
+          <div id="f05-tallies"></div>
+
+          <div id="f05-chips"></div>
+
+          <div class="f05-bar" id="f05-bar">一个入口</div>
+          <div class="f05-node" id="f05-node">
+            <svg class="f05-node-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 18H3l2-18" /></svg>
+            <span class="f05-node-name">ash</span>
+          </div>
+          <div class="f05-port" id="f05-port"></div>
+        </div>
+
+        <div class="f05-border" id="f05-border"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+
+          const ORANGE = "#e85d26";
+          const INK = "#111111";
+          const CREAM = "#f0ece5";
+
+          const names = ["claude", "codex", "antigravity", "gemini", "opencode", "trae", "grok", "kimi", "cursor", "qwen", "qoder", "copilot", "kiro", "kilo", "pi"];
+          // 每个芯片的飞入起点（相对落位的偏移 x, y 与旋转角），写死的表，不用随机数
+          const dirs = [
+            [900, 0, 8], [0, -620, -10], [760, 520, 12], [-880, 0, -8], [0, 700, 10],
+            [820, -480, -12], [-700, 460, 9], [0, -700, 7], [960, 0, -9], [-760, -420, 11],
+            [0, 760, -8], [880, 380, 10], [-900, 0, 8], [640, -640, -11], [0, -820, 6],
+          ];
+
+          // 芯片阵几何：3 列 × 5 行
+          const GX = 840, GY = 48, CW = 324, CH = 144, PX = 363, PY = 210;
+          const PORT = { x: 815, y: 999 };
+          const cell = (i) => {
+            const c = i % 3, r = Math.floor(i / 3);
+            return { c, r, x: GX + c * PX, y: GY + r * PY };
+          };
+
+          const slotHost = document.getElementById("f05-slots");
+          const chipHost = document.getElementById("f05-chips");
+          const tallyHost = document.getElementById("f05-tallies");
+          let wires = "";
+          names.forEach((name, i) => {
+            const { x, y } = cell(i);
+            const box = "left:" + x + "px;top:" + y + "px;width:" + CW + "px;height:" + CH + "px";
+            const slot = document.createElement("div");
+            slot.className = "f05-slot";
+            slot.style.cssText = box;
+            slotHost.appendChild(slot);
+
+            const chip = document.createElement("div");
+            chip.className = "f05-chip";
+            chip.id = "f05-chip-" + i;
+            chip.style.cssText = box;
+            chip.textContent = name;
+            chipHost.appendChild(chip);
+
+            const tally = document.createElement("div");
+            tally.className = "f05-tally";
+            tally.style.cssText = "left:" + (48 + i * 51) + "px;top:826px;width:38px;height:38px";
+            const on = document.createElement("div");
+            on.className = "f05-tally-on";
+            on.id = "f05-tally-" + i;
+            tally.appendChild(on);
+            tallyHost.appendChild(tally);
+
+            // 连线：从芯片中心画向 ash 节点的接口，用 dashoffset 从芯片一端画出
+            const cx = x + CW / 2, cy = y + CH / 2;
+            const len = Math.ceil(Math.hypot(cx - PORT.x, cy - PORT.y)) + 2;
+            wires +=
+              '<line id="f05-wire-' + i + '" x1="' + cx + '" y1="' + cy + '" x2="' + PORT.x + '" y2="' + PORT.y +
+              '" stroke="' + ORANGE + '" stroke-width="5" stroke-dasharray="' + len +
+              '" style="stroke-dashoffset:' + len + 'px" data-len="' + len + '"></line>';
+          });
+          document.getElementById("f05-wires").innerHTML = wires;
+
+          const show = (id, at) => tl.set(id, { visibility: "visible" }, at);
+          // 非 t=0 的 fromTo 一律不在构建时刷起始值
+          const hit = (id, from, to, at) => tl.fromTo(id, from, { ...to, immediateRender: false }, at);
+          // 整屏震动：写死的衰减表，逐步跳变
+          const SHAKE = [1, -0.8, 0.6, -0.42, 0.25, -0.12, 0];
+          const shake = (at, amp) =>
+            SHAKE.forEach((k, i) => tl.set("#f05-stage", { x: k * amp, y: k * amp * (i % 2 ? 0.7 : -0.5) }, at + i * 0.027));
+          // 芯片闪橙：硬切成橙底墨字，hold 秒后硬切回墨底（不做颜色过渡，免得中间一段发脏）；endBorder 是回落后的边框色
+          const chipInk = (i, at, border) => tl.set("#f05-chip-" + i, { backgroundColor: INK, color: CREAM, borderColor: border }, at);
+          const flashChip = (i, at, hold, endBorder) => {
+            tl.set("#f05-chip-" + i, { backgroundColor: ORANGE, color: INK, borderColor: ORANGE }, at);
+            chipInk(i, at + hold, endBorder);
+          };
+
+          // 背景网格全程匀速慢滑
+          tl.fromTo("#f05-grid", { x: 0, y: 0 }, { x: -110, y: 70, duration: b(8), ease: "none" }, 0);
+
+          // b0 —— 「15」从 1 数到 15 砸定，到位整屏一震
+          const counter = { v: 1 };
+          const numEl = document.getElementById("f05-num");
+          const ghostEl = document.getElementById("f05-ghost");
+          tl.to(counter, {
+            v: 15,
+            duration: 0.3,
+            ease: "none",
+            onUpdate: function () {
+              const text = String(Math.min(15, Math.max(1, Math.round(counter.v))));
+              numEl.textContent = text;
+              ghostEl.textContent = text;
+            },
+          }, 0);
+          tl.fromTo("#f05-numwrap", { scale: 1.3 }, { scale: 1, duration: 0.3, ease: "power3.in" }, 0);
+          tl.fromTo("#f05-border", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
+          shake(0.3, 30);
+          hit("#f05-num", { scale: 0.94 }, { scale: 1, duration: 0.16, ease: "back.out(3)" }, 0.3);
+
+          // 每拍：描边副本错位回弹（拍间一直在晃），「15」随拍顶一下
+          const ghostFrom = [[0, 0], [-34, 40], [52, 30], [-40, -30], [70, 70], [-36, 44], [50, -34], [64, 64]];
+          hit("#f05-ghost", { x: 60, y: 60 }, { x: 16, y: 16, duration: 0.16, ease: "elastic.out(1, 0.45)" }, 0.3);
+          for (let k = 1; k < 8; k++) {
+            hit("#f05-ghost", { x: ghostFrom[k][0], y: ghostFrom[k][1] }, { x: 16, y: 16, duration: BEAT * 0.96, ease: "elastic.out(1.1, 0.32)" }, b(k));
+          }
+          [1, 2, 3, 5, 6].forEach((k) => hit("#f05-num", { scale: 1.045 }, { scale: 1, duration: 0.28, ease: "power3.out" }, b(k)));
+          [2, 3, 5].forEach((k) => shake(b(k), 7));
+
+          // b1 —— 「个 CLI 执行器」砸入
+          show("#f05-cap", b(1));
+          hit("#f05-cap", { scale: 1.7, y: 60 }, { scale: 1, y: 0, duration: 0.26, ease: "power4.out" }, b(1));
+          shake(b(1) + 0.02, 10);
+
+          // b0–b7 —— 芯片每拍两个（拍点一个、八分点一个），各从不同方向飞入，到位闪橙
+          names.forEach((_, i) => {
+            const at = b(i / 2);
+            const id = "#f05-chip-" + i;
+            const [dx, dy, rot] = dirs[i];
+            // 第一个芯片 t=0 就在画面里：0 时刻的 set 在 seek(0) 时不会被渲染，直接写进样式
+            if (i === 0) document.getElementById("f05-chip-0").style.visibility = "visible";
+            else show(id, at);
+            tl.fromTo(id, { x: dx, y: dy, rotation: rot, scale: 1.35 }, { x: 0, y: 0, rotation: 0, scale: 1, duration: 0.2, ease: "power4.out" }, at);
+            chipInk(i, at + 0.14, CREAM);
+            // 计数格跟着亮一格
+            show("#f05-tally-" + i, at + 0.06);
+            tl.fromTo("#f05-tally-" + i, { scale: 2.4 }, { scale: 1, duration: 0.16, ease: "power2.out" }, at + 0.06);
+          });
+
+          // b4 —— 第二小节重拍：整屏顶一下，「15」再砸一次，已到位的芯片一起闪
+          hit("#f05-stage", { scale: 1.045 }, { scale: 1, duration: 0.32, ease: "power3.out" }, b(4));
+          hit("#f05-num", { scale: 1.1 }, { scale: 1, duration: 0.32, ease: "power4.out" }, b(4));
+          hit("#f05-border", { opacity: 1 }, { opacity: 0, duration: 0.34, ease: "power2.out" }, b(4));
+          for (let i = 0; i < 8; i++) {
+            flashChip(i, b(4), 0.15, CREAM);
+            hit("#f05-tally-" + i, { scale: 1.9 }, { scale: 1, duration: 0.26, ease: "power2.out" }, b(4));
+          }
+          hit("#f05-cap", { x: 26 }, { x: 0, duration: 0.3, ease: "power3.out" }, b(4));
+
+          // b6 —— 橙条「一个入口」砸入；反拍 ash 节点弹出
+          show("#f05-bar", b(6));
+          hit("#f05-bar", { xPercent: -100 }, { xPercent: 0, duration: 0.24, ease: "power4.out" }, b(6));
+          shake(b(6) + 0.08, 14);
+          show("#f05-node", b(6.5));
+          hit("#f05-node", { scale: 0.3, rotation: -12 }, { scale: 1, rotation: 0, duration: 0.22, ease: "back.out(2.4)" }, b(6.5));
+
+          // b7 —— 第 15 个到位，橙色从左上扫到右下，连线汇向 ash
+          hit("#f05-num", { scale: 1.07 }, { scale: 1, duration: 0.3, ease: "power4.out" }, b(7));
+          hit("#f05-bar", { scale: 1.06 }, { scale: 1, duration: 0.26, ease: "power3.out" }, b(7));
+          hit("#f05-border", { opacity: 1 }, { opacity: 0, duration: 0.36, ease: "power2.out" }, b(7));
+          const SWEEP = b(7) + 0.07;
+          const STEP = 0.025; // 相邻对角线的错峰（远小于一个十六分），整波 6 级
+          names.forEach((_, i) => {
+            const { c, r } = cell(i);
+            const at = SWEEP + (c + r) * STEP;
+            flashChip(i, at, 0.09, ORANGE);
+            hit("#f05-chip-" + i, { scale: 1.12 }, { scale: 1, duration: 0.16, ease: "power2.out" }, at);
+            tl.to("#f05-wire-" + i, { strokeDashoffset: 0, duration: 0.15, ease: "power2.out" }, at);
+          });
+          show("#f05-port", SWEEP + 0.12);
+          hit("#f05-port", { scale: 3.2 }, { scale: 1, duration: 0.2, ease: "power3.out" }, SWEEP + 0.12);
+          // 线到齐，节点硬闪一下橙底墨字
+          const ARRIVE = SWEEP + 6 * STEP + 0.07;
+          tl.set("#f05-node", { backgroundColor: ORANGE, color: INK }, ARRIVE);
+          tl.set(".f05-node-logo", { color: INK }, ARRIVE);
+          tl.set("#f05-node", { backgroundColor: INK, color: CREAM }, ARRIVE + 0.08);
+          tl.set(".f05-node-logo", { color: ORANGE }, ARRIVE + 0.08);
+          hit("#f05-node", { scale: 1.18 }, { scale: 1, duration: 0.14, ease: "power2.out" }, ARRIVE);
+          shake(ARRIVE, 8);
+
+          window.__timelines["05-executors"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

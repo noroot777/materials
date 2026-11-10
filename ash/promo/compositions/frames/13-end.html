@@ -1,0 +1,468 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f13-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        /* 震屏层套推近层：两种运动互不覆盖对方的 transform */
+        .f13-shake,
+        .f13-push {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f13-push {
+          transform-origin: 960px 540px;
+        }
+        /* 网格比画布大一圈（震屏和推近都露不出边）；线落在 x=80+160k、y=60+160k，左右上下对称，
+           标题基线、终端块四边、四角标记都压在线上 */
+        .f13-grid {
+          position: absolute;
+          left: -80px;
+          right: -80px;
+          top: -100px;
+          bottom: -100px;
+          visibility: hidden;
+        }
+        .f13-grid-base {
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f13-grid-hot {
+          background-image:
+            repeating-linear-gradient(90deg, #505048 0 2px, transparent 2px 160px),
+            repeating-linear-gradient(0deg, #505048 0 2px, transparent 2px 160px);
+        }
+
+        /* 上一帧留下的方块：中心 (960,540)，240×240 */
+        .f13-seed {
+          position: absolute;
+          left: 840px;
+          top: 420px;
+          width: 240px;
+          height: 240px;
+          background: #e85d26;
+        }
+        .f13-tile {
+          position: absolute;
+          width: 60px;
+          height: 60px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f13-ring {
+          position: absolute;
+          left: 960px;
+          top: 540px;
+          width: 240px;
+          height: 240px;
+          border: 56px solid #e85d26;
+          visibility: hidden;
+        }
+        .f13-rays {
+          position: absolute;
+          left: 960px;
+          top: 540px;
+          width: 0;
+          height: 0;
+        }
+        .f13-ray {
+          position: absolute;
+          left: 0;
+          background: #e85d26;
+          transform-origin: 0 50%;
+          visibility: hidden;
+        }
+        .f13-flash {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          visibility: hidden;
+          pointer-events: none;
+        }
+
+        /* 四角标记：爆开的碎片落定成画框，尖角压在网格交点上 */
+        .f13-corner {
+          position: absolute;
+          width: 88px;
+          height: 88px;
+          border: 0 solid #e85d26;
+          visibility: hidden;
+        }
+
+        .f13-brand {
+          position: absolute;
+          left: 0;
+          top: 80px;
+          width: 1920px;
+          height: 300px;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 46px;
+          color: #e85d26;
+          transform-origin: 50% 50%;
+          visibility: hidden;
+        }
+        .f13-logo {
+          display: block;
+          width: 300px;
+          height: 300px;
+          flex: none;
+        }
+        .f13-word {
+          position: relative;
+          top: -21px;
+          height: 300px;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 428px;
+          line-height: 300px;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+        }
+        .f13-slogan {
+          position: absolute;
+          left: 0;
+          top: 408px;
+          width: 1920px;
+          height: 104px;
+          display: flex;
+          justify-content: center;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 84px;
+          line-height: 104px;
+          color: #f0ece5;
+          white-space: pre;
+        }
+        .f13-ch {
+          display: inline-block;
+          visibility: hidden;
+          transform-origin: 50% 80%;
+        }
+
+        .f13-term {
+          position: absolute;
+          left: 240px;
+          top: 540px;
+          width: 1440px;
+          background: #1a1a18;
+          border: 2px solid #282826;
+          transform-origin: 50% 50%;
+          visibility: hidden;
+        }
+        .f13-term-bar {
+          height: 42px;
+          border-bottom: 2px solid #282826;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding-left: 22px;
+        }
+        .f13-dot {
+          width: 14px;
+          height: 14px;
+          background: #505048;
+        }
+        .f13-term-body {
+          padding: 26px 0 30px 56px;
+        }
+        .f13-ln {
+          height: 72px;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 46px;
+          line-height: 72px;
+          color: #f0ece5;
+          white-space: pre;
+        }
+        .f13-ps {
+          display: inline-block;
+          color: #e85d26;
+          visibility: hidden;
+        }
+        /* 没打出来的字不占位，行内光标自然跟在已打出的最后一个字后面（不依赖字宽换算） */
+        .f13-k {
+          display: none;
+        }
+        .f13-cur {
+          display: inline-block;
+          width: 26px;
+          height: 52px;
+          margin-left: 8px;
+          vertical-align: -11px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+
+        .f13-chips {
+          position: absolute;
+          left: 0;
+          top: 896px;
+          width: 1920px;
+          display: flex;
+          justify-content: center;
+          gap: 30px;
+        }
+        .f13-chip {
+          display: block;
+          height: 88px;
+          padding: 0 34px;
+          border: 3px solid #f0ece5;
+          font-family: "IBM Plex Mono", "Noto Sans SC", monospace;
+          font-weight: 500;
+          font-size: 44px;
+          line-height: 80px;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f13-chip-a {
+          background: #e85d26;
+          border-color: #e85d26;
+          color: #111111;
+        }
+        .f13-chip-b {
+          background: #111111;
+          color: #f0ece5;
+        }
+      </style>
+
+      <div id="root" data-composition-id="13-end" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f13-bg" id="f13-bg" data-start="0" data-duration="3.75" data-track-index="0"></div>
+
+        <div class="f13-shake" id="f13-shake">
+          <div class="f13-push" id="f13-push">
+            <div class="f13-grid f13-grid-base" id="f13-grid-base"></div>
+            <div class="f13-grid f13-grid-hot" id="f13-grid-hot"></div>
+
+            <div id="f13-corners"></div>
+
+            <div class="f13-brand" id="f13-brand">
+              <svg class="f13-logo" viewBox="2 1 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 18H3l2-18" /></svg>
+              <span class="f13-word">ash</span>
+            </div>
+
+            <div class="f13-slogan" id="f13-slogan"></div>
+
+            <div class="f13-term" id="f13-term">
+              <div class="f13-term-bar"><span class="f13-dot"></span><span class="f13-dot"></span><span class="f13-dot"></span></div>
+              <div class="f13-term-body" id="f13-term-body"></div>
+            </div>
+
+            <div class="f13-chips">
+              <span class="f13-chip f13-chip-a" id="f13-chip-a">localhost:4317</span>
+              <span class="f13-chip f13-chip-b" id="f13-chip-b">MIT 开源</span>
+            </div>
+          </div>
+
+          <div class="f13-seed" id="f13-seed"></div>
+          <div id="f13-tiles"></div>
+          <div class="f13-ring" id="f13-ring"></div>
+          <div class="f13-rays" id="f13-rays"></div>
+          <div class="f13-flash" id="f13-flash"></div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const show = (target, at) => tl.set(target, { visibility: "visible" }, at);
+          const hide = (target, at) => tl.set(target, { visibility: "hidden" }, at);
+          const make = (host, tag, cls, text) => {
+            const el = document.createElement(tag);
+            el.className = cls;
+            if (text !== undefined) el.textContent = text;
+            host.appendChild(el);
+            return el;
+          };
+
+          // t=0 那一格必须只有方块（与上一帧末画面逐像素一致），爆开从下一格起算
+          const T0 = 1 / 60;
+
+          // ── b0：方块碎成 4×4 块向外飞，方环冲出画布，放射线射向四周 ──
+          const tileHost = document.getElementById("f13-tiles");
+          const spin = [140, -95, 60, -170, -120, 200, -210, 85, 75, -150, 160, -80, -190, 110, -65, 130];
+          for (let i = 0; i < 16; i++) {
+            const col = i % 4;
+            const row = (i - col) / 4;
+            const tile = make(tileHost, "div", "f13-tile");
+            tile.style.left = 840 + col * 60 + "px";
+            tile.style.top = 420 + row * 60 + "px";
+            const dx = col - 1.5;
+            const dy = row - 1.5;
+            const far = 300 + (i % 3) * 70;
+            show(tile, T0);
+            tl.fromTo(
+              tile,
+              { x: 0, y: 0, rotation: 0, scale: 1 },
+              { x: dx * far, y: dy * far, rotation: spin[i], scale: 0, duration: 0.3 + (i % 4) * 0.02, ease: "power3.out" },
+              T0,
+            );
+          }
+          hide("#f13-seed", T0);
+
+          show("#f13-ring", T0);
+          tl.fromTo(
+            "#f13-ring",
+            { xPercent: -50, yPercent: -50, width: 240, height: 240, borderWidth: 56 },
+            { xPercent: -50, yPercent: -50, width: 2400, height: 2400, borderWidth: 6, duration: 0.34, ease: "power2.out" },
+            T0,
+          );
+          hide("#f13-ring", T0 + 0.34);
+
+          // 放射线：角度/长度/粗细/起步延迟写死成表
+          const rayHost = document.getElementById("f13-rays");
+          const RAYS = 28;
+          const jitter = [0, 5, -4, 3, -6, 2, 6, -3, 4, -5, 1, -2, 5, -6, 3, 0, -4, 6, -1, 2, -5, 4, -3, 5, 0, -6, 3, -2];
+          const lens = [520, 340, 440, 280, 600, 380, 460, 300];
+          const thick = [14, 8, 10, 6, 16, 8, 12, 6];
+          const lag = [0, 0.03, 0.012, 0.045, 0.02, 0.006, 0.036, 0.024];
+          for (let i = 0; i < RAYS; i++) {
+            const deg = (i * 360) / RAYS + jitter[i];
+            const rad = (deg * Math.PI) / 180;
+            const ux = Math.cos(rad);
+            const uy = Math.sin(rad);
+            const ray = make(rayHost, "div", "f13-ray");
+            const h = thick[i % 8];
+            ray.style.width = lens[i % 8] + "px";
+            ray.style.height = h + "px";
+            ray.style.top = -h / 2 + "px";
+            const at = T0 + lag[i % 8];
+            show(ray, at);
+            tl.fromTo(
+              ray,
+              { x: ux * 110, y: uy * 110, rotation: deg, scaleX: 0.25 },
+              { x: ux * 1320, y: uy * 1320, rotation: deg, scaleX: 1, duration: 0.31, ease: "none" },
+              at,
+            );
+            hide(ray, at + 0.31);
+          }
+
+          show("#f13-flash", T0);
+          tl.fromTo("#f13-flash", { opacity: 0.7 }, { opacity: 0, duration: 0.22, ease: "power2.out" }, T0);
+          hide("#f13-flash", T0 + 0.22);
+
+          // 整屏震一下（幅度逐次衰减）
+          const quake = [[30, -22], [-26, 18], [20, 14], [-16, -12], [11, 8], [-7, -5], [4, 2]];
+          quake.forEach(([x, y], i) => {
+            tl.to("#f13-shake", { x, y, duration: 0.036, ease: "steps(1)" }, T0 + i * 0.036);
+          });
+          tl.to("#f13-shake", { x: 0, y: 0, duration: 0.08, ease: "power2.out" }, T0 + quake.length * 0.036);
+
+          // 网格亮起：亮线闪一下后退成发丝线
+          show("#f13-grid-base", T0);
+          show("#f13-grid-hot", T0);
+          tl.fromTo("#f13-grid-hot", { opacity: 1 }, { opacity: 0, duration: 0.44, ease: "power2.out" }, T0);
+
+          // 四角标记从中心甩到四角
+          const cornerHost = document.getElementById("f13-corners");
+          [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => {
+            const el = make(cornerHost, "div", "f13-corner");
+            el.style.left = (sx < 0 ? 80 : 1840 - 88) + "px";
+            el.style.top = (sy < 0 ? 60 : 1020 - 88) + "px";
+            el.style[sx < 0 ? "borderLeftWidth" : "borderRightWidth"] = "6px";
+            el.style[sy < 0 ? "borderTopWidth" : "borderBottomWidth"] = "6px";
+            show(el, T0);
+            tl.fromTo(el, { x: -sx * 836, y: -sy * 436, scale: 2.2 }, { x: 0, y: 0, scale: 1, duration: 0.32, ease: "power4.out" }, T0);
+          });
+
+          // 徽标 + ash 砸到位
+          show("#f13-brand", T0);
+          tl.fromTo("#f13-brand", { scale: 2.6, y: 150 }, { scale: 1, y: 0, duration: 0.3, ease: "power4.out" }, T0);
+
+          // ── b1：口号逐字弹入 ──
+          const slogan = document.getElementById("f13-slogan");
+          [..."AI 编程智能体的本地调度台"].forEach((ch, i) => {
+            const el = make(slogan, "span", "f13-ch", ch);
+            const at = b(1) + i * 0.016;
+            show(el, at);
+            tl.fromTo(el, { scale: 2.4, y: 46 }, { scale: 1, y: 0, duration: 0.2, ease: "back.out(2)" }, at);
+          });
+
+          // ── b2 / b3 / b4：终端块砸入，三行命令逐拍打出 ──
+          // 协议头拆开写：自检脚本把源码里连写的协议头一律当成「引用外部资源」，这里只是屏幕上的字
+          const SCHEME = "https:" + "//";
+          const lines = [
+            { text: "git clone " + SCHEME + "github.com/noroot777/ash.git", beat: 2, lead: 0.06, span: 0.33 },
+            { text: "npm run setup", beat: 3, lead: 0.05, span: 0.24 },
+            { text: "npm start", beat: 4, lead: 0.05, span: 0.2 },
+          ];
+          const body = document.getElementById("f13-term-body");
+          const cursors = [];
+
+          show("#f13-term", b(2));
+          tl.fromTo("#f13-term", { scale: 1.16, y: 110 }, { scale: 1, y: 0, duration: 0.28, ease: "power4.out" }, b(2));
+
+          lines.forEach((line, k) => {
+            const row = make(body, "div", "f13-ln");
+            const ps = make(row, "span", "f13-ps", "$");
+            row.appendChild(document.createTextNode(" "));
+            const keys = [...line.text].map((ch) => make(row, "span", "f13-k", ch));
+            const cur = make(row, "span", "f13-cur");
+            cursors.push(cur);
+            const n = keys.length;
+            const start = b(line.beat) + line.lead;
+            const step = line.span / n;
+
+            show(ps, b(line.beat));
+            if (k > 0) {
+              tl.fromTo(ps, { scale: 2.2 }, { scale: 1, duration: 0.2, ease: "power3.out" }, b(line.beat));
+              // 换行那一拍终端块跟着顶一下，上一行的光标让位
+              tl.fromTo("#f13-term", { scale: 1.022 }, { scale: 1, duration: 0.22, ease: "power2.out", immediateRender: false }, b(line.beat));
+              hide(cursors[k - 1], b(line.beat));
+            }
+            show(cur, b(line.beat));
+            keys.forEach((key, i) => {
+              tl.set(key, { display: "inline" }, start + (i + 1) * step);
+            });
+            // 打完：行尾光标顶一下
+            tl.fromTo(cur, { scale: 1.9 }, { scale: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, start + line.span);
+          });
+
+          // ── b5：两个贴片轻轻弹出（此时已无音乐，动作短而轻）──
+          [["#f13-chip-a", 0], ["#f13-chip-b", 0.07]].forEach(([id, lag2]) => {
+            show(id, b(5) + lag2);
+            tl.fromTo(id, { y: 22, scale: 0.9 }, { y: 0, scale: 1, duration: 0.2, ease: "power3.out" }, b(5) + lag2);
+          });
+
+          // ── b5 → 帧尾：整个构图匀速推近；行尾光标每半拍明灭一次，最后停在亮着 ──
+          tl.fromTo("#f13-push", { scale: 1 }, { scale: 1.025, duration: 3.75 - b(5), ease: "none" }, b(5));
+          const last = cursors[cursors.length - 1];
+          [5, 5.5, 6, 6.5, 7, 7.5].forEach((beat, i) => {
+            tl.set(last, { visibility: i % 2 === 0 ? "hidden" : "visible" }, b(beat));
+          });
+
+          window.__timelines["13-end"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

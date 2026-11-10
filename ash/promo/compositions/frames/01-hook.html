@@ -1,0 +1,333 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f01-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f01-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f01-pile {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 50% 50%;
+        }
+        .f01-win {
+          position: absolute;
+          background: #1a1a18;
+          border: 3px solid #888880;
+          overflow: hidden;
+          visibility: hidden;
+          will-change: transform;
+        }
+        .f01-bar {
+          height: 64px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 0 20px;
+          background: #f0ece5;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 36px;
+          color: #111111;
+        }
+        .f01-sq {
+          width: 16px;
+          height: 16px;
+          background: #111111;
+          flex: none;
+        }
+        .f01-name {
+          margin-left: 12px;
+        }
+        .f01-body {
+          padding: 12px 22px;
+        }
+        .f01-ln {
+          display: flex;
+          align-items: center;
+          height: 50px;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 34px;
+          line-height: 50px;
+          white-space: pre;
+          color: #f0ece5;
+        }
+        .f01-chk {
+          display: none;
+          flex: none;
+          width: 30px;
+          height: 30px;
+          margin-right: 12px;
+          color: #e85d26;
+        }
+        .f01-k-ok .f01-chk {
+          display: block;
+        }
+        .f01-k-dim {
+          color: #888880;
+        }
+        .f01-k-warn {
+          color: #e85d26;
+        }
+        .f01-cur {
+          flex: none;
+          width: 18px;
+          height: 36px;
+          margin-left: 4px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f01-on .f01-cur {
+          visibility: inherit;
+        }
+        .f01-count {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 400px;
+          height: 400px;
+          background: #111111;
+          border-left: 8px solid #e85d26;
+          border-bottom: 8px solid #e85d26;
+          color: #e85d26;
+          transform-origin: 100% 0;
+          z-index: 50;
+        }
+        .f01-digit {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 420px;
+          line-height: 380px;
+          letter-spacing: -0.03em;
+          text-align: center;
+          visibility: hidden;
+        }
+        .f01-title {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          padding: 8px 40px 20px 56px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 132px;
+          line-height: 1.14;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          transform-origin: 0 100%;
+          visibility: hidden;
+          z-index: 40;
+        }
+      </style>
+
+      <div id="root" data-composition-id="01-hook" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f01-bg" id="f01-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f01-grid"></div>
+        </div>
+        <div class="f01-pile" id="f01-pile"></div>
+        <div class="f01-count" id="f01-count"></div>
+        <div class="f01-title" id="f01-title">你开了几个终端？</div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+
+          // —— 以下三张表与 02-pain.html 逐字相同（两帧共用同一堆窗口）——
+          // 窗口终态：[cli, left, top, width, height, 角度]
+          const WINS = [
+            ["claude", 400, 380, 960, 520, -3],
+            ["codex", 1060, 640, 880, 480, 4],
+            ["gemini", -40, 10, 860, 400, -5],
+            ["cursor", 1140, -20, 800, 500, -6],
+            ["opencode", 520, 12, 720, 350, 2],
+            ["copilot", -50, 520, 840, 520, 6],
+            ["qwen", 560, 700, 800, 420, -4],
+            ["kimi", 1250, 270, 720, 370, 7],
+          ];
+          // 每个窗口的打字速度（字符/秒）与砸入时已经打出的字符数；从它砸入的那一拍起算，跨帧连续
+          const RATE = [52, 44, 48, 40, 56, 46, 50, 42];
+          const HEAD = [30, 40, 70, 55, 90, 60, 80, 50];
+          const LOGS = [
+            [["cmd", "> reading src/checkout.ts"], ["dim", "  412 lines, 3 imports"], ["cmd", "> edit src/pay/applepay.ts"], ["ok", "patched 2 hunks"], ["cmd", "> npm test"], ["dim", "running tests…"], ["ok", "38 passed"], ["warn", "waiting for approval"], ["cmd", "> git diff --stat"], ["dim", "  4 files changed, +119 -12"], ["warn", "still waiting for approval"]],
+            [["cmd", "> rg \"exportCsv\" server/"], ["dim", "  7 matches in 3 files"], ["cmd", "> apply_patch export.ts"], ["ok", "1 file updated"], ["dim", "running tests…"], ["warn", "2 failed, 41 passed"], ["cmd", "> retry with --bail"], ["dim", "thinking…"], ["warn", "needs your input"]],
+            [["cmd", "> read web/theme/tokens.css"], ["dim", "  contrast 3.1 : 1"], ["cmd", "> write tokens.css"], ["ok", "saved"], ["cmd", "> npm run build"], ["dim", "bundling 214 modules…"], ["ok", "built in 4.2s"], ["warn", "idle for 6 min"]],
+            [["cmd", "> open auth/passkey.ts"], ["dim", "  indexing workspace…"], ["cmd", "> refactor verifyAssertion"], ["ok", "3 edits applied"], ["cmd", "> tsc --noEmit"], ["warn", "error TS2345 at line 88"], ["dim", "fixing…"], ["ok", "0 errors"], ["warn", "waiting for approval"]],
+            [["cmd", "> plan: split queue.ts"], ["dim", "  step 1 of 5"], ["cmd", "> mv queue.ts queue/index.ts"], ["ok", "moved"], ["cmd", "> update 12 imports"], ["dim", "  step 3 of 5"], ["ok", "12 imports rewritten"], ["dim", "running tests…"], ["warn", "merge conflict in main"]],
+            [["cmd", "> gh pr checkout 412"], ["dim", "  switched to pr-412"], ["cmd", "> review diff"], ["dim", "  +86 -31 in 5 files"], ["warn", "2 comments unresolved"], ["cmd", "> suggest fix"], ["ok", "suggestion ready"], ["warn", "who merges this?"]],
+            [["cmd", "> scan docs/api.md"], ["dim", "  18 endpoints found"], ["cmd", "> generate client.ts"], ["ok", "wrote 240 lines"], ["cmd", "> lint --fix"], ["dim", "checking 61 files…"], ["ok", "clean"], ["warn", "task finished 9 min ago"]],
+            [["cmd", "> pytest tests/billing"], ["dim", "collecting 52 items…"], ["warn", "FAILED test_refund"], ["cmd", "> read billing/refund.py"], ["dim", "thinking…"], ["cmd", "> patch refund.py"], ["ok", "52 passed"], ["warn", "waiting for approval"]],
+          ];
+          const CHECK = '<svg class="f01-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"><path d="M3 13l6 6L21 5" /></svg>';
+          const BODY_TOP = 6 + 64 + 24; // 边框 + 标题栏 + 上下内边距
+          const PAUSE = 5; // 一行打完后停顿的「字符数」
+
+          const pile = document.getElementById("f01-pile");
+          const wins = WINS.map(([name, left, top, width, height], i) => {
+            const el = document.createElement("div");
+            el.className = "f01-win";
+            el.id = "f01-win-" + i;
+            el.setAttribute("data-layout-ignore", "");
+            el.style.cssText = `left:${left}px;top:${top}px;width:${width}px;height:${height}px;z-index:${i + 1}`;
+            el.innerHTML = `<div class="f01-bar"><span class="f01-sq"></span><span class="f01-sq"></span><span class="f01-sq"></span><span class="f01-name">${name}</span></div><div class="f01-body"></div>`;
+            const body = el.lastChild;
+            const count = Math.floor((height - BODY_TOP) / 50);
+            const rows = [];
+            for (let r = 0; r < count; r += 1) {
+              const row = document.createElement("div");
+              row.className = "f01-ln";
+              row.innerHTML = CHECK + '<span></span><span class="f01-cur"></span>';
+              body.appendChild(row);
+              rows.push({ row, text: row.children[1] });
+            }
+            pile.appendChild(el);
+            return { el, rows };
+          });
+
+          // 第 i 个窗口在曲目时间 T 的画面：已打完的行往上滚，最后一行正在打
+          const draw = (i, T) => {
+            const log = LOGS[i];
+            let left = Math.floor(Math.max(0, T - b(i)) * RATE[i]) + HEAD[i];
+            let index = 0;
+            while (left >= log[index % log.length][1].length + PAUSE) {
+              left -= log[index % log.length][1].length + PAUSE;
+              index += 1;
+            }
+            const { rows } = wins[i];
+            const first = Math.max(0, index - rows.length + 1);
+            rows.forEach(({ row, text }, r) => {
+              const at = first + r;
+              if (at > index) {
+                row.className = "f01-ln";
+                text.textContent = "";
+                return;
+              }
+              const [kind, full] = log[at % log.length];
+              const typing = at === index;
+              row.className = "f01-ln f01-k-" + (typing && left === 0 ? "cmd" : kind) + (typing ? " f01-on" : "");
+              text.textContent = typing ? full.slice(0, left) : full;
+            });
+          };
+          const clock = { T: 0 };
+          const drawAll = () => WINS.forEach((_, i) => draw(i, clock.T));
+          // —— 共用部分到此为止 ——
+
+          // 进场起点：[x 偏移, y 偏移, 缩放, 相对终态的角度]
+          const ENTER = [
+            [0, 0, 1.7, -12],
+            [1000, 560, 1, 14],
+            [-1000, -560, 1, -16],
+            [0, 0, 1.6, 16],
+            [0, -720, 1, -9],
+            [-1050, 320, 1, 14],
+            [0, 0, 1.6, -12],
+            [900, 0, 1.25, 9],
+          ];
+          const center = (i) => [WINS[i][1] + WINS[i][3] / 2, WINS[i][2] + WINS[i][4] / 2];
+
+          const counter = document.getElementById("f01-count");
+          WINS.forEach((_, i) => {
+            const digit = document.createElement("div");
+            digit.className = "f01-digit";
+            digit.id = "f01-digit-" + i;
+            digit.textContent = String(i + 1);
+            counter.appendChild(digit);
+          });
+
+          tl.fromTo(clock, { T: 0 }, { T: 3.75, duration: 3.75, ease: "none", onUpdate: drawAll }, 0);
+          // 镜头每拍往后退一档：第一个窗口几乎占满画面，退到第 8 个时正好是终态布局
+          const ZOOM = [1.5, 1.38, 1.28, 1.2, 1.13, 1.08, 1.04, 1];
+          tl.fromTo("#f01-pile", { scale: 1.62 }, { scale: ZOOM[0], duration: BEAT, ease: "expo.out" }, 0);
+          for (let k = 1; k < 8; k += 1) tl.to("#f01-pile", { scale: ZOOM[k], duration: BEAT, ease: "expo.out" }, b(k));
+
+          // t=0 的画面不能靠时间线上 0 时刻的 set 来出（停在 0 时它们不一定渲染），直接写到元素上
+          gsap.set("#f01-win-0", { visibility: "visible", borderColor: "#e85d26" });
+          gsap.set("#f01-digit-0", { visibility: "visible" });
+          gsap.set("#f01-count", { backgroundColor: "#e85d26", color: "#111111" });
+
+          WINS.forEach((win, i) => {
+            const id = "#f01-win-" + i;
+            const rot = win[5];
+            const [ex, ey, es, er] = ENTER[i];
+            const at = b(i);
+
+            // 主事件：窗口砸入，边框亮一下橙色
+            tl.set(id, { visibility: "visible", borderColor: "#e85d26" }, at);
+            tl.fromTo(id, { x: ex, y: ey, scale: es, rotation: rot + er }, { x: 0, y: 0, scale: 1, rotation: rot, duration: 0.3, ease: "power4.out" }, at);
+            tl.set(id, { borderColor: "#888880" }, at + 0.2);
+
+            // 已在场的窗口被挤开一下再弹回
+            const [nx, ny] = center(i);
+            for (let j = 0; j < i; j += 1) {
+              const [ox, oy] = center(j);
+              const dist = Math.hypot(ox - nx, oy - ny) || 1;
+              const push = 34 - j * 2;
+              const twist = (j + i) % 2 ? 2.4 : -2.4;
+              tl.to("#f01-win-" + j, { x: ((ox - nx) / dist) * push, y: ((oy - ny) / dist) * push, rotation: WINS[j][5] + twist, duration: 0.09, ease: "power2.out" }, at + 0.06);
+              tl.to("#f01-win-" + j, { x: 0, y: 0, rotation: WINS[j][5], duration: 0.26, ease: "power2.out" }, at + 0.15);
+            }
+
+            // 计数：换数、反色一闪、顶一下
+            tl.set("#f01-digit-" + i, { visibility: "visible" }, at);
+            if (i > 0) tl.set("#f01-digit-" + (i - 1), { visibility: "hidden" }, at);
+            tl.set("#f01-count", { backgroundColor: "#e85d26", color: "#111111" }, at);
+            tl.set("#f01-count", { backgroundColor: "#111111", color: "#e85d26" }, at + 0.1);
+            tl.fromTo("#f01-count", { scale: 1.45 + i * 0.04 }, { scale: 1, duration: 0.3, ease: "back.out(2.4)", immediateRender: i === 0 }, at);
+            // 反拍：数字自己再弹一小下
+            tl.fromTo("#f01-digit-" + i, { scale: 1.1 }, { scale: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, at + BEAT / 2);
+          });
+
+          // b4 —— 标题砸入，之后每拍顶一下
+          tl.set("#f01-title", { visibility: "visible" }, b(4));
+          tl.fromTo("#f01-title", { xPercent: -100, scale: 1.25 }, { xPercent: 0, scale: 1, duration: 0.28, ease: "power4.out" }, b(4));
+          [5, 6, 7].forEach((k) => {
+            tl.fromTo("#f01-title", { scale: 1.07 }, { scale: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, b(k));
+          });
+
+          window.__timelines["01-hook"] = tl;
+          drawAll();
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

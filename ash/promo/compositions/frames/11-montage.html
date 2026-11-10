@@ -1,0 +1,405 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Noto Sans SC", "Barlow", sans-serif;
+        }
+        .f11-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f11-grid {
+          position: absolute;
+          inset: -160px;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        /* 一个画面 = 一层全幅的 .f11-sc，只靠 visibility 硬切 */
+        .f11-sc {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #111111;
+          visibility: hidden;
+        }
+        .f11-sc-or {
+          background: #e85d26;
+        }
+        /* 进场层：整张截图的甩入/砸入做在这一层，镜头的匀速推进做在里面的 cam 上，两者互不打架 */
+        .f11-in {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f11-cam {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 0 0;
+          will-change: transform;
+        }
+        .f11-shot {
+          display: block;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f11-mark {
+          position: absolute;
+          border: 4px solid #e85d26;
+          box-sizing: border-box;
+        }
+        .f11-tagw {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          gap: 18px;
+        }
+        .f11-tag {
+          display: flex;
+          flex-direction: column;
+          padding: 2px 40px 22px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 150px;
+          line-height: 1.18;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
+        .f11-tag-big {
+          padding: 6px 44px 34px;
+          font-size: 232px;
+          line-height: 1.12;
+        }
+        .f11-key {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 160px;
+          height: 160px;
+          background: #111111;
+          border: 7px solid #f0ece5;
+          color: #f0ece5;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 116px;
+          line-height: 1;
+        }
+        .f11-key-svg {
+          display: block;
+          width: 100px;
+          height: 100px;
+        }
+        /* b5 两台手机 */
+        .f11-phw {
+          position: absolute;
+          width: 433px;
+          height: 900px;
+        }
+        .f11-phone {
+          position: absolute;
+          inset: 0;
+          border: 16px solid #111111;
+          outline: 3px solid #f0ece5;
+          background: #111111;
+          overflow: hidden;
+        }
+        .f11-phone-img {
+          display: block;
+          width: 401px;
+          height: 868px;
+        }
+        /* b6 / b7 整屏字卡 */
+        .f11-big {
+          position: absolute;
+          left: 0;
+          width: 1920px;
+          display: flex;
+          justify-content: center;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+        }
+        .f11-big-6 {
+          top: 96px;
+          font-size: 356px;
+          line-height: 1.16;
+          color: #111111;
+          overflow: hidden;
+        }
+        .f11-ch {
+          display: block;
+        }
+        .f11-node {
+          position: absolute;
+          top: 668px;
+          width: 250px;
+          height: 250px;
+          background: #111111;
+        }
+        .f11-wire {
+          position: absolute;
+          left: 300px;
+          top: 785px;
+          width: 1320px;
+          height: 16px;
+          background: #111111;
+        }
+        .f11-trail {
+          position: absolute;
+          left: 300px;
+          top: 763px;
+          width: 1320px;
+          height: 60px;
+          background: #111111;
+          transform-origin: 0 50%;
+        }
+        .f11-run {
+          position: absolute;
+          left: 300px;
+          top: 733px;
+          width: 120px;
+          height: 120px;
+          background: #111111;
+        }
+        .f11-big-7 {
+          top: 372px;
+          font-size: 288px;
+          line-height: 1.16;
+          color: #f0ece5;
+        }
+        .f11-or {
+          display: block;
+          color: #e85d26;
+        }
+        .f11-ghost {
+          position: absolute;
+          left: 0;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 288px;
+          line-height: 1.16;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          color: #111111;
+          -webkit-text-stroke: 6px #505048;
+          paint-order: stroke fill;
+        }
+        .f11-border {
+          position: absolute;
+          inset: 0;
+          border: 26px solid #e85d26;
+          box-sizing: border-box;
+          opacity: 0;
+        }
+        .f11-flash {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          opacity: 0;
+          pointer-events: none;
+        }
+      </style>
+
+      <div id="root" data-composition-id="11-montage" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f11-bg" id="f11-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f11-grid"></div>
+        </div>
+
+        <!-- b0–b4：五张截图画面，由脚本按数据表生成 -->
+        <div id="f11-shots"></div>
+
+        <!-- b5：两台手机 -->
+        <div class="f11-sc" id="f11-sc-5">
+          <div class="f11-grid" id="f11-grid-5"></div>
+          <div class="f11-phw" id="f11-phw-a" style="left: 912px; top: 44px">
+            <div class="f11-phone" id="f11-ph-a">
+              <img class="f11-phone-img" src="assets/shots/phone-list.png" width="401" height="868" alt="" />
+            </div>
+          </div>
+          <div class="f11-phw" id="f11-phw-b" style="left: 1416px; top: 142px">
+            <div class="f11-phone" id="f11-ph-b">
+              <img class="f11-phone-img" src="assets/shots/phone-task.png" width="401" height="868" alt="" />
+            </div>
+          </div>
+          <div class="f11-tagw" id="f11-tagw-5" style="left: 56px; top: 246px">
+            <div class="f11-tag f11-tag-big" id="f11-tag-5"><span>手机上</span><span>也能盯</span></div>
+          </div>
+        </div>
+
+        <!-- b6：火橙字卡 -->
+        <div class="f11-sc f11-sc-or" id="f11-sc-6">
+          <div class="f11-big f11-big-6" id="f11-big-6"></div>
+          <div id="f11-relay">
+            <div class="f11-wire"></div>
+            <div class="f11-trail" id="f11-trail"></div>
+            <div class="f11-node" id="f11-node-l" style="left: 70px"></div>
+            <div class="f11-node" id="f11-node-r" style="left: 1600px"></div>
+            <div class="f11-run" id="f11-run"></div>
+          </div>
+        </div>
+
+        <!-- b7：墨黑字卡 -->
+        <div class="f11-sc" id="f11-sc-7">
+          <div class="f11-ghost" id="f11-ghost-a" style="top: 28px">重启不丢任务重启不丢任务</div>
+          <div class="f11-ghost" id="f11-ghost-b" style="top: 716px">重启不丢任务重启不丢任务</div>
+          <div class="f11-big f11-big-7" id="f11-big-7">
+            <span>重启</span><span class="f11-or" id="f11-keep">不丢</span><span>任务</span>
+          </div>
+          <div class="f11-border" id="f11-border"></div>
+        </div>
+
+        <div class="f11-flash" id="f11-flash"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const IN = 0.2; // 每个画面进场到位的时长
+          const KEY_CMD =
+            '<div class="f11-key" data-key><svg class="f11-key-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg></div>';
+          const KEY_K = '<div class="f11-key" data-key>K</div>';
+
+          // 镜头对准截图上的 (cx, cy)、放大 s 倍时 cam 的平移量（截图按 1920×1080 铺满）
+          const aim = ([cx, cy, s]) => ({ x: 960 - cx * s, y: 540 - cy * s, scale: s });
+
+          // b0–b4 的数据表。a → z：这一拍里镜头从哪推到哪（匀速）；enter：整张截图从哪进来；
+          // pos：标签位置；tagFrom：标签从哪砸进来；drift：标签到位后这一拍里匀速漂多少
+          const SHOTS = [
+            {
+              shot: "chat", tag: "多智能体聊天",
+              a: [1120, 404, 1.36], z: [1120, 380, 1.5],
+              enter: { scale: 1.5 },
+              pos: "left: -40px; top: 0", tagStyle: "padding-left: 84px; padding-top: 10px", tagFrom: { yPercent: -62 }, drift: { x: 30 },
+            },
+            {
+              shot: "palette", tag: "全局搜索", extra: KEY_CMD + KEY_K,
+              a: [960, 532, 1.37], z: [960, 514, 1.47],
+              enter: { x: 1050, skewX: -10 },
+              pos: "left: 852px; top: 540px", tagFrom: { scale: 0.3 }, tagEase: "back.out(2.4)", drift: { y: -22 },
+            },
+            {
+              shot: "notes", tag: "随手记",
+              a: [905, 462, 1.39], z: [880, 440, 1.5],
+              enter: { y: 640, rotation: 5 },
+              pos: "right: -40px; bottom: 56px", tagStyle: "padding-right: 84px", tagFrom: { xPercent: 110 }, drift: { x: -30 },
+            },
+            {
+              shot: "question", tag: "卡住会提问", mark: [412, 360, 978, 445],
+              a: [901, 606, 1.4], z: [901, 622, 1.5],
+              enter: { x: -1050, skewX: 10 },
+              pos: "left: 150px; bottom: 22px", tagFrom: { yPercent: 130, rotation: -7 }, drift: { x: 30 },
+            },
+            {
+              shot: "create", tag: "一句话派活",
+              a: [1128, 436, 1.37], z: [1128, 452, 1.5],
+              enter: { y: -640, rotation: -4 },
+              pos: "left: 452px; top: 496px", tagStyle: "font-size: 190px", tagFrom: { scale: 2.6, rotation: 6 }, drift: { scale: 1.06 },
+            },
+          ];
+
+          const host = document.getElementById("f11-shots");
+          host.innerHTML = SHOTS.map((s, i) => {
+            const mark = s.mark
+              ? `<div class="f11-mark" id="f11-mark-${i}" style="left:${s.mark[0]}px;top:${s.mark[1]}px;width:${s.mark[2]}px;height:${s.mark[3]}px"></div>`
+              : "";
+            return `<div class="f11-sc" id="f11-sc-${i}"${i ? "" : ' style="visibility: visible"'}>
+              <div class="f11-grid"></div>
+              <div class="f11-in" id="f11-in-${i}"><div class="f11-cam" id="f11-cam-${i}">
+                <img class="f11-shot" src="assets/shots/${s.shot}.png" width="1920" height="1080" alt="" />${mark}
+              </div></div>
+              <div class="f11-tagw" id="f11-tagw-${i}" style="${s.pos}"><div class="f11-tag" id="f11-tag-${i}" style="${s.tagStyle || ""}">${s.tag}</div>${s.extra || ""}</div>
+            </div>`;
+          }).join("");
+
+          // b6 的巨字拆成单字，逐字从底下顶上来
+          const relayText = "跨机器接力";
+          document.getElementById("f11-big-6").innerHTML = [...relayText].map((c) => `<span class="f11-ch">${c}</span>`).join("");
+
+          // 八个画面：每拍拍点上亮起自己、关掉上一个。第一个画面直接写成可见——
+          // 落在 0 秒的 set 在 seek(0) 时不会被渲染，t=0 会只剩底色。
+          for (let i = 1; i < 8; i++) {
+            tl.set("#f11-sc-" + i, { visibility: "visible" }, b(i));
+            tl.set("#f11-sc-" + (i - 1), { visibility: "hidden" }, b(i));
+          }
+
+          // b0–b4 —— 截图画面
+          SHOTS.forEach((s, i) => {
+            const at = b(i);
+            tl.fromTo("#f11-in-" + i, { x: 0, y: 0, scale: 1, rotation: 0, skewX: 0, ...s.enter }, { x: 0, y: 0, scale: 1, rotation: 0, skewX: 0, duration: IN, ease: "power4.out" }, at);
+            tl.fromTo("#f11-cam-" + i, aim(s.a), { ...aim(s.z), duration: BEAT, ease: "none" }, at);
+            tl.fromTo("#f11-tag-" + i, { xPercent: 0, yPercent: 0, scale: 1, rotation: 0, ...s.tagFrom }, { xPercent: 0, yPercent: 0, scale: 1, rotation: 0, duration: IN, ease: s.tagEase || "power4.out" }, at);
+            tl.fromTo("#f11-tagw-" + i, { x: 0, y: 0, scale: 1 }, { x: 0, y: 0, scale: 1, ...s.drift, duration: BEAT, ease: "none" }, at);
+            if (s.mark) tl.fromTo("#f11-mark-" + i, { scale: 1.16 }, { scale: 1, duration: 0.22, ease: "power3.out" }, at + 0.04);
+            host.querySelectorAll("#f11-tagw-" + i + " [data-key]").forEach((key, k) => {
+              tl.fromTo(key, { scale: 0, rotation: -18 }, { scale: 1, rotation: 0, duration: 0.16, ease: "back.out(2.6)" }, at + 0.07 + k * 0.06);
+            });
+          });
+          // SURGE 重拍和第二小节重拍各闪一下
+          tl.fromTo("#f11-flash", { opacity: 0.5 }, { opacity: 0, duration: 0.22, ease: "power2.out" }, 0);
+          tl.fromTo("#f11-flash", { opacity: 0.55 }, { opacity: 0, duration: 0.2, ease: "power2.out", immediateRender: false }, b(4));
+
+          // b5 —— 两台手机一上一下砸入，标签从左侧带着倾角甩进来
+          tl.fromTo("#f11-ph-a", { y: -760, rotation: -16 }, { y: 0, rotation: 6, duration: IN, ease: "power4.out" }, b(5));
+          tl.fromTo("#f11-ph-b", { y: 760, rotation: 24 }, { y: 0, rotation: 6, duration: IN, ease: "power4.out" }, b(5) + 0.03);
+          tl.fromTo("#f11-phw-a", { y: 12 }, { y: -22, duration: BEAT, ease: "none" }, b(5));
+          tl.fromTo("#f11-phw-b", { y: -12 }, { y: 22, duration: BEAT, ease: "none" }, b(5));
+          tl.fromTo("#f11-tag-5", { xPercent: -125, rotation: -16 }, { xPercent: 0, rotation: -4, duration: IN, ease: "power4.out" }, b(5));
+          tl.fromTo("#f11-tagw-5", { x: 0 }, { x: 34, duration: BEAT, ease: "none" }, b(5));
+          tl.fromTo("#f11-grid-5", { x: 0, y: 0 }, { x: -50, y: 30, duration: BEAT, ease: "none" }, b(5));
+
+          // b6 —— 火橙字卡：逐字顶上来；小块这一拍内从左机器跑到右机器，身后拖出一条粗线
+          tl.fromTo("#f11-big-6 .f11-ch", { yPercent: 115, rotation: 9 }, { yPercent: 0, rotation: 0, duration: 0.15, ease: "power4.out", stagger: 0.014 }, b(6));
+          tl.fromTo("#f11-big-6", { scale: 1 }, { scale: 1.035, duration: BEAT, ease: "none" }, b(6));
+          tl.fromTo("#f11-node-l", { scale: 1.5 }, { scale: 1, duration: 0.18, ease: "power4.out" }, b(6));
+          tl.fromTo("#f11-run", { x: 0 }, { x: 1200, duration: 0.38, ease: "none" }, b(6) + 0.02);
+          tl.fromTo("#f11-trail", { scaleX: 0 }, { scaleX: 1, duration: 0.38, ease: "none" }, b(6) + 0.02);
+          tl.fromTo("#f11-node-r", { scale: 1 }, { scale: 1.3, duration: 0.06, ease: "power2.out" }, b(6) + 0.4);
+
+          // b7 —— 墨黑字卡：巨字砸下、整屏震、橙框闪；描边的同一句话在上下两行反向滑
+          tl.fromTo("#f11-big-7", { scale: 2.7 }, { scale: 1, duration: 0.17, ease: "power4.out" }, b(7));
+          tl.fromTo("#f11-big-7", { scale: 1 }, { scale: 1.05, duration: BEAT - 0.17, ease: "none", immediateRender: false }, b(7) + 0.17);
+          tl.fromTo("#f11-keep", { scale: 1.3 }, { scale: 1, duration: 0.16, ease: "power3.out" }, b(7) + BEAT / 4);
+          tl.fromTo("#f11-ghost-a", { x: -150 }, { x: -330, duration: BEAT, ease: "none" }, b(7));
+          tl.fromTo("#f11-ghost-b", { x: -1010 }, { x: -830, duration: BEAT, ease: "none" }, b(7));
+          tl.fromTo("#f11-border", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, b(7));
+          // 震屏：写死的位移表，每 30ms 一格
+          [[-34, 22], [28, -18], [-20, 12], [14, -8], [-8, 5], [4, -2], [0, 0]].forEach(([x, y], k) => {
+            tl.set("#f11-sc-7", { x, y }, b(7) + 0.03 + k * 0.03);
+          });
+
+          window.__timelines["11-montage"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

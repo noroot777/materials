@@ -1,0 +1,479 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #111111;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f03-bg {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+        }
+        /* 震动层：底纹、放射线、徽标字组一起抖；四周多画一圈，抖的时候不露边 */
+        .f03-shake {
+          position: absolute;
+          inset: 0;
+          will-change: transform;
+        }
+        .f03-drift {
+          position: absolute;
+          inset: 0;
+        }
+        .f03-grid {
+          position: absolute;
+          inset: -240px;
+          background-image:
+            repeating-linear-gradient(90deg, #111111 0 2px, transparent 2px 120px),
+            repeating-linear-gradient(0deg, #111111 0 2px, transparent 2px 120px);
+          transform-origin: 50% 50%;
+        }
+        .f03-rays {
+          position: absolute;
+          left: 960px;
+          top: 540px;
+          width: 0;
+          height: 0;
+        }
+        .f03-ray {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 0;
+          height: 0;
+        }
+        .f03-ray-bar {
+          position: absolute;
+          left: 0;
+          background: #111111;
+          clip-path: polygon(0 50%, 100% 0, 100% 100%);
+          transform-origin: 0 50%;
+          visibility: hidden;
+        }
+        /* 字组：以 pos 为锚点（0×0），hero 是 1730×532 的墨色整组 —— 方徽标 + ash */
+        .f03-pos {
+          position: absolute;
+          left: 960px;
+          top: 540px;
+          width: 0;
+          height: 0;
+        }
+        .f03-hero {
+          position: absolute;
+          left: -865px;
+          top: -266px;
+          width: 1730px;
+          height: 532px;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        .f03-mark {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 532px;
+          height: 532px;
+          background: #111111;
+          color: #e85d26;
+        }
+        .f03-mark-svg {
+          position: absolute;
+          left: 46px;
+          top: 46px;
+          width: 440px;
+          height: 440px;
+          transform-origin: 50% 50%;
+        }
+        .f03-word {
+          position: absolute;
+          left: 575px;
+          top: -152px;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 760px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          color: #111111;
+          white-space: nowrap;
+        }
+        /* 通栏横条 */
+        .f03-bar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 168px;
+          background: #111111;
+          color: #f0ece5;
+          overflow: hidden;
+          visibility: hidden;
+        }
+        .f03-bar-inv {
+          background: #e85d26;
+          color: #111111;
+          border-top: 14px solid #111111;
+          border-bottom: 14px solid #111111;
+        }
+        .f03-tagline {
+          position: absolute;
+          left: 60px;
+          top: 0;
+          height: 168px;
+          display: flex;
+          align-items: center;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 112px;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        .f03-bar-inv .f03-tagline {
+          top: -14px;
+        }
+        .f03-ch {
+          display: inline-block;
+          margin-right: 3px;
+        }
+        .f03-ch-gap {
+          display: inline-block;
+          width: 30px;
+        }
+        .f03-stripes {
+          position: absolute;
+          left: 1520px;
+          top: 0;
+          width: 400px;
+          height: 168px;
+          overflow: hidden;
+        }
+        .f03-stripes-run {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 168px;
+        }
+        .f03-stripe {
+          position: absolute;
+          top: -20px;
+          width: 34px;
+          height: 208px;
+          background: #e85d26;
+          transform: skewX(-28deg);
+        }
+        .f03-bar-inv .f03-stripe {
+          background: #111111;
+        }
+        /* 底部五格 */
+        .f03-row {
+          position: absolute;
+          left: 0;
+          top: 850px;
+          width: 1920px;
+          height: 230px;
+        }
+        .f03-slot {
+          position: absolute;
+          top: 0;
+          height: 244px;
+          border: 5px solid #111111;
+          transform-origin: 50% 100%;
+          visibility: hidden;
+        }
+        .f03-tick {
+          position: absolute;
+          top: -36px;
+          height: 28px;
+          background: #111111;
+          transform-origin: 50% 100%;
+          visibility: hidden;
+        }
+        .f03-ring {
+          position: absolute;
+          top: 0;
+          height: 230px;
+          border: 30px solid #111111;
+          transform-origin: 50% 100%;
+          visibility: hidden;
+        }
+        .f03-cell {
+          position: absolute;
+          top: 0;
+          height: 300px;
+          background: #111111;
+          color: #f0ece5;
+          transform-origin: 50% 38%;
+          visibility: hidden;
+        }
+        .f03-cell-inv {
+          background: #e85d26;
+          color: #111111;
+          border: 14px solid #111111;
+        }
+        .f03-verb {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 230px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 118px;
+          line-height: 1;
+          letter-spacing: 0.04em;
+          text-indent: 0.04em;
+          white-space: nowrap;
+        }
+        .f03-cell-inv .f03-verb {
+          left: -14px;
+          top: -14px;
+          width: calc(100% + 28px);
+        }
+      </style>
+
+      <div id="root" data-composition-id="03-drop" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f03-bg" id="f03-bg" data-start="0" data-duration="3.75" data-track-index="0"></div>
+
+        <div class="f03-shake" id="f03-shake">
+          <div class="f03-drift" id="f03-drift"><div class="f03-grid" id="f03-grid"></div></div>
+          <div class="f03-rays" id="f03-rays"></div>
+          <div class="f03-pos" id="f03-pos">
+            <div class="f03-hero" id="f03-hero">
+              <div class="f03-mark" id="f03-mark">
+                <svg class="f03-mark-svg" id="f03-mark-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 18H3l2-18" /></svg>
+              </div>
+              <span class="f03-word">ash</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="f03-bar" id="f03-bar">
+          <div class="f03-tagline" id="f03-tagline"></div>
+          <div class="f03-stripes"><div class="f03-stripes-run" id="f03-stripes-a"></div></div>
+        </div>
+        <div class="f03-bar f03-bar-inv" id="f03-bar-inv">
+          <div class="f03-tagline" id="f03-tagline-inv"></div>
+          <div class="f03-stripes"><div class="f03-stripes-run" id="f03-stripes-b"></div></div>
+        </div>
+
+        <div class="f03-row" id="f03-row"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const S16 = BEAT / 4;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const $ = (id) => document.getElementById(id);
+          const show = (sel, at) => tl.set(sel, { visibility: "visible" }, at);
+          const hide = (sel, at) => tl.set(sel, { visibility: "hidden" }, at);
+          const make = (cls, id, host) => {
+            const node = document.createElement("div");
+            node.className = cls;
+            if (id) node.id = id;
+            host.appendChild(node);
+            return node;
+          };
+
+          // ---------- 构建：放射线 ----------
+          // 角度避开水平方向（那里被字组挡死）；每根线从字组背后伸到画外，粗细/长短/先后写死成表
+          const RAY_DEG = [-161, -150, -139, -128, -118, -107, -97, -86, -76, -65, -54, -43, -32, -20, 19, 31, 42, 53, 64, 74, 85, 95, 106, 116, 127, 138, 149, 160];
+          const RAY_THICK = [30, 54, 22, 66, 34, 18, 58, 26, 70, 20, 46, 28, 62, 24, 26, 60, 20, 48, 30, 68, 18, 56, 24, 64, 32, 20, 52, 28];
+          const RAY_REACH = [1.1, 0.86, 1.14, 0.92, 1.1, 0.8, 1.16, 0.9, 1.08, 0.84, 1.14, 0.94, 1.1, 0.88, 0.9, 1.12, 0.82, 1.1, 0.94, 1.16, 0.86, 1.08, 0.8, 1.14, 0.92, 1.1, 0.88, 1.12];
+          const RAY_LAG = [0.02, 0, 0.04, 0.01, 0.03, 0, 0.05, 0.02, 0, 0.04, 0.01, 0.03, 0, 0.02, 0.01, 0.03, 0, 0.05, 0.02, 0, 0.04, 0.01, 0.03, 0, 0.02, 0.04, 0, 0.03];
+          const rays = RAY_DEG.map((deg, i) => {
+            const rad = (deg * Math.PI) / 180;
+            const cos = Math.abs(Math.cos(rad));
+            const sin = Math.abs(Math.sin(rad));
+            const edge = Math.min(960 / cos, 540 / sin);
+            const r0 = Math.min(900 / cos, 170 / sin);
+            const wrap = make("f03-ray", "", $("f03-rays"));
+            wrap.style.transform = "rotate(" + deg + "deg)";
+            const bar = make("f03-ray-bar", "f03-ray-" + i, wrap);
+            bar.style.width = Math.round(edge * RAY_REACH[i] - r0) + "px";
+            bar.style.height = RAY_THICK[i] + "px";
+            bar.style.top = -RAY_THICK[i] / 2 + "px";
+            return { sel: "#f03-ray-" + i, r0, edge, lag: RAY_LAG[i] };
+          });
+
+          // ---------- 构建：横条文字与斜纹 ----------
+          const TAGLINE = ["A", "I", " ", "编", "程", "智", "能", "体", "的", "本", "地", "调", "度", "台"];
+          const fillTagline = (host, prefix) => {
+            TAGLINE.forEach((ch, i) => {
+              const span = document.createElement("span");
+              span.className = ch === " " ? "f03-ch-gap" : "f03-ch";
+              if (prefix) span.id = prefix + i;
+              span.textContent = ch === " " ? "" : ch;
+              host.appendChild(span);
+            });
+          };
+          fillTagline($("f03-tagline"), "f03-ch-");
+          fillTagline($("f03-tagline-inv"), "");
+          const STRIPE_PITCH = 72;
+          ["f03-stripes-a", "f03-stripes-b"].forEach((id) => {
+            for (let i = 0; i < 20; i++) make("f03-stripe", "", $(id)).style.left = i * STRIPE_PITCH + "px";
+          });
+
+          // ---------- 构建：底部五格 ----------
+          const VERBS = ["派活", "排队", "验证", "接力", "合并"];
+          const GAP = 8;
+          const CELL_W = (1920 - GAP * 4) / 5;
+          const row = $("f03-row");
+          const place = (node, i, grow) => {
+            node.style.left = i * (CELL_W + GAP) - grow + "px";
+            node.style.width = CELL_W + grow * 2 + "px";
+          };
+          VERBS.forEach((_, i) => place(make("f03-slot", "f03-slot-" + i, row), i, 0));
+          VERBS.forEach((_, i) => place(make("f03-ring", "f03-ring-" + i, row), i, 0));
+          // 格子上沿的十六分刻度：每格四块，一个十六分音符亮一块
+          const TICK_W = (CELL_W - GAP * 3) / 4;
+          for (let k = 0; k < VERBS.length * 4; k++) {
+            const tick = make("f03-tick", "f03-tick-" + k, row);
+            tick.style.left = Math.floor(k / 4) * (CELL_W + GAP) + (k % 4) * (TICK_W + GAP) + "px";
+            tick.style.width = TICK_W + "px";
+          }
+          VERBS.forEach((verb, i) => {
+            const cell = make("f03-cell", "f03-cell-" + i, row);
+            place(cell, i, 0);
+            make("f03-verb", "", cell).textContent = verb;
+          });
+          VERBS.forEach((verb, i) => {
+            const inv = make("f03-cell f03-cell-inv", "f03-inv-" + i, row);
+            place(inv, i, 0);
+            make("f03-verb", "", inv).textContent = verb;
+          });
+
+          // ---------- 通用动作 ----------
+          const jolt = (at, table, step) => table.forEach(([x, y], i) => tl.set("#f03-shake", { x, y }, at + i * step));
+          const BIG_SHAKE = [[34, -22], [-30, 20], [26, 16], [-22, -18], [18, -12], [-16, 13], [12, 9], [-10, -8], [8, 6], [-6, -4], [4, 3], [-2, -2], [0, 0]];
+          const HIT_SHAKE = [[0, -16], [0, 12], [0, -8], [0, 5], [0, -2], [0, 0]];
+          const END_SHAKE = [[-22, -18], [20, 16], [-16, 12], [14, -10], [-10, -8], [8, 6], [-5, 4], [3, -2], [0, 0]];
+          const bump = (at, from, dur) =>
+            tl.fromTo("#f03-hero", { scale: from }, { scale: 1, duration: dur || 0.3, ease: "power3.out", immediateRender: false }, at);
+          const gridKick = (at, from) =>
+            tl.fromTo("#f03-grid", { scale: from }, { scale: 1, duration: 0.34, ease: "power3.out", immediateRender: false }, at);
+
+          // 底纹全程匀速漂移，保证拍与拍之间画面一直在动
+          tl.fromTo("#f03-drift", { x: 0, y: 0 }, { x: -120, y: 120, duration: 3.75, ease: "none" }, 0);
+
+          // ---------- b0：徽标 + ash 从 3 倍砸到位，整屏震，放射线爆开 ----------
+          tl.fromTo("#f03-hero", { scale: 3 }, { scale: 1, duration: 0.25, ease: "power4.out" }, 0);
+          tl.fromTo("#f03-grid", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "power4.out" }, 0);
+          const IMPACT = 0.1;
+          jolt(IMPACT, BIG_SHAKE, 0.03);
+          rays.forEach((ray) => {
+            const at = IMPACT - 0.02 + ray.lag;
+            show(ray.sel, at);
+            tl.fromTo(ray.sel, { x: ray.r0 * 0.35, scaleX: 0, scaleY: 2.2 }, { x: ray.r0, scaleX: 1, scaleY: 1, duration: 0.26, ease: "power4.out" }, at);
+            tl.to(ray.sel, { x: ray.r0 + 36, duration: b(1) - (at + 0.26), ease: "none" }, at + 0.26);
+          });
+          // 八分处方块里的徽标线自己再顶一下，填住 b0–b1 的空档
+          tl.fromTo("#f03-mark-svg", { scale: 1.16 }, { scale: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, b(0.5));
+
+          // ---------- b1：ash 顶一下，放射线外蹿并鼓一下，底纹一震 ----------
+          bump(b(1), 1.05);
+          gridKick(b(1), 1.12);
+          jolt(b(1), HIT_SHAKE, 0.03);
+          rays.forEach((ray) => {
+            tl.to(ray.sel, { x: ray.r0 + 150, duration: 0.28, ease: "power3.out" }, b(1));
+            tl.fromTo(ray.sel, { scaleY: 2.4 }, { scaleY: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, b(1));
+            tl.to(ray.sel, { x: ray.r0 + 176, duration: b(2) - 0.1 - (b(1) + 0.28), ease: "none" }, b(1) + 0.28);
+            // b2 前一点开始加速冲出画面，给横条和五格腾地方
+            tl.to(ray.sel, { x: ray.edge + 120, scaleY: 0.4, duration: 0.3, ease: "power3.in" }, b(2) - 0.1);
+            hide(ray.sel, b(2) + 0.21);
+          });
+          tl.fromTo("#f03-mark-svg", { scale: 1.16 }, { scale: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, b(1.5));
+
+          // ---------- b2：墨色横条从左滑入，字逐个顶上来；ash 上移收小；五个空格位逐个立起 ----------
+          show("#f03-bar", b(2));
+          tl.fromTo("#f03-bar", { xPercent: -100 }, { xPercent: 0, duration: 0.26, ease: "power4.out" }, b(2));
+          TAGLINE.forEach((ch, i) => {
+            if (ch === " ") return;
+            tl.fromTo("#f03-ch-" + i, { yPercent: 130 }, { yPercent: 0, duration: 0.16, ease: "power3.out" }, b(2) + 0.08 + i * 0.016);
+          });
+          tl.fromTo("#f03-stripes-a", { x: 0 }, { x: -STRIPE_PITCH * 12, duration: 3.75 - b(2), ease: "none" }, b(2));
+          tl.fromTo("#f03-pos", { y: 0, scale: 1.05 }, { y: -31, scale: 1, duration: 0.3, ease: "power4.out" }, b(2));
+          bump(b(2), 1.05);
+          gridKick(b(2), 1.08);
+          jolt(b(2), HIT_SHAKE, 0.03);
+          VERBS.forEach((_, i) => {
+            const at = b(2) + 0.1 + i * 0.07;
+            show("#f03-slot-" + i, at);
+            tl.fromTo("#f03-slot-" + i, { scaleY: 0 }, { scaleY: 1, duration: 0.14, ease: "power3.out" }, at);
+          });
+
+          // ---------- b3–b7：五格逐拍盖章，每盖一格 ash 顶一下 ----------
+          const STAMP_ROT = [-9, 7, -6, 8, -7];
+          VERBS.forEach((_, i) => {
+            const at = b(3 + i);
+            const hit = at + 0.05;
+            const last = i === VERBS.length - 1;
+            const cell = "#f03-cell-" + i;
+            const ring = "#f03-ring-" + i;
+            show(cell, at);
+            tl.fromTo(cell, { scale: 2.7, rotation: STAMP_ROT[i] }, { scale: 1, rotation: 0, duration: 0.2, ease: "power4.out" }, at);
+            hide("#f03-slot-" + i, hit);
+            // 到位：格子外圈一圈墨框炸开，边越炸越细直到没掉（不用透明度，免得混出色板外的颜色）
+            show(ring, hit);
+            tl.fromTo(
+              ring,
+              { scaleX: 1, scaleY: 1, borderTopWidth: 30, borderRightWidth: 30, borderBottomWidth: 30, borderLeftWidth: 30 },
+              { scaleX: 1.2, scaleY: 1.7, borderTopWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, borderLeftWidth: 0, duration: 0.3, ease: "power2.out" },
+              hit,
+            );
+            hide(ring, hit + 0.31);
+            // 还空着的格位跟着跳一下
+            for (let k = i + 1; k < VERBS.length; k++) {
+              tl.fromTo("#f03-slot-" + k, { scaleY: 1.22 }, { scaleY: 1, duration: 0.22, ease: "power2.out", immediateRender: false }, hit + (k - i) * 0.03);
+            }
+            bump(hit, last ? 1.09 : 1.06);
+            gridKick(hit, last ? 1.14 : 1.07);
+            jolt(hit, last ? END_SHAKE : HIT_SHAKE, 0.03);
+            // 反拍：方块里的徽标线自己顶一下
+            if (!last) tl.fromTo("#f03-mark-svg", { scale: 1.16 }, { scale: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, at + BEAT / 2);
+          });
+
+          // 十六分刻度从 b3 一路点到帧尾，拍与拍之间不断档
+          for (let k = 0; k < VERBS.length * 4; k++) {
+            const at = b(3) + k * S16;
+            show("#f03-tick-" + k, at);
+            tl.fromTo("#f03-tick-" + k, { scaleY: 3.4 }, { scaleY: 1, duration: 0.1, ease: "power2.out" }, at);
+          }
+
+          // ---------- b7：第五格到位，整排上跳 + 横条与五格一起反色频闪，收束 ----------
+          const END = b(7);
+          tl.to("#f03-row", { y: -54, duration: 0.07, ease: "power2.out" }, END + 0.05);
+          tl.to("#f03-row", { y: 0, duration: 0.13, ease: "power2.in" }, END + 0.12);
+          const INVERT = VERBS.map((_, i) => "#f03-inv-" + i).concat("#f03-bar-inv");
+          tl.fromTo("#f03-stripes-b", { x: 0 }, { x: -STRIPE_PITCH * 2, duration: BEAT, ease: "none" }, END);
+          [[S16, S16 * 2], [S16 * 3, S16 * 3 + 0.07]].forEach(([on, off]) => {
+            show(INVERT, END + on);
+            hide(INVERT, END + off);
+          });
+          bump(END + S16 * 2, 1.05, 0.2);
+
+          window.__timelines["03-drop"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

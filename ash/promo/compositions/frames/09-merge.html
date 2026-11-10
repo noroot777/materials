@@ -1,0 +1,598 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f09-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f09-grid {
+          position: absolute;
+          inset: 0 -200px;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f09-shake {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+
+        /* ---------- b0：橙屏巨字 ---------- */
+        .f09-hit {
+          position: absolute;
+          inset: -90px;
+          background: #e85d26;
+          overflow: hidden;
+        }
+        .f09-hit-ray {
+          position: absolute;
+          left: 1050px;
+          top: 630px;
+          width: 0;
+          height: 0;
+        }
+        .f09-hit-ray-i {
+          position: absolute;
+          background: #111111;
+          clip-path: polygon(50% 100%, 0 0, 100% 0);
+          transform-origin: 50% 100%;
+        }
+        .f09-hit-word {
+          position: absolute;
+          left: 90px;
+          top: 90px;
+          width: 1920px;
+          height: 1080px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 440px;
+          line-height: 1;
+          letter-spacing: -0.01em;
+          color: #111111;
+          white-space: nowrap;
+          transform-origin: 50% 50%;
+        }
+
+        /* ---------- 标题条 ---------- */
+        .f09-title {
+          position: absolute;
+          left: 0;
+          top: 0;
+          padding: 6px 44px 16px 56px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 110px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          transform-origin: 0 0;
+          visibility: hidden;
+        }
+
+        /* ---------- git 图 ---------- */
+        .f09-svg {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: visible;
+        }
+        .f09-main-line {
+          fill: none;
+          stroke: #f0ece5;
+          stroke-width: 16;
+          stroke-dasharray: 1840;
+          stroke-dashoffset: 1840;
+        }
+        .f09-branch-line {
+          fill: none;
+          stroke: #e85d26;
+          stroke-width: 12;
+          stroke-linejoin: miter;
+          stroke-dasharray: 1063.4;
+          stroke-dashoffset: 1063.4;
+        }
+        .f09-ref {
+          position: absolute;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 42px;
+          line-height: 1;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f09-ref-main {
+          left: 60px;
+          top: 222px;
+          color: #f0ece5;
+        }
+        .f09-ref-branch {
+          left: 284px;
+          top: 452px;
+          color: #e85d26;
+        }
+        .f09-strike {
+          position: absolute;
+          left: -10px;
+          right: -10px;
+          top: 50%;
+          height: 5px;
+          background: #888880;
+          transform-origin: 0 50%;
+          visibility: hidden;
+        }
+        .f09-dot {
+          position: absolute;
+          width: 56px;
+          height: 56px;
+          margin: -28px 0 0 -28px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f09-ring {
+          position: absolute;
+          width: 56px;
+          height: 56px;
+          margin: -28px 0 0 -28px;
+          border: 6px solid #e85d26;
+          box-sizing: border-box;
+          visibility: hidden;
+        }
+        .f09-stem {
+          position: absolute;
+          width: 3px;
+          margin-left: -1px;
+          background: #505048;
+          transform-origin: 50% 0;
+          visibility: hidden;
+        }
+        .f09-msg {
+          position: absolute;
+          font-family: "IBM Plex Mono", monospace;
+          font-weight: 500;
+          font-size: 38px;
+          line-height: 46px;
+          height: 46px;
+          color: #f0ece5;
+          white-space: nowrap;
+        }
+        .f09-merge {
+          position: absolute;
+          left: 920px;
+          top: 300px;
+          width: 64px;
+          height: 64px;
+          margin: -32px 0 0 -32px;
+          background: #e85d26;
+          border: 8px solid #111111;
+          outline: 6px solid #e85d26;
+          box-sizing: border-box;
+          visibility: hidden;
+        }
+        .f09-pulse {
+          position: absolute;
+          left: 920px;
+          top: 285px;
+          width: 60px;
+          height: 30px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f09-burst {
+          position: absolute;
+          left: 920px;
+          top: 300px;
+          width: 0;
+          height: 0;
+        }
+        .f09-burst-i {
+          position: absolute;
+          left: -5px;
+          width: 10px;
+          transform-origin: 50% 50%;
+        }
+
+        /* ---------- 截图面板 ---------- */
+        .f09-panel {
+          position: absolute;
+          left: 1046px;
+          top: 62px;
+          width: 852px;
+          height: 580px;
+          border: 5px solid #f0ece5;
+          box-sizing: border-box;
+          overflow: hidden;
+          background: #1a1a18;
+          transform-origin: 50% 50%;
+          visibility: hidden;
+        }
+        .f09-pane {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+        }
+        .f09-pane-acc {
+          visibility: hidden;
+        }
+        .f09-shot {
+          position: absolute;
+          display: block;
+          max-width: none;
+        }
+        .f09-mark {
+          position: absolute;
+          border: 6px solid #e85d26;
+          box-sizing: border-box;
+          transform-origin: 50% 50%;
+        }
+
+        /* ---------- 增删数字 ---------- */
+        .f09-num {
+          position: absolute;
+          bottom: 46px;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 264px;
+          line-height: 0.8;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f09-num-add {
+          left: 44px;
+          color: #e85d26;
+          transform-origin: 0 100%;
+        }
+        .f09-num-del {
+          left: 620px;
+          color: #f0ece5;
+          transform-origin: 0 100%;
+        }
+        .f09-ratio {
+          position: absolute;
+          left: 56px;
+          top: 1036px;
+          height: 20px;
+          transform-origin: 0 50%;
+          visibility: hidden;
+        }
+        .f09-ratio-add {
+          width: 844px;
+          background: #e85d26;
+        }
+        .f09-ratio-del {
+          left: 912px;
+          width: 92px;
+          background: #f0ece5;
+        }
+
+        /* ---------- 清单 ---------- */
+        .f09-item {
+          position: absolute;
+          left: 1130px;
+          display: flex;
+          align-items: center;
+          gap: 26px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 76px;
+          line-height: 1;
+          color: #f0ece5;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f09-box {
+          flex: none;
+          width: 88px;
+          height: 88px;
+          background: #e85d26;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .f09-check {
+          display: block;
+          width: 68px;
+          height: 68px;
+          transform-origin: 50% 50%;
+        }
+
+        .f09-border {
+          position: absolute;
+          inset: 0;
+          border: 16px solid #e85d26;
+          box-sizing: border-box;
+          opacity: 0;
+        }
+      </style>
+
+      <div id="root" data-composition-id="09-merge" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f09-bg" id="f09-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f09-grid" id="f09-grid"></div>
+        </div>
+
+        <div class="f09-shake" id="f09-shake">
+          <!-- git 图 -->
+          <svg class="f09-svg" viewBox="0 0 1920 1080">
+            <path class="f09-branch-line" id="f09-branch" d="M140 300 L240 520 L820 520 L920 300" />
+            <path class="f09-main-line" id="f09-main" d="M60 300 L1900 300" />
+          </svg>
+          <div class="f09-pulse" id="f09-pulse"></div>
+          <div class="f09-ref f09-ref-main" id="f09-ref-main">main</div>
+          <div class="f09-ref f09-ref-branch" id="f09-ref-branch">ash/apple-pay<span class="f09-strike" id="f09-strike"></span></div>
+          <div id="f09-commits"></div>
+          <div class="f09-burst" id="f09-burst"></div>
+          <div class="f09-merge" id="f09-merge"></div>
+
+          <!-- 截图面板 -->
+          <div class="f09-panel" id="f09-panel">
+            <div class="f09-pane" id="f09-pane-diff">
+              <img class="f09-shot" id="f09-shot-diff" src="assets/shots/diff.png" alt="" width="2496" height="1404" style="left: -945px; top: -777px; width: 2496px; height: 1404px" />
+            </div>
+            <div class="f09-pane f09-pane-acc" id="f09-pane-acc">
+              <img class="f09-shot" id="f09-shot-acc" src="assets/shots/accepted.png" alt="" width="2400" height="1350" style="left: -870px; top: -10px; width: 2400px; height: 1350px" />
+              <div class="f09-mark" id="f09-mark" style="left: 269px; top: 8px; width: 560px; height: 66px"></div>
+              <div class="f09-mark" id="f09-mark-2" style="left: 39px; top: 484px; width: 92px; height: 46px"></div>
+            </div>
+          </div>
+
+          <!-- 增删数字 -->
+          <div class="f09-num f09-num-add" id="f09-num-add">+0</div>
+          <div class="f09-num f09-num-del" id="f09-num-del">–0</div>
+          <div class="f09-ratio f09-ratio-add" id="f09-ratio-add"></div>
+          <div class="f09-ratio f09-ratio-del" id="f09-ratio-del"></div>
+
+          <!-- 清单 -->
+          <div id="f09-list"></div>
+
+          <div class="f09-title" id="f09-title">一键验收</div>
+
+          <!-- b0 橙屏 -->
+          <div class="f09-hit" id="f09-hit">
+            <div id="f09-hit-rays"></div>
+            <div class="f09-hit-word" id="f09-hit-word">一键验收</div>
+          </div>
+        </div>
+
+        <div class="f09-border" id="f09-border"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const show = (sel, at) => tl.set(sel, { visibility: "visible" }, at);
+          const hide = (sel, at) => tl.set(sel, { visibility: "hidden" }, at);
+          const el = (tag, cls, id) => {
+            const node = document.createElement(tag);
+            node.className = cls;
+            if (id) node.id = id;
+            return node;
+          };
+
+          // ---------- 生成：橙屏放射楔 ----------
+          const hitHost = document.getElementById("f09-hit-rays");
+          const RAY_W = [70, 34, 96, 46, 58, 28, 84, 40, 66, 30, 104, 44, 54, 36, 88, 42, 62, 26, 92, 48, 56, 32, 78, 38];
+          const RAY_R = [300, 360, 280, 340, 320, 380, 290, 350];
+          RAY_W.forEach((w, i) => {
+            const ray = el("div", "f09-hit-ray");
+            ray.style.transform = "rotate(" + (i * 15 + 6) + "deg)";
+            const inner = el("div", "f09-hit-ray-i", "f09-hray-" + i);
+            const r = RAY_R[i % RAY_R.length];
+            const len = 1000;
+            inner.style.width = w + "px";
+            inner.style.left = -w / 2 + "px";
+            inner.style.height = len + "px";
+            inner.style.top = -(r + len) + "px";
+            ray.appendChild(inner);
+            hitHost.appendChild(ray);
+          });
+
+          // ---------- 生成：提交点 ----------
+          const COMMITS = [
+            { x: 340, msgY: 756, text: "feat: apple pay button" },
+            { x: 530, msgY: 680, text: "feat: canUse() gate" },
+            { x: 720, msgY: 604, text: "test: e2e" },
+          ];
+          const commitHost = document.getElementById("f09-commits");
+          COMMITS.forEach((c, i) => {
+            const stem = el("div", "f09-stem", "f09-stem-" + i);
+            stem.style.left = c.x + "px";
+            stem.style.top = "548px";
+            stem.style.height = c.msgY + 24 - 548 + "px";
+            const msg = el("div", "f09-msg", "f09-msg-" + i);
+            msg.style.left = c.x + 18 + "px";
+            msg.style.top = c.msgY + "px";
+            const ring = el("div", "f09-ring", "f09-ring-" + i);
+            ring.style.left = c.x + "px";
+            ring.style.top = "520px";
+            const dot = el("div", "f09-dot", "f09-dot-" + i);
+            dot.style.left = c.x + "px";
+            dot.style.top = "520px";
+            commitHost.append(stem, msg, ring, dot);
+          });
+
+          // ---------- 生成：合并点放射线 ----------
+          const burstHost = document.getElementById("f09-burst");
+          const BURST_LEN = [120, 70, 150, 84, 110, 64, 140, 90, 124, 72, 156, 80, 104, 66, 136, 92];
+          BURST_LEN.forEach((len, i) => {
+            const ray = el("div", "");
+            ray.style.cssText = "position:absolute;left:0;top:0;width:0;height:0;transform:rotate(" + (i * 22.5 + 11) + "deg)";
+            const inner = el("div", "f09-burst-i", "f09-bray-" + i);
+            inner.style.height = len + "px";
+            inner.style.top = -(54 + len) + "px";
+            inner.style.background = i % 2 ? "#f0ece5" : "#e85d26";
+            ray.appendChild(inner);
+            burstHost.appendChild(ray);
+          });
+
+          // ---------- 生成：清单 ----------
+          const ITEMS = ["合并入 main", "清理 worktree", "删除分支"];
+          const listHost = document.getElementById("f09-list");
+          ITEMS.forEach((text, i) => {
+            const item = el("div", "f09-item", "f09-item-" + i);
+            item.style.top = 692 + i * 128 + "px";
+            item.innerHTML =
+              '<span class="f09-box" id="f09-box-' + i + '"><svg class="f09-check" id="f09-check-' + i +
+              '" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="4.5" stroke-linecap="square" stroke-linejoin="miter"><path d="M4.5 12.5l5 5L19.5 6.5" /></svg></span><span>' +
+              text + "</span>";
+            listHost.appendChild(item);
+          });
+
+          // ================= b0 —— 橙屏，巨字砸到位，震屏，墨色放射线 =================
+          tl.fromTo("#f09-hit-word", { scale: 2.5 }, { scale: 1, duration: 0.25, ease: "power4.out" }, 0);
+          tl.to("#f09-hit-word", { scale: 1.05, duration: b(1) - 0.25, ease: "none" }, 0.25);
+          RAY_W.forEach((_, i) => {
+            tl.fromTo("#f09-hray-" + i, { scaleY: 0 }, { scaleY: 0.72 + (i % 4) * 0.06, duration: 0.2, ease: "power4.out" }, 0.05 + (i % 5) * 0.012);
+            tl.to("#f09-hray-" + i, { scaleY: 1, duration: b(1) - 0.3, ease: "none" }, 0.3);
+          });
+          tl.fromTo("#f09-hit-rays", { rotation: -5 }, { rotation: 5, duration: b(1), ease: "none", transformOrigin: "1050px 630px" }, 0);
+          const SHAKE = [[-26, 16], [22, -14], [-16, -10], [12, 11], [-8, 5], [5, -4], [0, 0]];
+          SHAKE.forEach(([x, y], i) => {
+            tl.to("#f09-shake", { x, y, duration: 0.036, ease: "none" }, 0.16 + i * 0.036);
+          });
+
+          // ================= b1 —— 硬切回墨底：标题条、main、分支线起画、第 1 个提交点 =================
+          hide("#f09-hit", b(1));
+          tl.fromTo("#f09-grid", { x: 0 }, { x: -150, duration: b(8) - b(1), ease: "none" }, b(1));
+          show("#f09-title", b(1));
+          tl.fromTo("#f09-title", { scale: 1.6 }, { scale: 1, duration: 0.26, ease: "power4.out" }, b(1));
+          tl.fromTo("#f09-main", { strokeDashoffset: 1840 }, { strokeDashoffset: 0, duration: 0.3, ease: "power3.out" }, b(1));
+          show("#f09-ref-main", b(1));
+          tl.fromTo("#f09-ref-main", { x: -80 }, { x: 0, duration: 0.24, ease: "power4.out" }, b(1));
+          show("#f09-ref-branch", b(1) + BEAT / 4);
+          tl.fromTo("#f09-ref-branch", { y: 40 }, { y: 0, duration: 0.22, ease: "back.out(2.4)" }, b(1) + BEAT / 4);
+          // 分支线：b1 冲到第 1 个提交点，之后匀速画到第 2 个，最后一拍加速拐上去并入 main
+          tl.fromTo("#f09-branch", { strokeDashoffset: 1063.4 }, { strokeDashoffset: 721.7, duration: 0.2, ease: "power2.out" }, b(1));
+          tl.to("#f09-branch", { strokeDashoffset: 531.7, duration: b(2) - b(1) - 0.2, ease: "none" }, b(1) + 0.2);
+          tl.to("#f09-branch", { strokeDashoffset: 0, duration: BEAT, ease: "power1.in" }, b(2));
+
+          COMMITS.forEach((c, i) => {
+            const at = b(i + 1);
+            show("#f09-dot-" + i, at);
+            tl.fromTo("#f09-dot-" + i, { scale: 3.4, rotation: 45 }, { scale: 1, rotation: 0, duration: 0.26, ease: "back.out(2.6)" }, at);
+            show("#f09-ring-" + i, at);
+            tl.fromTo("#f09-ring-" + i, { scale: 1, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 0.4, ease: "power2.out" }, at);
+            show("#f09-stem-" + i, at + 0.06);
+            tl.fromTo("#f09-stem-" + i, { scaleY: 0 }, { scaleY: 1, duration: 0.14, ease: "power2.out" }, at + 0.06);
+            const typed = { n: 0 };
+            const node = document.getElementById("f09-msg-" + i);
+            tl.fromTo(typed, { n: 0 }, {
+              n: c.text.length,
+              duration: 0.3,
+              ease: "none",
+              onUpdate: () => { node.textContent = c.text.slice(0, Math.round(typed.n)); },
+            }, at + 0.1);
+          });
+
+          // ================= b2 —— diff 面板从右侧斜插 =================
+          show("#f09-panel", b(2));
+          tl.fromTo("#f09-panel", { x: 940, rotation: 9 }, { x: 0, rotation: -3, duration: 0.3, ease: "power4.out" }, b(2));
+          tl.fromTo("#f09-shot-diff", { y: 10 }, { y: -14, duration: b(5) - b(2), ease: "none" }, b(2));
+          tl.to("#f09-panel", { rotation: -2, duration: b(5) - b(2) - 0.3, ease: "none" }, b(2) + 0.3);
+
+          // ================= b3 —— 并入 main：合并点、放射线、整屏顶一下 =================
+          show("#f09-merge", b(3));
+          tl.fromTo("#f09-merge", { scale: 3.2, rotation: 90 }, { scale: 1, rotation: 0, duration: 0.28, ease: "back.out(2.2)" }, b(3));
+          BURST_LEN.forEach((_, i) => {
+            const id = "#f09-bray-" + i;
+            tl.fromTo(id, { scaleY: 0 }, { scaleY: 1, duration: 0.1, ease: "power2.out" }, b(3));
+            tl.fromTo(id, { y: 0 }, { y: -150 - (i % 3) * 40, duration: 0.44, ease: "power3.out" }, b(3));
+            tl.fromTo(id, { scaleY: 1 }, { scaleY: 0, duration: 0.32, ease: "power2.in", immediateRender: false }, b(3) + 0.1);
+          });
+          tl.fromTo("#f09-shake", { scale: 1.05, y: 20 }, { scale: 1, y: 0, duration: 0.3, ease: "power3.out", immediateRender: false }, b(3));
+          show("#f09-pulse", b(3) + 0.08);
+          tl.fromTo("#f09-pulse", { x: 0, scaleX: 1 }, { x: 96, scaleX: 0.4, duration: BEAT - 0.08, ease: "power2.out" }, b(3) + 0.08);
+          hide("#f09-pulse", b(4));
+
+          // ================= b4 —— 增删行数滚到位、砸定 =================
+          const roll = (id, sign, to, at) => {
+            const node = document.getElementById(id);
+            const obj = { v: 0 };
+            show("#" + id, at);
+            tl.fromTo("#" + id, { scale: 2.1 }, { scale: 1, duration: 0.28, ease: "power4.out" }, at);
+            tl.fromTo(obj, { v: 0 }, {
+              v: to,
+              duration: 0.36,
+              ease: "power2.out",
+              onUpdate: () => { node.textContent = sign + Math.round(obj.v); },
+            }, at);
+          };
+          roll("f09-num-add", "+", 119, b(4));
+          roll("f09-num-del", "–", 13, b(4) + BEAT / 4);
+          tl.fromTo("#f09-shake", { scale: 1.04 }, { scale: 1, duration: 0.28, ease: "power3.out", immediateRender: false }, b(4));
+          show("#f09-ratio-add", b(4) + BEAT / 2);
+          tl.fromTo("#f09-ratio-add", { scaleX: 0 }, { scaleX: 1, duration: BEAT * 0.4, ease: "none" }, b(4) + BEAT / 2);
+          show("#f09-ratio-del", b(4) + BEAT * 0.9);
+          tl.fromTo("#f09-ratio-del", { scaleX: 0 }, { scaleX: 1, duration: BEAT * 0.1, ease: "none" }, b(4) + BEAT * 0.9);
+
+          // ================= b5 —— 面板硬切成已验收；清单逐拍砸入 =================
+          show("#f09-pane-acc", b(5));
+          hide("#f09-pane-diff", b(5));
+          tl.fromTo("#f09-panel", { scale: 1.12, rotation: 4 }, { scale: 1, rotation: 2.4, duration: 0.28, ease: "power4.out", immediateRender: false }, b(5));
+          tl.to("#f09-panel", { rotation: 1.2, duration: b(8) - b(5) - 0.28, ease: "none" }, b(5) + 0.28);
+          tl.fromTo("#f09-mark", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "back.out(2.4)" }, b(5) + 0.06);
+          tl.fromTo("#f09-mark-2", { scale: 2.4 }, { scale: 1, duration: 0.26, ease: "back.out(2.4)" }, b(5) + BEAT / 2);
+          tl.fromTo("#f09-pane-acc", { scale: 1.06 }, { scale: 1, duration: b(8) - b(5), ease: "none", transformOrigin: "60% 10%" }, b(5));
+
+          ITEMS.forEach((_, i) => {
+            const at = b(5 + i);
+            show("#f09-item-" + i, at);
+            tl.fromTo("#f09-item-" + i, { x: 820 }, { x: 0, duration: 0.24, ease: "power4.out" }, at);
+            tl.fromTo("#f09-check-" + i, { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.2, ease: "back.out(3.2)" }, at + 0.2);
+            tl.fromTo("#f09-box-" + i, { scale: 1.5 }, { scale: 1, duration: 0.2, ease: "power3.out" }, at + 0.2);
+          });
+          // 数字随拍顶一下
+          tl.fromTo("#f09-num-add", { scale: 1.07 }, { scale: 1, duration: 0.26, ease: "power2.out", immediateRender: false }, b(5));
+          tl.fromTo("#f09-num-del", { scale: 1.09 }, { scale: 1, duration: 0.26, ease: "power2.out", immediateRender: false }, b(6));
+          tl.fromTo("#f09-merge", { scale: 1.5 }, { scale: 1, duration: 0.26, ease: "power2.out", immediateRender: false }, b(5));
+          tl.fromTo("#f09-title", { scale: 1.08 }, { scale: 1, duration: 0.26, ease: "power2.out", immediateRender: false }, b(6));
+
+          // ================= b7 —— 删除分支：分支线变灰、标签划掉，橙框闪 =================
+          tl.set("#f09-branch", { stroke: "#505048" }, b(7));
+          tl.set(".f09-dot", { backgroundColor: "#505048" }, b(7));
+          tl.set(".f09-msg", { color: "#888880" }, b(7));
+          tl.set("#f09-ref-branch", { color: "#888880" }, b(7));
+          show("#f09-strike", b(7));
+          tl.fromTo("#f09-strike", { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, b(7));
+          COMMITS.forEach((_, i) => {
+            tl.fromTo("#f09-dot-" + i, { scale: 1 }, { scale: 0.62, duration: 0.2, ease: "power3.out", immediateRender: false }, b(7) + i * (BEAT / 8));
+          });
+          tl.fromTo("#f09-shake", { scale: 1.035 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, b(7));
+          tl.fromTo("#f09-border", { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power2.out", immediateRender: false }, b(7));
+
+          window.__timelines["09-merge"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

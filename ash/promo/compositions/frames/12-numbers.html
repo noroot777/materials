@@ -1,0 +1,519 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f12-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+
+        /* ── 前四拍：整屏字卡 ── */
+        .f12-card {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          visibility: hidden;
+        }
+        .f12-card-orange {
+          background: #e85d26;
+          color: #111111;
+        }
+        .f12-card-ink {
+          background: #111111;
+          color: #f0ece5;
+        }
+        .f12-c0 {
+          visibility: visible;
+        }
+        .f12-tilt {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        .f12-num {
+          position: absolute;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+          will-change: transform;
+        }
+        /* 滚动中的过渡数字叠在终值上方，逐个切显隐；终值留在文档流里撑出尺寸 */
+        .f12-roll {
+          position: absolute;
+          top: 0;
+          visibility: hidden;
+        }
+        .f12-roll-end {
+          visibility: hidden;
+        }
+        .f12-unit {
+          position: absolute;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        .f12-dots {
+          position: absolute;
+        }
+        .f12-dot {
+          position: absolute;
+        }
+        /* 斜纹带：外框裁切，里面一排斜条整体平移 */
+        .f12-hatch {
+          position: absolute;
+          overflow: hidden;
+        }
+        .f12-hatch-in {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -400px;
+        }
+        .f12-hatch-bar {
+          position: absolute;
+          top: -20%;
+          height: 140%;
+          background: currentColor;
+          transform: skewX(-28deg);
+        }
+
+        /* 卡 0：15 居左，整体左倾 */
+        .f12-n0 { left: 44px; top: -86px; font-size: 1000px; transform-origin: 40% 60%; }
+        .f12-d0 { left: 1000px; top: 120px; width: 860px; height: 504px; }
+        .f12-u0 { left: 1000px; top: 668px; font-size: 150px; letter-spacing: 0.04em; }
+        .f12-h0 { left: -200px; top: 900px; width: 2320px; height: 320px; color: #111111; }
+
+        /* 卡 1：28 居右，整体右倾 */
+        .f12-n1 { right: 70px; top: 14px; font-size: 940px; color: #e85d26; transform-origin: 55% 55%; }
+        .f12-d1 { left: 70px; top: 262px; width: 700px; height: 391px; }
+        .f12-u1 { left: 62px; top: 700px; font-size: 122px; }
+        .f12-h1a { left: -200px; top: 44px; width: 2320px; height: 84px; color: #e85d26; }
+        .f12-h1b { left: -200px; top: 954px; width: 2320px; height: 84px; color: #f0ece5; }
+        .f12-dot-ring { border: 5px solid #f0ece5; }
+        .f12-dot-fill { position: absolute; inset: -5px; background: #e85d26; }
+
+        /* 卡 2：1 居中，两翼粗条 */
+        .f12-n2 { left: 0; width: 1920px; top: -178px; font-size: 1120px; text-align: center; letter-spacing: 0; transform-origin: 50% 55%; }
+        .f12-u2 { left: 0; width: 1920px; top: 874px; font-size: 144px; text-align: center; letter-spacing: 0.28em; padding-left: 0.28em; }
+        .f12-wing { position: absolute; height: 76px; background: #111111; }
+
+        /* 卡 3：三块通栏 */
+        .f12-os {
+          position: absolute;
+          left: 0;
+          width: 1920px;
+          height: 360px;
+        }
+        .f12-os-word {
+          position: absolute;
+          top: 28px;
+          background: #111111;
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 280px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+        }
+        .f12-os-bar { left: -200px; width: 2320px; top: 84px; height: 196px; }
+        .f12-os-left { left: 0; padding: 0 64px 0 64px; }
+        .f12-os-right { right: 0; padding: 0 64px 0 72px; }
+        .f12-os-rule { position: absolute; left: 0; width: 1920px; height: 6px; background: #282826; }
+
+        /* ── 后四拍：马赛克 ── */
+        .f12-mstage {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          visibility: hidden;
+          transform-origin: 50% 50%;
+        }
+        .f12-cell {
+          position: absolute;
+          width: 480px;
+          height: 270px;
+          will-change: transform;
+        }
+        .f12-pane {
+          position: absolute;
+          inset: 2px;
+          overflow: hidden;
+          background: #1a1a18;
+        }
+        .f12-shot {
+          position: absolute;
+          left: 0;
+          top: 0;
+          display: block;
+        }
+        .f12-fill {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          opacity: 0;
+        }
+        .f12-dim {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          opacity: 0;
+        }
+        .f12-ring {
+          position: absolute;
+          width: 476px;
+          height: 266px;
+          border: 14px solid #e85d26;
+          opacity: 0;
+        }
+        .f12-title {
+          position: absolute;
+          left: -40px;
+          top: 412px;
+          width: 2000px;
+          height: 256px;
+          background: #e85d26;
+          border-top: 12px solid #111111;
+          border-bottom: 12px solid #111111;
+          overflow: hidden;
+          visibility: hidden;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 136px;
+          line-height: 222px;
+          letter-spacing: 0.03em;
+          text-align: center;
+          white-space: nowrap;
+        }
+        .f12-ch {
+          display: inline-block;
+        }
+        .f12-square {
+          position: absolute;
+          left: 840px;
+          top: 420px;
+          width: 240px;
+          height: 240px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+      </style>
+
+      <div id="root" data-composition-id="12-numbers" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f12-bg" id="f12-bg" data-start="0" data-duration="3.75" data-track-index="0"></div>
+
+        <div class="f12-card f12-card-orange f12-c0" id="f12-c0">
+          <div class="f12-tilt" id="f12-t0">
+            <div class="f12-hatch f12-h0"><div class="f12-hatch-in" id="f12-hi0"></div></div>
+            <div class="f12-dots f12-d0" id="f12-d0"></div>
+            <div class="f12-unit f12-u0" id="f12-u0">个执行器</div>
+            <div class="f12-num f12-n0" id="f12-n0"></div>
+          </div>
+        </div>
+
+        <div class="f12-card f12-card-ink" id="f12-c1">
+          <div class="f12-tilt" id="f12-t1">
+            <div class="f12-hatch f12-h1a"><div class="f12-hatch-in" id="f12-hi1a"></div></div>
+            <div class="f12-hatch f12-h1b"><div class="f12-hatch-in" id="f12-hi1b"></div></div>
+            <div class="f12-dots f12-d1" id="f12-d1"></div>
+            <div class="f12-unit f12-u1" id="f12-u1">个 MCP 工具</div>
+            <div class="f12-num f12-n1" id="f12-n1"></div>
+          </div>
+        </div>
+
+        <div class="f12-card f12-card-orange" id="f12-c2">
+          <div id="f12-wings"></div>
+          <div class="f12-num f12-n2" id="f12-n2"></div>
+          <div class="f12-unit f12-u2" id="f12-u2">条命令启动</div>
+        </div>
+
+        <div class="f12-card f12-card-ink" id="f12-c3">
+          <div class="f12-os-rule" style="top: 357px"></div>
+          <div class="f12-os-rule" style="top: 717px"></div>
+          <div class="f12-os" style="top: 0; color: #f0ece5">
+            <div class="f12-hatch f12-os-bar" id="f12-ob0"><div class="f12-hatch-in" id="f12-oh0"></div></div>
+            <span class="f12-os-word f12-os-left" id="f12-os0">macOS</span>
+          </div>
+          <div class="f12-os" style="top: 360px; color: #e85d26">
+            <div class="f12-hatch f12-os-bar" id="f12-ob1"><div class="f12-hatch-in" id="f12-oh1"></div></div>
+            <span class="f12-os-word f12-os-right" id="f12-os1">Linux</span>
+          </div>
+          <div class="f12-os" style="top: 720px; color: #f0ece5">
+            <div class="f12-hatch f12-os-bar" id="f12-ob2"><div class="f12-hatch-in" id="f12-oh2"></div></div>
+            <span class="f12-os-word f12-os-left" id="f12-os2">Windows</span>
+          </div>
+        </div>
+
+        <div class="f12-mstage" id="f12-mstage">
+          <div id="f12-mosaic"></div>
+          <div class="f12-dim" id="f12-dim"></div>
+          <div id="f12-rings"></div>
+        </div>
+
+        <div class="f12-title" id="f12-title"></div>
+        <div class="f12-square" id="f12-square"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+          const $ = (id) => document.getElementById(id);
+          const make = (cls, host, css) => {
+            const el = document.createElement("div");
+            el.className = cls;
+            Object.assign(el.style, css || {});
+            host.appendChild(el);
+            return el;
+          };
+          const show = (sel, at) => tl.set(sel, { visibility: "visible" }, at);
+          const hide = (sel, at) => tl.set(sel, { visibility: "hidden" }, at);
+
+          // 斜纹带：一排斜条，整带在一拍里匀速滑过 shift 像素
+          const hatch = (id, count, barW, pitch) => {
+            const host = $(id);
+            for (let i = 0; i < count; i++) make("f12-hatch-bar", host, { left: i * pitch + "px", width: barW + "px" });
+            return "#" + id;
+          };
+          const slide = (sel, shift, at, dur) => tl.fromTo(sel, { x: 0 }, { x: shift, duration: dur || BEAT, ease: "none" }, at);
+
+          // 数字滚到位：写死一串过渡值，拍点后每 1/30s 换一个、0.17s 落到终值（只切显隐，画面只由时间决定）
+          const roll = (id, values, at, align) => {
+            const host = $(id);
+            const spans = values.map((v, k) => {
+              const last = k === values.length - 1;
+              const span = document.createElement("span");
+              span.className = last ? "f12-roll-end" : "f12-roll";
+              span.id = id + "-v" + k;
+              span.textContent = String(v);
+              if (!last) {
+                if (align === "center") Object.assign(span.style, { left: "0px", width: "100%" });
+                else span.style[align] = "0px";
+              }
+              if (k === 0) span.style.visibility = "inherit";
+              host.appendChild(span);
+              return "#" + span.id;
+            });
+            for (let k = 1; k < spans.length; k++) {
+              tl.set(spans[k - 1], { visibility: "hidden" }, at + k / 30);
+              tl.set(spans[k], { visibility: "inherit" }, at + k / 30);
+            }
+          };
+          const slam = (sel, at, fromVars, push) => {
+            tl.fromTo(sel, { scale: 1.42, ...fromVars }, { scale: 1, x: 0, y: 0, duration: 0.2, ease: "power4.out" }, at);
+            tl.to(sel, { scale: push || 1.06, duration: BEAT - 0.2, ease: "none" }, at + 0.2);
+          };
+
+          // ── b0 橙底「15 个执行器」：15 居左，右上 5×3 十五个墨块逐个点亮，底部斜纹带滑动 ──
+          hatch("f12-hi0", 34, 46, 92);
+          for (let i = 0; i < 15; i++) {
+            make("f12-dot", $("f12-d0"), {
+              left: (i % 5) * 176 + "px",
+              top: Math.floor(i / 5) * 176 + "px",
+              width: "152px",
+              height: "152px",
+              background: "#111111",
+            }).id = "f12-d0-" + i;
+          }
+          tl.fromTo("#f12-t0", { rotation: -9 }, { rotation: -4, duration: 0.24, ease: "back.out(2.4)" }, 0);
+          roll("f12-n0", [4, 8, 11, 13, 14, 15], 0, "left");
+          slam("#f12-n0", 0, { x: -60, y: -40 });
+          tl.fromTo("#f12-u0", { x: 420 }, { x: 0, duration: 0.2, ease: "power4.out" }, 0.02);
+          for (let i = 0; i < 15; i++) {
+            tl.fromTo("#f12-d0-" + i, { scale: 0 }, { scale: 1, duration: 0.1, ease: "back.out(1.5)" }, 0.05 + i * (BEAT / 26));
+          }
+          slide("#f12-hi0", 276, 0);
+
+          // ── b1 墨底「28 个 MCP 工具」：28 居右，左侧 7×4 二十八格逐个填橙，上下两条斜纹对向滑 ──
+          hatch("f12-hi1a", 36, 40, 80);
+          hatch("f12-hi1b", 36, 40, 80);
+          for (let i = 0; i < 28; i++) {
+            const dot = make("f12-dot f12-dot-ring", $("f12-d1"), {
+              left: (i % 7) * 103 + "px",
+              top: Math.floor(i / 7) * 103 + "px",
+              width: "82px",
+              height: "82px",
+            });
+            make("f12-dot-fill", dot).id = "f12-d1-" + i;
+          }
+          hide("#f12-c0", b(1));
+          show("#f12-c1", b(1));
+          tl.fromTo("#f12-t1", { rotation: 8 }, { rotation: 3, duration: 0.24, ease: "back.out(2.4)" }, b(1));
+          roll("f12-n1", [3, 12, 19, 24, 27, 28], b(1), "right");
+          slam("#f12-n1", b(1), { x: 80, y: 50 }, 1.05);
+          tl.fromTo("#f12-u1", { x: -460 }, { x: 0, duration: 0.2, ease: "power4.out" }, b(1) + 0.02);
+          tl.fromTo("#f12-d1", { y: -140 }, { y: 0, duration: 0.2, ease: "power4.out" }, b(1));
+          for (let i = 0; i < 28; i++) {
+            tl.fromTo("#f12-d1-" + i, { scale: 0 }, { scale: 1, duration: 0.09, ease: "power3.out" }, b(1) + 0.05 + i * (BEAT / 44));
+          }
+          slide("#f12-hi1a", 240, b(1));
+          slide("#f12-hi1b", -240, b(1));
+
+          // ── b2 橙底「1 条命令启动」：1 居中直立，两翼各五根粗条从边缘射入后继续伸缩 ──
+          const WING_L = [600, 720, 440, 680, 520];
+          const WING_R = [480, 660, 720, 400, 620];
+          const WING_GROW = [[60, -70, 110, -60, 80], [90, -80, 30, 120, -70]];
+          [WING_L, WING_R].forEach((widths, side) => {
+            widths.forEach((w, i) => {
+              const css = { top: 96 + i * 148 + "px", width: w + "px", transformOrigin: side ? "100% 50%" : "0% 50%" };
+              css[side ? "right" : "left"] = "0px";
+              const id = "f12-wing-" + side + "-" + i;
+              make("f12-wing", $("f12-wings"), css).id = id;
+              const at = b(2) + (side ? 4 - i : i) * 0.012;
+              tl.fromTo("#" + id, { scaleX: 0 }, { scaleX: 1, duration: 0.17, ease: "power4.out" }, at);
+              tl.to("#" + id, { scaleX: (w + WING_GROW[side][i]) / w, duration: b(3) - at - 0.17, ease: "none" }, at + 0.17);
+            });
+          });
+          hide("#f12-c1", b(2));
+          show("#f12-c2", b(2));
+          roll("f12-n2", [9, 6, 4, 3, 2, 1], b(2), "center");
+          slam("#f12-n2", b(2), { y: -90 }, 1.08);
+          tl.fromTo("#f12-u2", { y: 220 }, { y: 0, duration: 0.2, ease: "power4.out" }, b(2) + 0.02);
+          tl.to("#f12-u2", { scaleX: 1.05, duration: BEAT - 0.22, ease: "none" }, b(2) + 0.22);
+
+          // ── b3 墨底三块通栏：三条斜纹带拍点上同时铺满并对向滑动，三个词各压一块墨底十六分错峰砸入 ──
+          hatch("f12-oh0", 30, 58, 104);
+          hatch("f12-oh1", 30, 58, 104);
+          hatch("f12-oh2", 30, 58, 104);
+          hide("#f12-c2", b(3));
+          show("#f12-c3", b(3));
+          [-1, 1, -1].forEach((dir, i) => {
+            const at = b(3) + i * (BEAT / 4);
+            const word = "#f12-os" + i;
+            tl.fromTo("#f12-ob" + i, { scaleY: 0.2 }, { scaleY: 1, duration: 0.14, ease: "power4.out" }, b(3));
+            tl.fromTo("#f12-oh" + i, { x: 0 }, { x: -dir * 312, duration: BEAT, ease: "none" }, b(3));
+            // 第一个词在拍点上已经露出一大半，后两个从屏外进
+            tl.fromTo(word, { xPercent: dir * (i ? 104 : 55) }, { xPercent: 0, duration: 0.14, ease: "power4.out" }, at);
+            tl.to(word, { paddingLeft: dir < 0 ? 104 : 72, paddingRight: dir < 0 ? 64 : 104, duration: b(4) - at - 0.14, ease: "none" }, at + 0.14);
+          });
+
+          // ── b4 马赛克：4×4 十六格按写死的乱序翻入，b5 前全部到位 ──
+          const SHOTS = [
+            "workbench", "diff", "phone-list", "team",
+            "review", "queue", "chat", "accepted",
+            "duet", "changes", "phone-task", "palette",
+            "create", "notes", "reviewing", "question",
+          ];
+          const ORDER = [5, 12, 0, 9, 14, 2, 7, 11, 3, 15, 6, 1, 10, 4, 13, 8];
+          const FLIP = [
+            { rotationX: -92 },
+            { scale: 0 },
+            { rotationY: 92 },
+            { rotationX: 92 },
+            { scale: 0, rotation: -18 },
+            { rotationY: -92 },
+          ];
+          const STEP = BEAT / 20;
+          const cells = SHOTS.map((name, i) => {
+            const col = i % 4;
+            const row = Math.floor(i / 4);
+            const pos = { left: col * 480 + "px", top: row * 270 + "px" };
+            const cell = make("f12-cell", $("f12-mosaic"), pos);
+            cell.id = "f12-cell-" + i;
+            const pane = make("f12-pane", cell);
+            const img = document.createElement("img");
+            img.className = "f12-shot";
+            img.alt = "";
+            img.src = "assets/shots/" + name + ".png";
+            const phone = name.indexOf("phone") === 0;
+            img.width = 476;
+            img.height = phone ? 1030 : 268;
+            img.style.width = "476px";
+            img.style.height = (phone ? 1030 : 268) + "px";
+            pane.appendChild(img);
+            make("f12-fill", pane).id = "f12-fill-" + i;
+            make("f12-ring", $("f12-rings"), { left: col * 480 + 2 + "px", top: row * 270 + 2 + "px" }).id = "f12-ring-" + i;
+            return { id: "#f12-cell-" + i, col, row, cx: col * 480 + 240, cy: row * 270 + 135 };
+          });
+
+          hide("#f12-c3", b(4));
+          show("#f12-mstage", b(4));
+          tl.fromTo("#f12-mstage", { scale: 1.1 }, { scale: 1, duration: 0.42, ease: "power3.out" }, b(4));
+          cells.forEach((cell, i) => {
+            // 提前不到一个十六分起翻（此时整层还藏着），拍点切进来时第一批已经翻到一半
+            const at = b(4) - 0.16 + ORDER[i] * STEP;
+            tl.fromTo(
+              cell.id,
+              { transformPerspective: 900, ...FLIP[ORDER[i] % FLIP.length] },
+              { rotationX: 0, rotationY: 0, rotation: 0, scale: 1, duration: 0.2, ease: "back.out(1.5)" },
+              at,
+            );
+            // 每格先是一块橙，翻到位的同时褪成截图
+            tl.fromTo("#f12-fill-" + i, { opacity: 1 }, { opacity: 0, duration: 0.2, ease: "power2.in" }, at + 0.04);
+          });
+
+          // ── b5 橙条大标题砸入，马赛克压暗 ──
+          const title = $("f12-title");
+          "全部跑在你自己的机器上".split("").forEach((ch, i) => {
+            const span = document.createElement("span");
+            span.className = "f12-ch";
+            span.id = "f12-ch-" + i;
+            span.textContent = ch;
+            title.appendChild(span);
+            tl.fromTo("#f12-ch-" + i, { y: 250 }, { y: 0, duration: 0.17, ease: "back.out(1.8)" }, b(5) + 0.03 + i * 0.012);
+          });
+          show("#f12-title", b(5));
+          tl.fromTo("#f12-title", { xPercent: -100 }, { xPercent: 0, duration: 0.2, ease: "power4.out" }, b(5));
+          tl.to("#f12-dim", { opacity: 0.3, duration: 0.18, ease: "power2.out" }, b(5));
+          tl.fromTo("#f12-mstage", { scale: 1.05 }, { scale: 1, duration: 0.26, ease: "power3.out", immediateRender: false }, b(5));
+          tl.to("#f12-mstage", { scale: 1.035, duration: BEAT - 0.26, ease: "none" }, b(5) + 0.26);
+          tl.to("#f12-title", { scale: 1.03, duration: BEAT - 0.2, ease: "none" }, b(5) + 0.2);
+
+          // ── b6 橙描边沿对角线逐格扫过，整屏顶一下 ──
+          cells.forEach((cell, i) => {
+            const at = b(6) + (cell.col + cell.row) * 0.032;
+            tl.set("#f12-ring-" + i, { opacity: 1 }, at);
+            tl.fromTo("#f12-ring-" + i, { scale: 1.08 }, { scale: 1, duration: 0.12, ease: "power3.out", immediateRender: false }, at);
+            tl.to("#f12-ring-" + i, { opacity: 0, duration: 0.14, ease: "power2.in" }, at + 0.12);
+          });
+          tl.fromTo("#f12-mstage", { scale: 1.08 }, { scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, b(6));
+          tl.to("#f12-mstage", { scale: 1.025, duration: BEAT - 0.3, ease: "none" }, b(6) + 0.3);
+          tl.fromTo("#f12-dim", { opacity: 0 }, { opacity: 0.3, duration: 0.4, ease: "power2.in", immediateRender: false }, b(6));
+          tl.fromTo("#f12-title", { scale: 1.1 }, { scale: 1, duration: 0.28, ease: "back.out(2.4)", immediateRender: false }, b(6));
+          tl.to("#f12-title", { scale: 1.03, duration: BEAT - 0.28, ease: "none" }, b(6) + 0.28);
+
+          // ── b7 标题条收走；十六格先一缩裂开，再染橙吸向正中，橙方块在落点顶出来 ──
+          tl.to("#f12-title", { xPercent: 104, duration: 0.13, ease: "power3.in" }, b(7));
+          hide("#f12-title", b(7) + 0.14);
+          tl.to("#f12-dim", { opacity: 0, duration: 0.08, ease: "none" }, b(7));
+          tl.to("#f12-mstage", { scale: 1, duration: 0.07, ease: "power2.out" }, b(7));
+          cells.forEach((cell, i) => {
+            tl.to(cell.id, { scale: 0.84, duration: 0.07, ease: "power4.out" }, b(7));
+            const at = b(7) + 0.07 + ORDER[i] * 0.004;
+            tl.to(cell.id, { x: 960 - cell.cx, y: 540 - cell.cy, scale: 0.3, duration: 0.2, ease: "power3.in" }, at);
+            tl.to("#f12-fill-" + i, { opacity: 1, duration: 0.16, ease: "power2.in" }, at);
+          });
+          show("#f12-square", b(7) + 0.2);
+          tl.fromTo("#f12-square", { scale: 0.3 }, { scale: 1, duration: 0.2, ease: "back.out(3)" }, b(7) + 0.2);
+          hide("#f12-mosaic", b(7) + 0.34);
+
+          window.__timelines["12-numbers"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

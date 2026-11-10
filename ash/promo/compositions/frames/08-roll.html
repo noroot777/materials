@@ -1,0 +1,419 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Noto Sans SC", sans-serif;
+        }
+        .f08-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f08-world {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+        }
+        /* 镜头：以右侧工作流面板为原点阶梯式推近 */
+        .f08-cam {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 1650px 190px;
+          will-change: transform;
+        }
+        .f08-shot {
+          position: absolute;
+          left: 0;
+          top: 0;
+          display: block;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f08-scrim {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+          opacity: 0.7;
+        }
+
+        /* —— 四格环（07 / 08 共用同一张数表，位置尺寸由脚本里的 RING 写入） —— */
+        .f08-ring {
+          position: absolute;
+        }
+        .f08-ring-svg {
+          position: absolute;
+          left: -70px;
+          top: -70px;
+          width: 940px;
+          height: 760px;
+          overflow: visible;
+        }
+        .f08-link-base {
+          fill: none;
+          stroke: #505048;
+          stroke-width: 10;
+        }
+        .f08-head-base {
+          fill: #505048;
+        }
+        .f08-link {
+          fill: none;
+          stroke: #f0ece5;
+          stroke-width: 10;
+        }
+        .f08-head {
+          fill: #f0ece5;
+        }
+        #f08-link-back {
+          stroke: #e85d26;
+        }
+        #f08-head-back {
+          fill: #e85d26;
+        }
+        .f08-block {
+          position: absolute;
+          width: 280px;
+          height: 230px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 8px solid #f0ece5;
+          background: #111111;
+          color: #f0ece5;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 80px;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        .f08-round {
+          position: absolute;
+          left: 280px;
+          top: 260px;
+          width: 240px;
+          height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          color: #e85d26;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 84px;
+          line-height: 100px;
+          white-space: nowrap;
+        }
+        .f08-round-num {
+          position: relative;
+          width: 54px;
+          height: 100px;
+          overflow: hidden;
+        }
+        .f08-round-col {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 54px;
+        }
+        .f08-round-digit {
+          display: block;
+          height: 100px;
+          line-height: 100px;
+          text-align: center;
+        }
+
+        /* —— 左侧巨型翻词 —— */
+        .f08-word {
+          position: absolute;
+          left: 60px;
+          top: 150px;
+          width: 880px;
+          height: 580px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 12px solid #f0ece5;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 350px;
+          line-height: 1;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f08-word-review {
+          background: #111111;
+          color: #f0ece5;
+        }
+        .f08-word-reject {
+          background: #e85d26;
+          border-color: #e85d26;
+          color: #111111;
+        }
+        .f08-word-fix {
+          background: #111111;
+          border-color: #e85d26;
+          color: #e85d26;
+        }
+        /* —— 节拍格：四分 / 八分 / 十六分，宽度按时值 —— */
+        .f08-meter {
+          position: absolute;
+          left: 60px;
+          top: 790px;
+          width: 880px;
+          height: 130px;
+        }
+        .f08-cell {
+          position: absolute;
+          top: 0;
+          height: 130px;
+          border: 6px solid #505048;
+          background: #111111;
+        }
+        .f08-sweep {
+          position: absolute;
+          left: 60px;
+          top: 944px;
+          width: 880px;
+          height: 16px;
+          background: #f0ece5;
+          transform-origin: 0 50%;
+        }
+        .f08-frame {
+          position: absolute;
+          inset: 0;
+          border: 18px solid #e85d26;
+          opacity: 0;
+        }
+        .f08-frame-heavy {
+          border-width: 36px;
+          opacity: 1;
+          visibility: hidden;
+        }
+        .f08-bar {
+          position: absolute;
+          left: 0;
+          width: 1920px;
+          height: 96px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        /* —— 硬停：纯墨黑 + 勾 + 「已通过」 —— */
+        .f08-pass {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 56px;
+          background: #111111;
+          visibility: hidden;
+        }
+        .f08-pass-check {
+          display: block;
+          width: 260px;
+          height: 260px;
+          flex: none;
+        }
+        .f08-pass-text {
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 280px;
+          line-height: 1;
+          letter-spacing: -0.02em;
+          color: #f0ece5;
+          white-space: nowrap;
+        }
+      </style>
+
+      <div id="root" data-composition-id="08-roll" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f08-bg" id="f08-bg" data-start="0" data-duration="3.75" data-track-index="0"></div>
+
+        <div class="f08-world" id="f08-world">
+          <div class="f08-cam" id="f08-cam">
+            <img class="f08-shot" src="assets/shots/reviewing.png" alt="" />
+            <div class="f08-scrim"></div>
+          </div>
+
+          <div class="f08-ring" id="f08-ring"></div>
+
+          <div class="f08-word f08-word-review" id="f08-word-review">审查</div>
+          <div class="f08-word f08-word-reject" id="f08-word-reject">打回</div>
+          <div class="f08-word f08-word-fix" id="f08-word-fix">修复</div>
+
+          <div class="f08-meter" id="f08-meter"></div>
+          <div class="f08-sweep" id="f08-sweep"></div>
+        </div>
+
+        <div class="f08-bar" id="f08-bar-top" style="top: 0"></div>
+        <div class="f08-bar" id="f08-bar-bottom" style="bottom: 0"></div>
+        <div class="f08-frame" id="f08-frame"></div>
+        <div class="f08-frame f08-frame-heavy" id="f08-frame-heavy"></div>
+
+        <div class="f08-pass" id="f08-pass">
+          <svg class="f08-pass-check" viewBox="0 0 260 260" fill="none">
+            <path d="M20 138 L98 216 L240 50" stroke="#e85d26" stroke-width="44" />
+          </svg>
+          <span class="f08-pass-text">已通过</span>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const P = "f08";
+          const BEAT = 0.46875;
+          const INK = "#111111";
+          const ORANGE = "#e85d26";
+          const CREAM = "#f0ece5";
+          const tl = gsap.timeline({ paused: true });
+
+          // —— 四格环数表（与 07-verify 逐字相同）——
+          const RING = { left: 1060, top: 220, w: 800, h: 620 };
+          const BLOCKS = [
+            { key: "impl", label: "实现", x: 0, y: 0 },
+            { key: "review", label: "审查", x: 520, y: 0 },
+            { key: "reject", label: "打回", x: 520, y: 390 },
+            { key: "fix", label: "修复", x: 0, y: 390 },
+          ];
+          const LINKS = [
+            { key: "c1", d: "M280 115 H492", head: "520,115 490,96 490,134" },
+            { key: "c2", d: "M660 230 V362", head: "660,390 641,360 679,360" },
+            { key: "c3", d: "M520 505 H308", head: "280,505 310,486 310,524" },
+            { key: "back", d: "M0 505 H-50 V-50 H660 V-28", head: "660,0 641,-30 679,-30" },
+          ];
+          const ring = document.getElementById(P + "-ring");
+          ring.style.cssText = `left:${RING.left}px;top:${RING.top}px;width:${RING.w}px;height:${RING.h}px`;
+          ring.innerHTML =
+            `<svg class="${P}-ring-svg" viewBox="-70 -70 940 760">` +
+            LINKS.map(
+              (l) =>
+                (l.key === "back" ? "" : `<path class="${P}-link-base" d="${l.d}"/><polygon class="${P}-head-base" points="${l.head}"/>`) +
+                `<path class="${P}-link" id="${P}-link-${l.key}" d="${l.d}"/><polygon class="${P}-head" id="${P}-head-${l.key}" points="${l.head}"/>`,
+            ).join("") +
+            `</svg>` +
+            BLOCKS.map((k) => `<div class="${P}-block" id="${P}-block-${k.key}" style="left:${k.x}px;top:${k.y}px">${k.label}</div>`).join("") +
+            `<div class="${P}-round" id="${P}-round"><span>第</span><span class="${P}-round-num"><span class="${P}-round-col" id="${P}-round-col">` +
+            [1, 2, 3, 4, 5].map((n) => `<span class="${P}-round-digit">${n}</span>`).join("") +
+            `</span></span><span>轮</span></div>`;
+
+          // —— 加速序列：四分 ×4 → 八分 ×4 → 十六分 ×4，3.28125 硬停 ——
+          const JUMPS = [0, 0.46875, 0.9375, 1.40625, 1.875, 2.109375, 2.34375, 2.578125, 2.8125, 2.9296875, 3.046875, 3.1640625];
+          const STOP = 3.28125;
+          const ORDER = ["review", "reject", "fix"];
+          const LINK_INTO = { review: "back", reject: "c2", fix: "c3" };
+          const UNITS = [4, 4, 4, 4, 2, 2, 2, 2, 1, 1, 1, 1];
+
+          // 节拍格
+          const meter = document.getElementById("f08-meter");
+          const GAP = 8;
+          const unit = (880 - GAP * (UNITS.length - 1)) / UNITS.reduce((a, n) => a + n, 0);
+          let cursor = 0;
+          meter.innerHTML = UNITS.map((n, i) => {
+            const html = `<div class="f08-cell" id="f08-cell-${i}" style="left:${cursor.toFixed(2)}px;width:${(n * unit).toFixed(2)}px"></div>`;
+            cursor += n * unit + GAP;
+            return html;
+          }).join("");
+
+          const blk = (key) => `#${P}-block-${key}`;
+          // t=0 的状态直接写到元素上（时间线停在 0 时，position 0 的 set 不保证已经渲染），之后的才进时间线
+          const put = (sel, props, at) => (at === 0 ? gsap.set(sel, props) : tl.set(sel, props, at));
+          const paintLink = (key, color, at) => {
+            put(`#${P}-link-${key}`, { stroke: color }, at);
+            put(`#${P}-head-${key}`, { fill: color }, at);
+          };
+
+          // 底图阶梯推近；节拍扫线匀速走到硬停
+          gsap.set("#f08-cam", { scale: 1.02 });
+          tl.fromTo("#f08-sweep", { scaleX: 0 }, { scaleX: 1, duration: STOP, ease: "none" }, 0);
+
+          let round = 1;
+          JUMPS.forEach((at, k) => {
+            const key = ORDER[k % 3];
+            const prev = ORDER[(k + 2) % 3];
+            const gap = (k < JUMPS.length - 1 ? JUMPS[k + 1] : STOP) - at;
+            const dur = Math.min(0.26, gap * 0.8);
+            const heat = k / (JUMPS.length - 1); // 0 → 1，越往后越狠
+
+            // 环：上一格恢复常亮，这一格橙底墨字；通向这一格的连线变橙
+            put(blk(prev), { borderColor: CREAM, color: CREAM, backgroundColor: INK }, at);
+            put(blk(key), { borderColor: ORANGE, color: INK, backgroundColor: ORANGE }, at);
+            paintLink(LINK_INTO[prev], CREAM, at);
+            paintLink(LINK_INTO[key], ORANGE, at);
+            tl.fromTo(blk(key), { scale: (k === 0 ? 1.06 : 1.12) + heat * 0.14 }, { scale: 1, duration: dur, ease: "power3.out", immediateRender: k === 0 }, at);
+
+            // 翻词：硬切
+            put(`#f08-word-${prev}`, { visibility: "hidden" }, at);
+            put(`#f08-word-${key}`, { visibility: "visible" }, at);
+            tl.fromTo(
+              `#f08-word-${key}`,
+              { scale: 1.08 + heat * 0.1, rotation: k % 2 ? 1.6 : -1.6 },
+              { scale: 1, rotation: 0, duration: dur, ease: "power4.out", immediateRender: false },
+              at,
+            );
+
+            // 节拍格点亮
+            put(`#f08-cell-${k}`, { backgroundColor: ORANGE, borderColor: ORANGE }, at);
+            tl.fromTo(`#f08-cell-${k}`, { scaleY: 1.5 }, { scaleY: 1, duration: dur, ease: "power2.out", immediateRender: false }, at);
+
+            // 轮次：每回到「审查」加一，数字硬滚
+            if (key === "review") {
+              round += 1;
+              tl.to(`#${P}-round-col`, { y: -100 * (round - 1), duration: Math.min(0.09, gap * 0.6), ease: "power3.out" }, at);
+              tl.fromTo(`#${P}-round`, { scale: 1 }, { scale: 1.45, duration: 0.05, ease: "power2.out", immediateRender: false }, at);
+              tl.to(`#${P}-round`, { scale: 1, duration: dur - 0.05, ease: "power2.out" }, at + 0.05);
+            }
+
+            if (k > 0) {
+              // 镜头再推一步；整屏顶一下，越往后顶得越狠、还带横向错位
+              tl.to("#f08-cam", { scale: 1.02 + k * 0.04, duration: Math.min(0.12, gap * 0.6), ease: "power4.out" }, at);
+              tl.fromTo(
+                "#f08-world",
+                { scale: 1.018 + heat * 0.036, x: k >= 4 ? (k % 2 ? 1 : -1) * (4 + heat * 10) : 0 },
+                { scale: 1, x: 0, duration: dur, ease: "power3.out", immediateRender: false },
+                at,
+              );
+            }
+            if (k >= 4 && k < 8) {
+              tl.fromTo("#f08-frame", { opacity: 1 }, { opacity: 0, duration: gap * 0.9, ease: "power2.out", immediateRender: false }, at);
+            }
+            if (k >= 8) {
+              // 十六分：粗框硬闪 + 上下横条交替
+              const bar = k % 2 ? "#f08-bar-bottom" : "#f08-bar-top";
+              tl.set("#f08-frame-heavy", { visibility: "visible" }, at);
+              tl.set("#f08-frame-heavy", { visibility: "hidden" }, at + gap * 0.55);
+              tl.set(bar, { visibility: "visible" }, at);
+              tl.set(bar, { visibility: "hidden" }, at + gap * 0.55);
+            }
+          });
+
+          // 硬停：一刀切到纯墨黑，勾 + 「已通过」，一动不动到帧尾
+          tl.set("#f08-world", { visibility: "hidden", opacity: 0 }, STOP);
+          tl.set("#f08-pass", { visibility: "visible" }, STOP);
+          tl.set({}, {}, 3.75);
+
+          window.__timelines["08-roll"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>

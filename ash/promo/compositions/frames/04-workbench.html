@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        @font-face { font-family: "Barlow"; font-weight: 900; font-display: block; src: url("assets/fonts/Barlow-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 700; font-display: block; src: url("assets/fonts/Barlow-Bold.woff2") format("woff2"); }
+        @font-face { font-family: "Barlow"; font-weight: 500; font-display: block; src: url("assets/fonts/Barlow-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 900; font-display: block; src: url("assets/fonts/NotoSansSC-Black.woff2") format("woff2"); }
+        @font-face { font-family: "Noto Sans SC"; font-weight: 500; font-display: block; src: url("assets/fonts/NotoSansSC-Medium.woff2") format("woff2"); }
+
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          color: #f0ece5;
+          font-family: "Barlow", "Noto Sans SC", sans-serif;
+        }
+        .f04-bg {
+          position: absolute;
+          inset: 0;
+          background: #111111;
+        }
+        .f04-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            repeating-linear-gradient(90deg, #282826 0 1px, transparent 1px 160px),
+            repeating-linear-gradient(0deg, #282826 0 1px, transparent 1px 160px);
+        }
+        .f04-stage {
+          position: absolute;
+          inset: 0;
+          perspective: 2200px;
+        }
+        /* 镜头：截图按 1920×1080 铺满，标注框画在同一坐标系里，随镜头一起推拉 */
+        .f04-cam {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          transform-origin: 0 0;
+          will-change: transform;
+        }
+        .f04-plate {
+          position: absolute;
+          inset: 0;
+          transform-origin: 50% 50%;
+          outline: 1px solid #282826;
+        }
+        .f04-shot {
+          display: block;
+          width: 1920px;
+          height: 1080px;
+        }
+        .f04-mark {
+          position: absolute;
+          border: 5px solid #e85d26;
+          box-sizing: border-box;
+          visibility: hidden;
+        }
+        .f04-tag {
+          position: absolute;
+          left: -5px;
+          bottom: 100%;
+          padding: 6px 18px 8px;
+          background: #e85d26;
+          color: #111111;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 34px;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
+        .f04-tag-left {
+          left: auto;
+          right: 100%;
+          bottom: auto;
+          top: -5px;
+          font-size: 56px;
+        }
+        .f04-tick {
+          position: absolute;
+          left: 20px;
+          width: 22px;
+          height: 22px;
+          background: #e85d26;
+          visibility: hidden;
+        }
+        .f04-head {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .f04-line {
+          display: block;
+          padding: 10px 44px 18px 106px;
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 900;
+          font-size: 124px;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
+          visibility: hidden;
+        }
+        .f04-line-a {
+          background: #111111;
+          color: #f0ece5;
+        }
+        .f04-line-b {
+          background: #e85d26;
+          color: #111111;
+        }
+        .f04-chip {
+          position: absolute;
+          display: flex;
+          align-items: baseline;
+          gap: 16px;
+          padding: 12px 26px 14px;
+          background: #111111;
+          border: 1px solid #f0ece5;
+          visibility: hidden;
+          white-space: nowrap;
+        }
+        .f04-chip-num {
+          font-family: "Barlow", sans-serif;
+          font-weight: 900;
+          font-size: 76px;
+          line-height: 1;
+          letter-spacing: -0.03em;
+          color: #e85d26;
+        }
+        .f04-chip-label {
+          font-family: "Noto Sans SC", sans-serif;
+          font-weight: 500;
+          font-size: 32px;
+          color: #f0ece5;
+        }
+        .f04-flash {
+          position: absolute;
+          inset: 0;
+          background: #e85d26;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .f04-border {
+          position: absolute;
+          inset: 0;
+          border: 14px solid #e85d26;
+          box-sizing: border-box;
+          opacity: 0;
+        }
+      </style>
+
+      <div id="root" data-composition-id="04-workbench" data-width="1920" data-height="1080" data-duration="3.75">
+        <div class="clip f04-bg" id="f04-bg" data-start="0" data-duration="3.75" data-track-index="0">
+          <div class="f04-grid" id="f04-grid"></div>
+        </div>
+
+        <div class="f04-stage">
+          <div class="f04-cam" id="f04-cam">
+            <div class="f04-plate" id="f04-plate">
+              <img class="f04-shot" src="assets/shots/workbench.png" alt="" />
+              <div class="f04-mark" id="f04-mark-list" style="left: 12px; top: 232px; width: 326px; height: 774px">
+                <div class="f04-tag f04-tag-left">所有任务</div>
+              </div>
+              <div class="f04-mark" id="f04-mark-chat" style="left: 392px; top: 244px; width: 1010px; height: 292px">
+                <div class="f04-tag">实时对话</div>
+              </div>
+              <div class="f04-mark" id="f04-mark-diff" style="left: 1462px; top: 452px; width: 386px; height: 226px">
+                <div class="f04-tag">改动一目了然</div>
+              </div>
+              <div id="f04-ticks"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="f04-chip" id="f04-chip-1" style="left: 1010px; top: 150px">
+          <span class="f04-chip-num">4</span><span class="f04-chip-label">个文件</span>
+        </div>
+        <div class="f04-chip" id="f04-chip-2" style="left: 1436px; top: 286px">
+          <span class="f04-chip-num">+119</span><span class="f04-chip-label">行新增</span>
+        </div>
+        <div class="f04-chip" id="f04-chip-3" style="left: 1530px; top: 64px">
+          <span class="f04-chip-num">3</span><span class="f04-chip-label">次提交</span>
+        </div>
+
+        <div class="f04-head">
+          <span class="f04-line f04-line-a" id="f04-line-a">一块屏幕</span>
+          <span class="f04-line f04-line-b" id="f04-line-b">盯住所有智能体</span>
+        </div>
+
+        <div class="f04-border" id="f04-border"></div>
+        <div class="f04-flash" id="f04-flash"></div>
+      </div>
+
+      <script>
+        (function () {
+          const BEAT = 0.46875;
+          const b = (n) => n * BEAT;
+          const tl = gsap.timeline({ paused: true });
+
+          // 侧栏每一行任务前的方块（截图坐标系，1440→1920 放大后的行位置）
+          const rows = [184, 293, 339, 384, 429, 475, 520, 565, 611, 656, 701, 747, 792, 837, 883, 928];
+          const tickHost = document.getElementById("f04-ticks");
+          rows.forEach((y, i) => {
+            const tick = document.createElement("div");
+            tick.className = "f04-tick";
+            tick.id = "f04-tick-" + i;
+            tick.style.top = y - 11 + "px";
+            tickHost.appendChild(tick);
+          });
+
+          // 镜头对准截图上的 (cx, cy)、放大 s 倍时 cam 的平移量
+          const aim = (cx, cy, s) => ({ x: 960 - cx * s, y: 540 - cy * s, scale: s });
+          const WHIP = 0.3;
+          const LEAD = 0.17;
+          const whip = (cx, cy, s, at, extra) =>
+            tl.to("#f04-cam", { ...aim(cx, cy, s), ...extra, duration: WHIP, ease: "power3.inOut" }, at - LEAD);
+          const show = (id, at) => tl.set(id, { visibility: "visible" }, at);
+          const hide = (id, at) => tl.set(id, { visibility: "hidden" }, at);
+          const punch = (id, at, from) =>
+            tl.fromTo(id, { scale: from || 1.12 }, { scale: 1, duration: 0.32, ease: "power3.out" }, at);
+
+          // b0 —— 从上一帧硬切进来，整张界面砸到位
+          tl.set("#f04-cam", { ...aim(960, 540, 1), rotationX: 0, rotationY: 0 }, 0);
+          tl.fromTo("#f04-plate", { scale: 1.5, rotationX: 22, y: 160 }, { scale: 1, rotationX: 0, y: 0, duration: 0.34, ease: "power4.out" }, 0);
+          tl.fromTo("#f04-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
+          show("#f04-line-a", 0);
+          tl.fromTo("#f04-line-a", { xPercent: -100 }, { xPercent: 0, duration: 0.3, ease: "power4.out" }, 0);
+
+          // b1 —— 推到侧栏
+          whip(380, 560, 1.3, b(1));
+          show("#f04-mark-list", b(1));
+          punch("#f04-mark-list", b(1), 1.08);
+
+          // b2 —— 甩到对话
+          hide("#f04-mark-list", b(2) - 0.06);
+          whip(900, 420, 1.42, b(2));
+          show("#f04-mark-chat", b(2));
+          punch("#f04-mark-chat", b(2), 1.08);
+
+          // b3 —— 甩到右侧改动统计
+          hide("#f04-mark-chat", b(3) - 0.06);
+          whip(1560, 540, 1.9, b(3));
+          show("#f04-mark-diff", b(3));
+          punch("#f04-mark-diff", b(3), 1.1);
+
+          // b4 —— 第二小节重拍：拉远成斜放的整屏，第二行标题砸下
+          hide("#f04-mark-diff", b(4) - 0.05);
+          tl.to(
+            "#f04-cam",
+            { ...aim(960, 600, 0.9), rotationY: -11, rotationX: 5, duration: 0.36, ease: "power4.out" },
+            b(4) - 0.12,
+          );
+          tl.fromTo("#f04-flash", { opacity: 0.55 }, { opacity: 0, duration: 0.28, ease: "power2.out", immediateRender: false }, b(4));
+          show("#f04-line-b", b(4));
+          tl.fromTo("#f04-line-b", { xPercent: -100 }, { xPercent: 0, duration: 0.26, ease: "power4.out" }, b(4) - 0.08);
+          tl.fromTo("#f04-line-a", { y: 150 }, { y: 0, duration: 0.26, ease: "power4.out", immediateRender: false }, b(4) - 0.08);
+
+          // b5–b6 —— 侧栏任务逐行点亮（十六分音符）
+          rows.forEach((_, i) => {
+            const at = b(5) + i * (BEAT / 8);
+            show("#f04-tick-" + i, at);
+            tl.fromTo("#f04-tick-" + i, { scale: 2.6 }, { scale: 1, duration: 0.16, ease: "power2.out" }, at);
+          });
+          tl.to("#f04-cam", { rotationY: -7, duration: BEAT * 2, ease: "none" }, b(5));
+
+          // b5 / b6 / b7 —— 数字贴片逐拍弹出
+          [["#f04-chip-1", 5], ["#f04-chip-2", 6], ["#f04-chip-3", 7]].forEach(([id, beat]) => {
+            show(id, b(beat));
+            tl.fromTo(id, { scale: 1.5, rotation: -4 }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2.2)" }, b(beat));
+          });
+
+          // b6 / b7 —— 整屏随拍顶一下，最后一拍橙框闪
+          tl.fromTo("#f04-plate", { scale: 1.035 }, { scale: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, b(6));
+          tl.fromTo("#f04-plate", { scale: 1.05 }, { scale: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, b(7));
+          tl.fromTo("#f04-border", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out", immediateRender: false }, b(7));
+          tl.fromTo("#f04-grid", { opacity: 1 }, { opacity: 0.55, duration: 0.4, ease: "power2.out", immediateRender: false }, b(7));
+
+          window.__timelines["04-workbench"] = tl;
+          tl.seek(0);
+        })();
+      </script>
+    </template>
+  </body>
+</html>
