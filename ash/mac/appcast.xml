@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:ash="https://github.com/noroot777/ash" version="2.0">
+  <channel>
+    <title>ash for macOS</title>
+    <link>https://github.com/noroot777/materials</link>
+    <item>
+        <title>0.2.0（20261117.075426）</title>
+        <pubDate>Tue, 17 Nov 2026 07:57:31 GMT</pubDate>
+        <sparkle:version>20261117.075426</sparkle:version>
+        <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <ash:commit>513ce035</ash:commit>
+        <description>&lt;ul&gt;&lt;li&gt;fix(信息格): 上下文细条改画已用的那一截，跟水位往上涨的直觉一致&lt;/li&gt;&lt;li&gt;feat(scripts): 加 npm run stop——停掉后台常驻的服务端，与 restart 共用同一套任务安全闸&lt;/li&gt;&lt;li&gt;fix(R 键): 打开动作统一过一道判据——窗口关着、结果没跟上、回车后词又改了都不开；读任务回来时窗口重开过也不跳&lt;/li&gt;&lt;li&gt;fix(test): 补齐问答卡斜杠菜单的讨论对象夹具&lt;/li&gt;&lt;li&gt;fix(R 键): 顺序认侧栏屏幕；搜索没跟上输入时不许打开、回车等结果；右边分页往前读、任务多少条都装得下；正文搜索失败单独提示可重试&lt;/li&gt;&lt;li&gt;ui(会话): 「在想」进行条前面画正在跑的那家智能体的标——想得久时看得出是它在想、不是 ash 卡着；位置同它开口后的头像，排队/还没交出去时不画&lt;/li&gt;&lt;li&gt;ui(侧栏): 置顶图标挪到行尾最后，排在队列名次和子任务数之后&lt;/li&gt;&lt;li&gt;feat(R 键): 改成以任务为主——左边任务顺序同侧栏，右边是我在那条（连名下执行者、子任务）里说过的每一句&lt;/li&gt;&lt;li&gt;fix(回复框): 拖过的高度只当下限，照样随行数长高——原来拖一次（哪怕无意几像素）就跨任务、跨刷新把自动撑高整个关掉且看不出来（用户 Chrome 里团队框钉在 79px 不再长）；去掉已无原生把手可认的「手动拖过」探测&lt;/li&gt;&lt;li&gt;ui(侧栏): 子任务图标有颜色时画实心——12px 细线只换颜色几乎看不出，灰的那颗留细线拉开对比&lt;/li&gt;&lt;li&gt;fix(侧栏): 名下有做完没验收的子孙也带到最外层父任务的子任务图标上（主色不跳）——侧栏不展开子孙，不带上来就看不出还有章没盖&lt;/li&gt;&lt;li&gt;ui(侧栏): 父任务行尾不再写「子项运行中/子项等答复」，名下状态改由子任务图标的颜色说——在动主色会跳、轮到你琥珀、出事红，数字留灰；右侧子任务格折叠键同一颗&lt;/li&gt;&lt;li&gt;test(task-read-sync): 定时器和 Date.now 换成 node:test 的 mock.timers —— 47 处 settle() 全是真睡（默认 700 毫秒、等产品 5 秒重试的各 5.5 秒），合计 45.8 秒。settle(ms) 改成按 10 毫秒一步拨假钟、每步让真事件循环转几圈，时长语义不变：重试拉长、攒批拉长、不补拉三种变异照样红；单跑 47 秒 → 不到 1 秒，与负载无关&lt;/li&gt;&lt;li&gt;test(preview-preset-links): ⑦ 挂死那一发装假时钟拨过上限 —— 要按 useTaskPreview 的 READ_TIMEOUT_MS 真等 10 秒、再等 2.5 秒重拉。改成先确认那一发已出门、上限之前入口还在，再 clock.fastForward 拨过上限和重拉间隔（fastForward 只在跳完那刻触发一次，重拉从新时刻起算，不受两个常数大小影响），拨过之后只留 2 秒余量：上限改长、不 abort 两种变异都红（原写法 16 秒宽限下上限改长照样绿）；单跑 29 → 16 秒&lt;/li&gt;&lt;li&gt;test(preview-log-live): 「服务列表迟到」改成由测试放行 —— 夹具按「日志读满 5 轮」才给全服务列表，轮询 2 秒一轮，late / late-short 两档各真等 10 秒。照同夹具 __releaseStaleWeb 的做法改成 window.__servicesArrive：测试把「列表到达之前」的断言做完、焦点放好再放行，下一轮就到。比原来按轮数赌一个余量更确定；单跑 49 → 34 秒&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/materials/releases/download/ash-mac-v0.2.0-20261117.075426/Ash-0.2.0-20261117.075426.zip" length="74613112" type="application/octet-stream" sparkle:edSignature="E0JFFC7YAUONV6Gp9pCJhPFWQPSL+VLBnKw9vCtygB2ZbjPLWFuidIWqe1Fk0hgi5DOgtI6YEF/1kW/8p9PbCw=="></enclosure>
+      </item>
+  </channel>
+</rss><!-- sparkle-signatures:
+edSignature: J8FugWtlKAkc2/87so8WNG3QRWrgzsV2NOLatTU4t26U2g+IE2El+hienuonn+4G+UVM0UzhJnL4wpBWqrq8Dg==
+length: 4856
+-->
