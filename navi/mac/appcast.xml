@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:navi="https://github.com/noroot777/navi" xmlns:ash="https://github.com/noroot777/ash" version="2.0">
+  <channel>
+    <title>Navi for macOS</title>
+    <link>https://github.com/noroot777/navi</link>
+    <item>
+        <title>0.2.0（20261119.224103）</title>
+        <pubDate>Thu, 19 Nov 2026 22:51:36 GMT</pubDate>
+        <sparkle:version>20261119.224103</sparkle:version>
+        <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>f303fcadc</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;docs: 重写 README，加 MIT LICENSE&lt;/li&gt;&lt;li&gt;fix(upgrade): 复审第 4 轮——进度里认不出是这份库的记录一律停服务之前拦下,不再「当成别的库跳过」&lt;/li&gt;&lt;li&gt;fix(upgrade): 复审第 3 轮——「升级进度归哪份库」整类收口:库按文件本身认、旧记录有认领入口、共享的进度文件和 runs 一起锁&lt;/li&gt;&lt;li&gt;fix(upgrade): 复审第 2 轮——升级进度里跟某份库绑着的都记上是哪份库(进度、备份、欠着的核对、起着的服务)&lt;/li&gt;&lt;li&gt;fix(upgrade): 复审第 1 轮——欠着的数据核对每个成功出口都得亲自补过、claude 旧名按用户级认人再删、升级锁 token 只在递锁的父子间有效&lt;/li&gt;&lt;li&gt;test(upgrade): 软链库的 WAL 夹具照服务那样经链接写 —— Windows 上 SQLite 不跟软链,-wal 落在链接名旁边(真机实测)&lt;/li&gt;&lt;li&gt;fix(upgrade): 审查第 4 轮——退回命令带上这次选数据的环境变量并核对起来的服务用的是哪份数据、stop --pid 按出生时刻认人、数据锁按库文件的真实落点&lt;/li&gt;&lt;li&gt;fix(archive): 冻结位拿到后到交出释放之前抛错就当场放掉；取回也占同一份冻结位、冻上后重读，上层整棵归档进行中取回不了；团队那条归档路同样先冻住自己；归档冻上后重读任务行和事实再判&lt;/li&gt;&lt;li&gt;fix(upgrade): 审查第 3 轮——备份改成 SQLite 一致快照并记指纹、核对先认人不建空库、升级锁改成各放各的登记且 restart/setup/数据目录一起互斥、退回命令按 pid 结束并等它真退、旧名登记只认服务自己那张表的启动命令&lt;/li&gt;&lt;li&gt;fix(archive): 整棵归档先冻住整棵再重读重判，建任务挂进来跟它互斥、已归档的名下建不出新任务；名下有看不见的项目时归档/取回整笔不做、不报标题；取回父任务与子孙一笔解冻&lt;/li&gt;&lt;li&gt;feat(mcp-register): claude / codex 之外各家的旧名登记也收成 navi(已有 navi 就删、没有就原地改名、起的脚本已不在就删掉让后面补；别人的、关着的不动)&lt;/li&gt;&lt;li&gt;feat(archive): 派出去的子孙跟着派活那条一起归档、一起取回；任务头标出已归档；团队/讨论对智能体隐形&lt;/li&gt;&lt;li&gt;fix(upgrade): 审查第 1 轮——整次升级上锁、软链库照指向的那份留底、停服务后的意外统一出口、慢服务按 pid 结束、已是最新也收拾 MCP 登记、核对没成不算升好、产物按整棵树认、退回命令里的路径按 shell 转义&lt;/li&gt;&lt;li&gt;fix(mcp-register): 已有 navi 时也删掉还在的旧名登记(起的是 Navi 的 MCP 脚本才删，指着别处的不动)&lt;/li&gt;&lt;li&gt;docs(upgrade): --help 写上服务停着时的端口来源&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.2.0-20261119.224103/Navi-0.2.0-20261119.224103.dmg" length="84674008" type="application/octet-stream" sparkle:edSignature="7yfkkbQ7eQGjG/kiNY40Aghnmm6oA8BGZi8s83ZFqEUlyUShgotxBd5MNRTk2wJkq+lTIGd5T9xA2z+TYo2nDg=="></enclosure>
+      </item>
+  </channel>
+</rss><!-- sparkle-signatures:
+edSignature: hO5Ik3vD7Fi2Gw1TtUniHNQ9TuqGtOJxIVzQHqO+4EoXq7W/7MmdIjTaICnW9Rp10CLAsmY8iSWgGHtdQlxrBw==
+length: 4252
+-->
