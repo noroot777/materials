@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.2.1（20261120.005732）</title>
+        <pubDate>Fri, 20 Nov 2026 01:02:54 GMT</pubDate>
+        <sparkle:version>20261120.005732</sparkle:version>
+        <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>691485354</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.2.1&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.2.1-20261120.005732/Navi-0.2.1-20261120.005732.dmg" length="84657681" type="application/octet-stream" sparkle:edSignature="OEzL1hFMhMK+VhRfI4b85tbRwE3yzitAkhyIe0b0Z7bGrUO06JG6rdMCP+b7tCurMhdCX2qvsyRNqS6vosY9DQ=="></enclosure>
+      </item>
+    <item>
         <title>0.2.0（20261119.224103）</title>
         <pubDate>Thu, 19 Nov 2026 22:51:36 GMT</pubDate>
         <sparkle:version>20261119.224103</sparkle:version>
@@ -16,6 +26,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: hO5Ik3vD7Fi2Gw1TtUniHNQ9TuqGtOJxIVzQHqO+4EoXq7W/7MmdIjTaICnW9Rp10CLAsmY8iSWgGHtdQlxrBw==
-length: 4252
+edSignature: Pz561308WeegHhz/+kMruPGmPc44QWkaxXLlZG1pJVOczgt5Y+q81FF2ibvE1bey6KcN4d7nYbYx/BHRO8KmAQ==
+length: 5052
 -->
