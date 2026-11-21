@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.3</title>
+        <pubDate>Sat, 21 Nov 2026 09:56:08 GMT</pubDate>
+        <sparkle:version>20261121.093431</sparkle:version>
+        <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>af0163afc</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.3&lt;/li&gt;&lt;li&gt;fix(web): fit computer preview to content and allow dismissal&lt;/li&gt;&lt;li&gt;fix(mac): 公开版本命名移除日期构建号&lt;/li&gt;&lt;li&gt;fix(mac): 避免云端恢复发布触发匿名 API 限流&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.3.3/Navi-0.3.3.dmg" length="77182668" type="application/octet-stream" sparkle:edSignature="Bsr1nmsoa9tEatUNy6dzkXB8AIUZBS2449NzAfg55S+NVRQ0lB622PxBGVKrbBgfiktK3iHlxGaqya+KvkNnDA=="></enclosure>
+      </item>
+    <item>
         <title>0.3.2</title>
         <pubDate>Sat, 21 Nov 2026 08:08:41 GMT</pubDate>
         <sparkle:version>20261121.073121</sparkle:version>
@@ -56,6 +66,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: SmeSuYh8jAajXznZIiAUuKrCRjxL9IJXyT+NCJZ0siYFJGy9W+1LAMo2UwXr/ifEyexwZMWabW4hmYDHDd0aDw==
-length: 12224
+edSignature: nmlS1I3u3W4qullmoS3CAxJUDtNHU/K3KS3qD+m/oB8QKN9s7NDFFlrPAlKqt/4CfUYTFH3M/qunRZhc11ZgAg==
+length: 13201
 -->
