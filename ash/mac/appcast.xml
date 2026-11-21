@@ -5,17 +5,17 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
-        <title>Navi 0.3.2</title>
-        <pubDate>Sat, 21 Nov 2026 08:08:42 GMT</pubDate>
-        <sparkle:version>20261121.073121</sparkle:version>
-        <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+        <title>Navi 0.3.3</title>
+        <pubDate>Sat, 21 Nov 2026 09:56:10 GMT</pubDate>
+        <sparkle:version>20261121.093431</sparkle:version>
+        <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
         <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
         <sparkle:informationalUpdate></sparkle:informationalUpdate>
-        <link>https://github.com/noroot777/navi/releases/tag/navi-mac-v0.3.2-20261121.073121</link>
-        <description>&lt;p&gt;Ash 改名为 Navi。新版换了应用标识，没法从 Ash 里直接更新：点「了解更多」下载 Navi，拖进「应用程序」后打开一次，它会接过 Navi 的设置、数据和登录项，并把旧的 Ash.app 移到废纸篓。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.2&lt;/li&gt;&lt;li&gt;feat(mac): 一键发布同时支持 Apple 芯片和 Intel&lt;/li&gt;&lt;li&gt;feat: stream live computer-use window previews on macOS&lt;/li&gt;&lt;li&gt;feat(web): use solid unaccepted dots and unify status indicators at 6px&lt;/li&gt;&lt;li&gt;feat(web): compare task dots at 4 5 6 and 7 pixels&lt;/li&gt;&lt;li&gt;fix(mac): 对外版本显示隐藏内部构建号&lt;/li&gt;&lt;li&gt;feat(web): compare all task indicators at 4px and 7px&lt;/li&gt;&lt;li&gt;feat(web): show task dot colors and live motion side by side&lt;/li&gt;&lt;li&gt;feat(web): compare five unaccepted task dot styles&lt;/li&gt;&lt;li&gt;feat(web): compare three persistent acceptance indicators&lt;/li&gt;&lt;li&gt;fix: limit operation mini previews to computer use&lt;/li&gt;&lt;li&gt;feat(web): add interactive task indicator comparison demo&lt;/li&gt;&lt;li&gt;feat(mac): 通过 GitHub Actions 一键发布并维护固定下载页&lt;/li&gt;&lt;li&gt;fix(mac): wait for safe runtime handover without interrupting users&lt;/li&gt;&lt;li&gt;fix(web): restore full-width plan implementation row&lt;/li&gt;&lt;li&gt;feat: add compact computer previews and responsive browser layouts&lt;/li&gt;&lt;/ul&gt;</description>
+        <link>https://github.com/noroot777/navi/releases/tag/navi-mac-v0.3.3</link>
+        <description>&lt;p&gt;Ash 改名为 Navi。新版换了应用标识，没法从 Ash 里直接更新：点「了解更多」下载 Navi，拖进「应用程序」后打开一次，它会接过 Navi 的设置、数据和登录项，并把旧的 Ash.app 移到废纸篓。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.3&lt;/li&gt;&lt;li&gt;fix(web): fit computer preview to content and allow dismissal&lt;/li&gt;&lt;li&gt;fix(mac): 公开版本命名移除日期构建号&lt;/li&gt;&lt;li&gt;fix(mac): 避免云端恢复发布触发匿名 API 限流&lt;/li&gt;&lt;/ul&gt;</description>
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: lpe33jQR7vkdMR78HcAwnDK7tPon60OT25sIe8flpItTOeo8EmSpddekk0gmFDsD/YGv6DMmh/oQPjyIUcQFAA==
-length: 2624
+edSignature: SGuP7bUKwKM+NTrELg4b8SyMVm2xwrIJhlqfsrWa3MFk1U3ysiB5GZ6jGp+mWS2QCegE2De9N2u+DnZ0c4zYBg==
+length: 1660
 -->
