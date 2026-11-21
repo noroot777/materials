@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.0（20261121.004809）</title>
+        <pubDate>Sat, 21 Nov 2026 00:53:31 GMT</pubDate>
+        <sparkle:version>20261121.004809</sparkle:version>
+        <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>f864c11db</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.0&lt;/li&gt;&lt;li&gt;fix(macos): stage paused retry targets without activating them&lt;/li&gt;&lt;li&gt;fix(macos): persist rollback pause and retire recovery test services&lt;/li&gt;&lt;li&gt;fix(macos): preserve legacy restart and target new runtime after rollback&lt;/li&gt;&lt;li&gt;fix(macos): include recovery identity in established compile sources&lt;/li&gt;&lt;li&gt;fix(macos): retain explicit recovery prompt after main merge&lt;/li&gt;&lt;li&gt;fix(runtime): share side-effect-free takeover preflight and pause rejected switches&lt;/li&gt;&lt;li&gt;feat(macos): integrate safe runtime handover and durable agent channels&lt;/li&gt;&lt;li&gt;fix(macos): recover unused gateways with damaged records&lt;/li&gt;&lt;li&gt;fix(macos): fence stable gateway identity writers&lt;/li&gt;&lt;li&gt;fix(macos): recover gateway faults and retire verified idle channels&lt;/li&gt;&lt;li&gt;chore(runtime): retain latest accepted main web changes&lt;/li&gt;&lt;li&gt;fix(macos): recover and version stable agent channels&lt;/li&gt;&lt;li&gt;fix(web): show actual send conditions in collapsed message tray&lt;/li&gt;&lt;li&gt;chore(runtime): align integration tree with accepted main 4b74da3a7&lt;/li&gt;&lt;li&gt;fix(macos): preserve agent channels across runtime handoff&lt;/li&gt;&lt;li&gt;fix(macos): add explicit recovery for blocked runtime switches&lt;/li&gt;&lt;li&gt;fix(macos): protect agent relay and hook channels during runtime handoff&lt;/li&gt;&lt;li&gt;fix(macos): isolate per-task runtime eligibility failures&lt;/li&gt;&lt;li&gt;fix(macos): harden runtime handoff recovery and stable MCP entry&lt;/li&gt;&lt;li&gt;fix(runtime): reject partial workspace holds during service handover&lt;/li&gt;&lt;li&gt;fix: preserve independent forks from archived tasks&lt;/li&gt;&lt;li&gt;feat(macos): preserve running tasks across versioned runtime updates&lt;/li&gt;&lt;li&gt;test(mac): initialize detached completion fixture before host imports&lt;/li&gt;&lt;li&gt;fix(mac): base idle shutdown on owned cleanup resources&lt;/li&gt;&lt;li&gt;fix(mac): handle legacy migration, defer frozen starts and stabilize MCP entry&lt;/li&gt;&lt;li&gt;fix: freeze archived decision cards and derived task creation&lt;/li&gt;&lt;li&gt;fix(retry-turn): 依赖旧上下文的输入在选会话那一步收口——续不上就改发完整指令并如实留一句，拿不出完整指令就不起跑（审查第 3 轮 F1/N1）&lt;/li&gt;&lt;li&gt;Compare canonical runtime paths in macOS fixture&lt;/li&gt;&lt;li&gt;Include Homebrew Node library in isolated runtime fixtures&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.3.0-20261121.004809/Navi-0.3.0-20261121.004809.dmg" length="85780663" type="application/octet-stream" sparkle:edSignature="TRw9aoRegHHgTA7wvjky73609t+/lL3HdsIZTqxoXRmkOiGlbEtqov7oJkjczEqgqw43YJfRtDwyTk3Sco0ADw=="></enclosure>
+      </item>
+    <item>
         <title>0.2.1（20261120.005732）</title>
         <pubDate>Fri, 20 Nov 2026 01:02:54 GMT</pubDate>
         <sparkle:version>20261120.005732</sparkle:version>
@@ -26,6 +36,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: Pz561308WeegHhz/+kMruPGmPc44QWkaxXLlZG1pJVOczgt5Y+q81FF2ibvE1bey6KcN4d7nYbYx/BHRO8KmAQ==
-length: 5052
+edSignature: lmFRNo/88yFib5Q5B9TrrxDBH28SNz1sL2mNJCLXSzBXGRUNHq6RZB4cdYlCaMER0pETreM2mkZ2qfGaBRyFAA==
+length: 8414
 -->
