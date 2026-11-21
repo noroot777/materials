@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.1（20261121.032133）</title>
+        <pubDate>Sat, 21 Nov 2026 03:26:49 GMT</pubDate>
+        <sparkle:version>20261121.032133</sparkle:version>
+        <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>026c39cfb</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.1&lt;/li&gt;&lt;li&gt;fix(ui): unify branded app states and crash handoff&lt;/li&gt;&lt;li&gt;fix(mac): preserve button gesture order confirmed by live click traces&lt;/li&gt;&lt;li&gt;feat(macos): add branded restart and offline transition&lt;/li&gt;&lt;li&gt;fix(mac): retract speculative input routing and add isolated click tracing&lt;/li&gt;&lt;li&gt;fix: protect user previews from agent service cleanup&lt;/li&gt;&lt;li&gt;fix(web): use S for conversation timeline and add recall toolbar icon&lt;/li&gt;&lt;li&gt;fix: reuse retained previews and allow closing during task runs&lt;/li&gt;&lt;li&gt;fix(mac): preserve mouse event order across input method handling&lt;/li&gt;&lt;li&gt;fix(labels,composer): 长标签收在小块里、分支名不再被截括号&lt;/li&gt;&lt;li&gt;fix: keep ready task previews open across continued runs&lt;/li&gt;&lt;li&gt;ui(composer): 工作目录和 base 分支挪进新建卡片底排&lt;/li&gt;&lt;li&gt;ui(composer): 工作目录和 base 分支常驻在新建卡片下面；标签编辑器补上通用样式&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.3.1-20261121.032133/Navi-0.3.1-20261121.032133.dmg" length="85932962" type="application/octet-stream" sparkle:edSignature="6uqXqc2qANp2UdMn9atPIohuNtP1s2TyM0yOyqoBxXWXL52ZPmgzLuOtJdL+x8BrZbKL2iehbH7+tXHxoYHsBg=="></enclosure>
+      </item>
+    <item>
         <title>0.3.0（20261121.004809）</title>
         <pubDate>Sat, 21 Nov 2026 00:53:31 GMT</pubDate>
         <sparkle:version>20261121.004809</sparkle:version>
@@ -36,6 +46,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: lmFRNo/88yFib5Q5B9TrrxDBH28SNz1sL2mNJCLXSzBXGRUNHq6RZB4cdYlCaMER0pETreM2mkZ2qfGaBRyFAA==
-length: 8414
+edSignature: xI2KFY+zvpd142YZ3HjciySBleujhGSGrFtXCGnLtVP4rkaPhc2s/W/0yi9BYA0e9tcDkRG2o13BDweK7yBDAg==
+length: 10267
 -->
