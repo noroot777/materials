@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.2</title>
+        <pubDate>Sat, 21 Nov 2026 08:08:41 GMT</pubDate>
+        <sparkle:version>20261121.073121</sparkle:version>
+        <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>81012dcfd</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.2&lt;/li&gt;&lt;li&gt;feat(mac): 一键发布同时支持 Apple 芯片和 Intel&lt;/li&gt;&lt;li&gt;feat: stream live computer-use window previews on macOS&lt;/li&gt;&lt;li&gt;feat(web): use solid unaccepted dots and unify status indicators at 6px&lt;/li&gt;&lt;li&gt;feat(web): compare task dots at 4 5 6 and 7 pixels&lt;/li&gt;&lt;li&gt;fix(mac): 对外版本显示隐藏内部构建号&lt;/li&gt;&lt;li&gt;feat(web): compare all task indicators at 4px and 7px&lt;/li&gt;&lt;li&gt;feat(web): show task dot colors and live motion side by side&lt;/li&gt;&lt;li&gt;feat(web): compare five unaccepted task dot styles&lt;/li&gt;&lt;li&gt;feat(web): compare three persistent acceptance indicators&lt;/li&gt;&lt;li&gt;fix: limit operation mini previews to computer use&lt;/li&gt;&lt;li&gt;feat(web): add interactive task indicator comparison demo&lt;/li&gt;&lt;li&gt;feat(mac): 通过 GitHub Actions 一键发布并维护固定下载页&lt;/li&gt;&lt;li&gt;fix(mac): wait for safe runtime handover without interrupting users&lt;/li&gt;&lt;li&gt;fix(web): restore full-width plan implementation row&lt;/li&gt;&lt;li&gt;feat: add compact computer previews and responsive browser layouts&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.3.2-20261121.073121/Navi-0.3.2-20261121.073121.dmg" length="77133070" type="application/octet-stream" sparkle:edSignature="h5GO0tWYIwIAkMyNgeEZYNAhmauABM1tJ16KYZZ1gQ9Ht+xUm83s7JyDPdUlBgYDS8yR9NGhqEkxlHA222oaCw=="></enclosure>
+      </item>
+    <item>
         <title>0.3.1（20261121.032133）</title>
         <pubDate>Sat, 21 Nov 2026 03:26:49 GMT</pubDate>
         <sparkle:version>20261121.032133</sparkle:version>
@@ -46,6 +56,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: xI2KFY+zvpd142YZ3HjciySBleujhGSGrFtXCGnLtVP4rkaPhc2s/W/0yi9BYA0e9tcDkRG2o13BDweK7yBDAg==
-length: 10267
+edSignature: SmeSuYh8jAajXznZIiAUuKrCRjxL9IJXyT+NCJZ0siYFJGy9W+1LAMo2UwXr/ifEyexwZMWabW4hmYDHDd0aDw==
+length: 12224
 -->
