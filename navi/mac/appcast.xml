@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.4</title>
+        <pubDate>Wed, 25 Nov 2026 07:12:09 GMT</pubDate>
+        <sparkle:version>20261125.064911</sparkle:version>
+        <sparkle:shortVersionString>0.3.4</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>84d6f4e48</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(mac): 版本号 0.3.4&lt;/li&gt;&lt;li&gt;fix(裁定): 回复框顶上那一行先说这条驳回争的是什么——键上面一句执行者写给用户的那句话（老驳回说谁不认什么），后面一颗去审议格那一轮读报告和依据&lt;/li&gt;&lt;li&gt;fix(mac): recover when the workspace navigation times out&lt;/li&gt;&lt;li&gt;fix(mac): preserve the workspace during brief health timeouts&lt;/li&gt;&lt;li&gt;fix(mac): 克隆复制失败时回退兼容跨卷封装&lt;/li&gt;&lt;li&gt;fix(mac): bound handover retries without reloading untouched workspace&lt;/li&gt;&lt;li&gt;fix(web): isolate computer preview keyboard and target lifecycle&lt;/li&gt;&lt;li&gt;fix(web): keep sidebar theme menu in bounds for non-git projects&lt;/li&gt;&lt;li&gt;fix(terminal): distinguish drawer toggle from session tabs&lt;/li&gt;&lt;li&gt;fix(terminal): avoid broken ESM mode queries in production builds&lt;/li&gt;&lt;li&gt;fix(terminal): preserve interactive screens and add appearance choices&lt;/li&gt;&lt;li&gt;perf(mac): 缓存下载并减少封装复制开销&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/navi-mac-v0.3.4/Navi-0.3.4.dmg" length="77254356" type="application/octet-stream" sparkle:edSignature="l/wemRNR9TTB0HhxHNyvFXHBobIrnBotiY7q9Mgg9JPw577jJOe8v0doold+19EaqktTkvjc3ydH+SPo7LuFDw=="></enclosure>
+      </item>
+    <item>
         <title>0.3.3</title>
         <pubDate>Sat, 21 Nov 2026 09:56:08 GMT</pubDate>
         <sparkle:version>20261121.093431</sparkle:version>
@@ -66,6 +76,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: nmlS1I3u3W4qullmoS3CAxJUDtNHU/K3KS3qD+m/oB8QKN9s7NDFFlrPAlKqt/4CfUYTFH3M/qunRZhc11ZgAg==
-length: 13201
+edSignature: uJhk3uS5Ogtmh/Ea5rTwHLsXjFsvcAfvhHdd/RcAQoxkfgxtRpXmA8+SkA71d9LVEf7eVZJFYlTy9Gg1fYxaCg==
+length: 15004
 -->
