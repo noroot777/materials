@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.6</title>
+        <pubDate>Fri, 27 Nov 2026 03:50:16 GMT</pubDate>
+        <sparkle:version>20261127.032810</sparkle:version>
+        <sparkle:shortVersionString>0.3.6</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>ef584e387</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;fix(win): 解 node zip 点名用 System32 的 tar.exe&lt;/li&gt;&lt;li&gt;chore(release): 版本号 0.3.6（mac、win）&lt;/li&gt;&lt;li&gt;fix(release): release.yml 还没推上 GitHub 时说清楚先 push，不甩 404 原文&lt;/li&gt;&lt;li&gt;fix(release): 提交被拒时只还原自己写出的版本文件；预检后切走 main 也停&lt;/li&gt;&lt;li&gt;fix(release): v&amp;lt;版本&amp;gt; 的 Release 只由合并发布公开，单平台入口上传前就拒&lt;/li&gt;&lt;li&gt;fix(release): 单平台入口也过「三个包齐了才公开」那道门&lt;/li&gt;&lt;li&gt;feat(release): 一个版本一个 Release——tag v&amp;lt;版本&amp;gt; 里放 Apple 芯片、Intel、Windows 三个包&lt;/li&gt;&lt;li&gt;feat(release): npm run release -- &amp;lt;版本&amp;gt;，mac 和 Windows 一起发同一个版本号&lt;/li&gt;&lt;li&gt;feat(win): 发版与 mac 共用 Secret——MAC_RELEASE_TOKEN 传包，MAC_SPARKLE_PRIVATE_KEY 签 updater&lt;/li&gt;&lt;li&gt;fix(desktop): 打包前核对依赖认磁盘上的包，不信 npm 的已装缓存&lt;/li&gt;&lt;li&gt;fix(desktop): 打包前核对检出里的依赖，跟 package-lock.json 对不上先 npm install 再 build&lt;/li&gt;&lt;li&gt;fix(mac): 定时认人只在答出来换了人、连接被拒时撤页面，探活超时连着多少次都不撤、不去起服务&lt;/li&gt;&lt;li&gt;fix(mac): 换库与确认在服务共用服务记录锁：查过库锁之后库换不上来，有活着的持锁进程就不换&lt;/li&gt;&lt;li&gt;fix(mac): 确认在服务只认此刻握着这份库单实例锁的那个进程：退了的、库换过之后才交来的一眼不替眼前这份库作证&lt;/li&gt;&lt;li&gt;fix(mac): 认不准是哪份库、是不是这次起的，一律算不知道：不证明备过、不指给人、不作废、不替它确认&lt;/li&gt;&lt;li&gt;fix(mac): 恢复点也对着哪一份库记，别的库的底不顶替、不指给人看；确认之外的几件事跟着确认走&lt;/li&gt;&lt;li&gt;fix(mac): 服务记录的账对着哪一份库记，换了库那次尝试不顶替它的迁移前备份&lt;/li&gt;&lt;li&gt;fix(mac): 服务记录锁算 app 自己的文件，导入不挡也不搬；锁等 15 秒拿不到就这次不记&lt;/li&gt;&lt;li&gt;fix(terminal): keep live input modes independent of redraws&lt;/li&gt;&lt;li&gt;fix(mac): 确认服务改成带时刻的比较交换，current 只在同一次确认里前移&lt;/li&gt;&lt;li&gt;fix(terminal): publish synchronized redraws atomically&lt;/li&gt;&lt;li&gt;fix(terminal): render the authoritative PTY screen&lt;/li&gt;&lt;li&gt;fix(mac): 服务记录把在服务的那一份和没确认的尝试分开存；current 跟着确认在服务的那一份走&lt;/li&gt;&lt;li&gt;fix(mac): 旧服务一时没应答而库锁还在它手里时不另起一份；起出来没服务过就退的进程不留在服务记录里&lt;/li&gt;&lt;li&gt;fix(terminal): answer control queries once in the PTY session&lt;/li&gt;&lt;li&gt;fix(terminal): recover replay gaps and support multiline vi backspace&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/v0.3.6/Navi-0.3.6-intel.dmg" length="80100204" type="application/octet-stream" sparkle:edSignature="3kIf4A67qQ12ezIWFZogW6hA47iFRBN9XCaiKSjAGEL5cNUj3w+SbOXe0P2eN2dSotpoC3d6cZzHb5RPBivaCg=="></enclosure>
+      </item>
+    <item>
         <title>0.3.5</title>
         <pubDate>Thu, 26 Nov 2026 10:34:22 GMT</pubDate>
         <sparkle:version>20261126.101933</sparkle:version>
@@ -46,6 +56,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: 6VfXuntMI7Qr6Co2Yq6G6jH9rqbiDjI4GXCi14B7Hdfj6zLBokZ5s8gBaoYTo5vTW0zIgxXRJ4rudfRUg7sfBg==
-length: 12624
+edSignature: whL3sa3jx+jpafm3iwX4mmXsF2TW8WAy6QUZH+hKzFoC2Ohk/JxuY6/e5ndV0iDdqCLL/alc/HMVdMib7d1gDg==
+length: 16388
 -->
