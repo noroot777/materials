@@ -1,0 +1,16 @@
+{
+  "version": "0.3.6",
+  "notes": "- fix(win): 解 node zip 点名用 System32 的 tar.exe\n- chore(release): 版本号 0.3.6（mac、win）\n- fix(release): release.yml 还没推上 GitHub 时说清楚先 push，不甩 404 原文\n- fix(release): 提交被拒时只还原自己写出的版本文件；预检后切走 main 也停\n- fix(release): v<版本> 的 Release 只由合并发布公开，单平台入口上传前就拒\n- fix(release): 单平台入口也过「三个包齐了才公开」那道门\n- feat(release): 一个版本一个 Release——tag v<版本> 里放 Apple 芯片、Intel、Windows 三个包\n- feat(release): npm run release -- <版本>，mac 和 Windows 一起发同一个版本号\n- feat(win): 发版与 mac 共用 Secret——MAC_RELEASE_TOKEN 传包，MAC_SPARKLE_PRIVATE_KEY 签 updater\n- fix(desktop): 打包前核对依赖认磁盘上的包，不信 npm 的已装缓存\n- fix(desktop): 打包前核对检出里的依赖，跟 package-lock.json 对不上先 npm install 再 build\n- fix(mac): 定时认人只在答出来换了人、连接被拒时撤页面，探活超时连着多少次都不撤、不去起服务\n- fix(mac): 换库与确认在服务共用服务记录锁：查过库锁之后库换不上来，有活着的持锁进程就不换\n- fix(mac): 确认在服务只认此刻握着这份库单实例锁的那个进程：退了的、库换过之后才交来的一眼不替眼前这份库作证\n- fix(mac): 认不准是哪份库、是不是这次起的，一律算不知道：不证明备过、不指给人、不作废、不替它确认",
+  "pub_date": "2026-11-27T03:50:23Z",
+  "platforms": {
+    "windows-x86_64": {
+      "url": "https://github.com/noroot777/navi/releases/download/v0.3.6/Navi-0.3.6-x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQWMzQTFiQ1YzbWVLaEtsSWhjRXRMK01VL2NvN2t0VXJaL3pLdVRTelpFWWxYYmlJKzl4eUxIajQ5R2VaUjk4NEhWVjFjNnFNWjUzVzZCM3VRQ2pyWGdLS1VUYUI5UUE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk1NzUxNDIxCWZpbGU6TmF2aS0wLjMuNi14NjQtc2V0dXAuZXhlCXZlcnNpb246MC4zLjYKUG1rdDhtNC9WbGFiM0VsZThYUU9naUNHT1I4Ly9ZNmVrOG1kbEh1VzJMNzV2N1RwZ3RZNDZ2Z2tSU3djN0hLeTM5MkNHOGxGOVFmbExQenBlekdCQ0E9PQo="
+    }
+  },
+  "navi": {
+    "commit": "ef584e3872269a1d119b4ed9a60ca89092824923",
+    "sha256": "8d495c0023d461be1fea23f82983c16d821e4351133de407f117c575fe637878",
+    "size": 38845439
+  }
+}
