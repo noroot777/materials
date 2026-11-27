@@ -1,16 +1,16 @@
 {
-  "version": "0.3.6",
-  "notes": "- fix(win): 解 node zip 点名用 System32 的 tar.exe\n- chore(release): 版本号 0.3.6（mac、win）\n- fix(release): release.yml 还没推上 GitHub 时说清楚先 push，不甩 404 原文\n- fix(release): 提交被拒时只还原自己写出的版本文件；预检后切走 main 也停\n- fix(release): v<版本> 的 Release 只由合并发布公开，单平台入口上传前就拒\n- fix(release): 单平台入口也过「三个包齐了才公开」那道门\n- feat(release): 一个版本一个 Release——tag v<版本> 里放 Apple 芯片、Intel、Windows 三个包\n- feat(release): npm run release -- <版本>，mac 和 Windows 一起发同一个版本号\n- feat(win): 发版与 mac 共用 Secret——MAC_RELEASE_TOKEN 传包，MAC_SPARKLE_PRIVATE_KEY 签 updater\n- fix(desktop): 打包前核对依赖认磁盘上的包，不信 npm 的已装缓存\n- fix(desktop): 打包前核对检出里的依赖，跟 package-lock.json 对不上先 npm install 再 build\n- fix(mac): 定时认人只在答出来换了人、连接被拒时撤页面，探活超时连着多少次都不撤、不去起服务\n- fix(mac): 换库与确认在服务共用服务记录锁：查过库锁之后库换不上来，有活着的持锁进程就不换\n- fix(mac): 确认在服务只认此刻握着这份库单实例锁的那个进程：退了的、库换过之后才交来的一眼不替眼前这份库作证\n- fix(mac): 认不准是哪份库、是不是这次起的，一律算不知道：不证明备过、不指给人、不作废、不替它确认",
-  "pub_date": "2026-11-27T03:50:23Z",
+  "version": "0.3.7",
+  "notes": "- chore(release): 版本号 0.3.7（mac、win）\n- fix(release): 移除 Mac 固定下载标签\n- fix: 项目先后改成每人一个版本号、对得上才写，晚到的旧请求一律作废，不再按页面记序号、也不用裁\n- fix(server): 常驻调度台的分项按持有者代次落库，被接管后旧台那一笔落空也不播\n- fix(web): 拖过的手势吞点击留到真正松手那一下，切走标签再回来松手不再误切项目\n- fix(web): 分段细条的节点身份用分类原名，几项认不出的不再撞 key\n- fix(server): 引导失败回滚的身份与内容合回同一笔，结算读不到半成品\n- fix: 项目先后的防重放序号进库、和顺序同一事务写，重启后晚到的旧意图照样作废\n- fix(server): 决定收台就不再收插话，删掉在途插话协调\n- fix(server): 引导没送进去时，原会话的身份不再被期间新问的那一问挡住\n- fix(server): 收台前等在途插话有终点：停止当场放行，其余最多等 5 秒\n- fix: 项目先后的保存有期限、卡住不再拖住项目列表，晚到的旧意图作废\n- revert(server): 撤掉引导的方向分界机制，引导之后的提问只绑回合、不按方向分新旧\n- fix(server): 单飞收台的最后一次核对与关 stdin 放进同一步\n- fix(web): 项目先后的保存排队发、只留最新一份；拖动撤销后松手不再当成点选\n- fix: 引导的方向边界排进事件队列，旧方向的提问等引导落定再决定作废还是留下；正在生成的那一步换了气泡重画\n- fix: 上下文分项取数整体有期限、旧回执写不进新快照、分项事件不进正文组装\n- fix(server): 等分项那几秒里换了回合就不收台；常驻迟到回包不盖新的；接力带上分项\n- feat(web): 信息格上下文那一行按分项分色，点开就地列出各项占多少\n- feat(mac): 应用菜单加「设置…」(⌘,)，落点与项目下拉里的「设置」、G S 相同\n- feat(web): 上下文浮层补上分项明细，信息格细条按份着色\n- feat: 项目切换下拉里可以拖动调项目的先后\n- feat(server): 实施计划时把卡上原文另存成文件，告诉智能体可以复制再改（claude、codex 都给）\n- feat(server): claude 回合结束时取上下文分项，落到会话行\n- feat(server): claude 会话回合末取上下文分项并落在会话行上\n- feat: 智能体正在生成一步长工具调用时，会话尾上挂一行「正在写 方案.md · 已写 8,240 字」\n- Revert: claude 引导等工具调用落地再打断\n- fix(server): claude 引导先等手上那一步工具调用落地再打断，不再把生成到一半的长文件扔掉\n- fix: 「实施此计划」在会话里只记这一下，卡上原文只交给模型\n- fix(server): 计划回合引导之后的提问按流里的边界归方向；托盘随引导资格重拉；接回的计划回合认得出",
+  "pub_date": "2026-11-27T12:24:19Z",
   "platforms": {
     "windows-x86_64": {
-      "url": "https://github.com/noroot777/navi/releases/download/v0.3.6/Navi-0.3.6-x64-setup.exe",
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQWMzQTFiQ1YzbWVLaEtsSWhjRXRMK01VL2NvN2t0VXJaL3pLdVRTelpFWWxYYmlJKzl4eUxIajQ5R2VaUjk4NEhWVjFjNnFNWjUzVzZCM3VRQ2pyWGdLS1VUYUI5UUE4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk1NzUxNDIxCWZpbGU6TmF2aS0wLjMuNi14NjQtc2V0dXAuZXhlCXZlcnNpb246MC4zLjYKUG1rdDhtNC9WbGFiM0VsZThYUU9naUNHT1I4Ly9ZNmVrOG1kbEh1VzJMNzV2N1RwZ3RZNDZ2Z2tSU3djN0hLeTM5MkNHOGxGOVFmbExQenBlekdCQ0E9PQo="
+      "url": "https://github.com/noroot777/navi/releases/download/v0.3.7/Navi-0.3.7-x64-setup.exe",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQWMzQTFiQ1YzbVJTM01iWFMrbVZqcWFSeTduRysxWCtnaTFoMnJrMERkWmZxWEp3RC8xdGtLYS9xUjhkZW5rNnh1ZHJEbXl5c1ZUaExOQlVDM2VGR2Rxak8reWxibEFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk1NzgyMjU3CWZpbGU6TmF2aS0wLjMuNy14NjQtc2V0dXAuZXhlCXZlcnNpb246MC4zLjcKZVdHSHpRbFRjVWxhRE8wNFBReERtcC8yNDc3aGtRZWVocisrVFJQRi9hL1J2eFZLdnhzNTlSQkRBYVhTN2RqbHJLbGhqZGFQUzdyTGJQaGd4VmdpRHc9PQo="
     }
   },
   "navi": {
-    "commit": "ef584e3872269a1d119b4ed9a60ca89092824923",
-    "sha256": "8d495c0023d461be1fea23f82983c16d821e4351133de407f117c575fe637878",
-    "size": 38845439
+    "commit": "38b213872e7239a9d09915b27377f9817ae5b0e7",
+    "sha256": "191348dd05c04ac2158b2af130ea44075b9b6a9146f463596e8758c16d610568",
+    "size": 38853195
   }
 }
