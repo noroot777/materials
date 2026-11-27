@@ -5,6 +5,16 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <title>Navi for macOS</title>
     <link>https://github.com/noroot777/navi</link>
     <item>
+        <title>0.3.7</title>
+        <pubDate>Fri, 27 Nov 2026 12:24:13 GMT</pubDate>
+        <sparkle:version>20261127.120139</sparkle:version>
+        <sparkle:shortVersionString>0.3.7</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <navi:commit>38b213872</navi:commit>
+        <description>&lt;ul&gt;&lt;li&gt;chore(release): 版本号 0.3.7（mac、win）&lt;/li&gt;&lt;li&gt;fix(release): 移除 Mac 固定下载标签&lt;/li&gt;&lt;li&gt;fix: 项目先后改成每人一个版本号、对得上才写，晚到的旧请求一律作废，不再按页面记序号、也不用裁&lt;/li&gt;&lt;li&gt;fix(server): 常驻调度台的分项按持有者代次落库，被接管后旧台那一笔落空也不播&lt;/li&gt;&lt;li&gt;fix(web): 拖过的手势吞点击留到真正松手那一下，切走标签再回来松手不再误切项目&lt;/li&gt;&lt;li&gt;fix(web): 分段细条的节点身份用分类原名，几项认不出的不再撞 key&lt;/li&gt;&lt;li&gt;fix(server): 引导失败回滚的身份与内容合回同一笔，结算读不到半成品&lt;/li&gt;&lt;li&gt;fix: 项目先后的防重放序号进库、和顺序同一事务写，重启后晚到的旧意图照样作废&lt;/li&gt;&lt;li&gt;fix(server): 决定收台就不再收插话，删掉在途插话协调&lt;/li&gt;&lt;li&gt;fix(server): 引导没送进去时，原会话的身份不再被期间新问的那一问挡住&lt;/li&gt;&lt;li&gt;fix(server): 收台前等在途插话有终点：停止当场放行，其余最多等 5 秒&lt;/li&gt;&lt;li&gt;fix: 项目先后的保存有期限、卡住不再拖住项目列表，晚到的旧意图作废&lt;/li&gt;&lt;li&gt;revert(server): 撤掉引导的方向分界机制，引导之后的提问只绑回合、不按方向分新旧&lt;/li&gt;&lt;li&gt;fix(server): 单飞收台的最后一次核对与关 stdin 放进同一步&lt;/li&gt;&lt;li&gt;fix(web): 项目先后的保存排队发、只留最新一份；拖动撤销后松手不再当成点选&lt;/li&gt;&lt;li&gt;fix: 引导的方向边界排进事件队列，旧方向的提问等引导落定再决定作废还是留下；正在生成的那一步换了气泡重画&lt;/li&gt;&lt;li&gt;fix: 上下文分项取数整体有期限、旧回执写不进新快照、分项事件不进正文组装&lt;/li&gt;&lt;li&gt;fix(server): 等分项那几秒里换了回合就不收台；常驻迟到回包不盖新的；接力带上分项&lt;/li&gt;&lt;li&gt;feat(web): 信息格上下文那一行按分项分色，点开就地列出各项占多少&lt;/li&gt;&lt;li&gt;feat(mac): 应用菜单加「设置…」(⌘,)，落点与项目下拉里的「设置」、G S 相同&lt;/li&gt;&lt;li&gt;feat(web): 上下文浮层补上分项明细，信息格细条按份着色&lt;/li&gt;&lt;li&gt;feat: 项目切换下拉里可以拖动调项目的先后&lt;/li&gt;&lt;li&gt;feat(server): 实施计划时把卡上原文另存成文件，告诉智能体可以复制再改（claude、codex 都给）&lt;/li&gt;&lt;li&gt;feat(server): claude 回合结束时取上下文分项，落到会话行&lt;/li&gt;&lt;li&gt;feat(server): claude 会话回合末取上下文分项并落在会话行上&lt;/li&gt;&lt;li&gt;feat: 智能体正在生成一步长工具调用时，会话尾上挂一行「正在写 方案.md · 已写 8,240 字」&lt;/li&gt;&lt;li&gt;Revert: claude 引导等工具调用落地再打断&lt;/li&gt;&lt;li&gt;fix(server): claude 引导先等手上那一步工具调用落地再打断，不再把生成到一半的长文件扔掉&lt;/li&gt;&lt;li&gt;fix: 「实施此计划」在会话里只记这一下，卡上原文只交给模型&lt;/li&gt;&lt;li&gt;fix(server): 计划回合引导之后的提问按流里的边界归方向；托盘随引导资格重拉；接回的计划回合认得出&lt;/li&gt;&lt;/ul&gt;</description>
+        <enclosure url="https://github.com/noroot777/navi/releases/download/v0.3.7/Navi-0.3.7-intel.dmg" length="80138126" type="application/octet-stream" sparkle:edSignature="H6D1EalDuIwCT6Du7e4agXkBqXsC65AvBl+HN4l1XEvfYehIjv4eBh8ePwIUkwf3evRJts5fPIlg8v98QrQ2Aw=="></enclosure>
+      </item>
+    <item>
         <title>0.3.6</title>
         <pubDate>Fri, 27 Nov 2026 03:50:16 GMT</pubDate>
         <sparkle:version>20261127.032810</sparkle:version>
@@ -56,6 +66,6 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
       </item>
   </channel>
 </rss><!-- sparkle-signatures:
-edSignature: whL3sa3jx+jpafm3iwX4mmXsF2TW8WAy6QUZH+hKzFoC2Ohk/JxuY6/e5ndV0iDdqCLL/alc/HMVdMib7d1gDg==
-length: 16388
+edSignature: WTG6Z9XchBju4KUzqjVG9anuojExsbZN/YkC+fEujbdM9Ft/fPUvpDqTggYkv+vLu5wcSuG85Q4NqlLcXI+cAw==
+length: 20546
 -->
